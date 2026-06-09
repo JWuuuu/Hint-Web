@@ -1,4 +1,4 @@
-﻿import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Settings } from "lucide-react";
 import { ACCENT, GLASS } from "../hold/atmosphere";
@@ -16,6 +16,18 @@ import { RecordsGrid } from "./components/RecordsGrid";
 import { MoreGrid } from "./components/MoreGrid";
 import { SettingsList } from "./components/SettingsList";
 import { useLanguage } from "../../lib/i18n";
+import {
+  listLocalDailyReadings,
+  subscribeToLocalDailyReadings,
+} from "../readings/localDailyReadings";
+import {
+  listLocalQuestionHistory,
+  subscribeToLocalQuestionHistory,
+} from "../readings/localQuestionHistory";
+import {
+  listLocalTarotReadings,
+  subscribeToLocalTarotReadings,
+} from "../readings/localTarotReadings";
 
 /**
  * MeView — the user's personal Hint account hub: profile, membership,
@@ -29,6 +41,31 @@ export function MeView() {
   const { data: stats } = useGetUserStats({ anonId });
   const [editing, setEditing] = useState(false);
   const { t } = useLanguage();
+  const [localDailyCount, setLocalDailyCount] = useState(() => listLocalDailyReadings(anonId).length);
+  const [localTarotCount, setLocalTarotCount] = useState(() => listLocalTarotReadings(anonId).length);
+  const [localQuestionCount, setLocalQuestionCount] = useState(() => listLocalQuestionHistory(anonId).length);
+  const localReadingCount = useMemo(
+    () => localDailyCount + localTarotCount,
+    [localDailyCount, localTarotCount],
+  );
+
+  useEffect(() => {
+    return subscribeToLocalDailyReadings(() => {
+      setLocalDailyCount(listLocalDailyReadings(anonId).length);
+    });
+  }, [anonId]);
+
+  useEffect(() => {
+    return subscribeToLocalTarotReadings(() => {
+      setLocalTarotCount(listLocalTarotReadings(anonId).length);
+    });
+  }, [anonId]);
+
+  useEffect(() => {
+    return subscribeToLocalQuestionHistory(() => {
+      setLocalQuestionCount(listLocalQuestionHistory(anonId).length);
+    });
+  }, [anonId]);
 
   async function handleSave(input: Parameters<typeof saveProfile>[0]) {
     await saveProfile(input);
@@ -90,7 +127,12 @@ export function MeView() {
           <MembershipCard />
           <BalanceGrid />
           <ProfileBanner />
-          <RecordsGrid stats={stats} />
+          <RecordsGrid
+            stats={stats}
+            localReadingCount={localReadingCount}
+            localPullCount={localDailyCount}
+            localQuestionCount={localQuestionCount}
+          />
           <MoreGrid />
           <div id="me-settings" className="scroll-mt-6">
             <SettingsList />

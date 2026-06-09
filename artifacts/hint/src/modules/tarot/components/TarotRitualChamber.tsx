@@ -308,11 +308,7 @@ export function TarotRitualChamber({
 
   function selectFromSpread(visualId: string) {
     setSelectedCards((current) => {
-      const next = selectCardByVisualId(deckState.hiddenDeckOrder, current, visualId, maxSelectedCards);
-      if (next.length === maxSelectedCards) {
-        window.setTimeout(() => setStage("reveal"), 700);
-      }
-      return next;
+      return selectCardByVisualId(deckState.hiddenDeckOrder, current, visualId, maxSelectedCards);
     });
   }
 
@@ -384,6 +380,7 @@ export function TarotRitualChamber({
           maxCards={maxSelectedCards}
           spread={selectedSpread}
           onSelect={selectFromSpread}
+          onContinue={() => setStage("reveal")}
           backStyle={theme.cardBackStyle}
         />
       )}
@@ -392,6 +389,7 @@ export function TarotRitualChamber({
         <ReadingReveal
           selectedCards={selectedCards}
           revealedIds={revealedIds}
+          autoReveal
           onContinue={() => setStage("reading")}
           onReveal={revealCard}
           onRestart={restartRitual}
@@ -404,6 +402,9 @@ export function TarotRitualChamber({
           selectedCards={selectedCards}
           spread={selectedSpread}
           backStyle={theme.cardBackStyle}
+          question={setup?.question}
+          story={setup?.story}
+          focusLabel={setup?.focusLabel}
         />
       )}
 

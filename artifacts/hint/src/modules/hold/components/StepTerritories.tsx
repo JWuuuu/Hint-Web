@@ -556,9 +556,10 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
     () => localizedSpreads.find((choice) => choice.id === recommendedSpread.spreadType) ?? localizedSpreads[0]!,
     [localizedSpreads, recommendedSpread.spreadType]
   );
+  const effectiveSpreadType = spreadTouched ? spreadType : recommendedSpread.spreadType;
   const selectedSpread = useMemo(
-    () => localizedSpreads.find((choice) => choice.id === spreadType) ?? localizedSpreads[0]!,
-    [localizedSpreads, spreadType]
+    () => localizedSpreads.find((choice) => choice.id === effectiveSpreadType) ?? localizedSpreads[0]!,
+    [effectiveSpreadType, localizedSpreads]
   );
   const positionChipLimit =
     selectedSpread.positionLabels.length >= 7
@@ -677,6 +678,7 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
     if (submitted || !question.trim()) return;
     setSubmitted(true);
     recognitionRef.current?.abort();
+    const finalSpreadType = spreadTouched ? spreadType : recommendedSpread.spreadType;
     const translatedFocus: Territory = {
       ...focus,
       label: t(`territory.${focus.id}.label`),
@@ -688,7 +690,7 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
           focus: translatedFocus,
           context,
           question,
-          spreadType,
+          spreadType: finalSpreadType,
           roomSetup: roomSetup ?? undefined,
         }),
       SELECT_BLOOM_MS
@@ -701,7 +703,7 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.5, ease: "easeInOut" }}
-      className="flex w-full max-w-[460px] flex-col px-4"
+      className="flex w-full max-w-[460px] flex-col px-4 lg:max-w-[540px]"
     >
       <div
         className="relative overflow-hidden rounded-[8px] border"
@@ -745,7 +747,7 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
           <div
             ref={scrollRef}
             data-tarot-intake-scroll
-            className="min-h-0 flex-1 overflow-y-auto px-5 py-6"
+            className="min-h-0 flex-1 overflow-y-auto px-5 py-6 lg:py-4"
           >
             <>
               {panel === "context" && (
@@ -887,10 +889,19 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
                 >
                   <div className="space-y-2.5">
                     <FieldLabel>{t("tarot.intake.style")}</FieldLabel>
-                    <div
-                      className="rounded-[8px] border p-3"
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setSpreadTouched(true);
+                        setSpreadType(recommendedSpread.spreadType);
+                        setShowAllPositions(false);
+                        if (!QUICK_SPREAD_IDS.includes(recommendedSpread.spreadType)) {
+                          setShowAdvancedSpreads(true);
+                        }
+                      }}
+                      className="w-full rounded-[8px] border p-3 text-left transition-all duration-300 hover:opacity-90"
                       style={{
-                        borderColor: "rgba(228,198,138,0.28)",
+                        borderColor: effectiveSpreadType === recommendedSpread.spreadType ? GOLD.edge : "rgba(228,198,138,0.28)",
                         background:
                           "linear-gradient(135deg, rgba(228,198,138,0.12), rgba(64,224,208,0.07))",
                         boxShadow: "0 0 22px rgba(228,198,138,0.08)",
@@ -902,42 +913,28 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
                             className="font-sans text-[9px] font-semibold uppercase tracking-[0.22em]"
                             style={{ color: GOLD.ink }}
                           >
-                            {t("tarot.spreadRecommendation.eyebrow")}
+                            {t("tarot.spreadRecommendation.badge")}
                           </p>
                           <p className="mt-1 font-sans text-[14px] font-semibold leading-tight" style={{ color: IVORY.strong }}>
-                            {t("tarot.spreadRecommendation.title")} {recommendedSpreadChoice.label}
+                            {recommendedSpreadChoice.label}
+                          </p>
+                          <p className="mt-1 font-sans text-[9.5px] font-semibold uppercase tracking-[0.14em]" style={{ color: GOLD.ink }}>
+                            {recommendedSpreadChoice.cardCount} {recommendedSpreadChoice.cardCount === 1 ? t("tarot.spreadChooser.card") : t("tarot.spreadChooser.cards")}
                           </p>
                         </div>
-                        <Sparkles className="shrink-0" size={15} style={{ color: GOLD.ink }} />
+                        {effectiveSpreadType === recommendedSpread.spreadType ? (
+                          <Check className="shrink-0" size={15} style={{ color: GOLD.ink }} />
+                        ) : (
+                          <Sparkles className="shrink-0" size={15} style={{ color: GOLD.ink }} />
+                        )}
                       </div>
                       <p className="mt-2 font-sans text-[11px] leading-relaxed" style={{ color: IVORY.dim }}>
                         {t(recommendedSpread.reasonKey)}
                       </p>
-                      {spreadType !== recommendedSpread.spreadType && (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSpreadTouched(false);
-                            setSpreadType(recommendedSpread.spreadType);
-                            setShowAllPositions(false);
-                            if (!QUICK_SPREAD_IDS.includes(recommendedSpread.spreadType)) {
-                              setShowAdvancedSpreads(true);
-                            }
-                          }}
-                          className="mt-2 rounded-full border px-3 py-1.5 font-sans text-[10px] font-semibold uppercase tracking-[0.14em] transition-opacity hover:opacity-80"
-                          style={{
-                            color: IVORY.primary,
-                            borderColor: "rgba(228,198,138,0.28)",
-                            background: "rgba(228,198,138,0.08)",
-                          }}
-                        >
-                          {t("tarot.spreadRecommendation.use")}
-                        </button>
-                      )}
-                    </div>
+                    </button>
                     <div className="grid gap-1.5 sm:grid-cols-2">
                       {guidedReadingChoices.map((choice) => {
-                        const selected = spreadType === choice.spreadType;
+                        const selected = effectiveSpreadType === choice.spreadType;
                         const recommended = recommendedSpread.spreadType === choice.spreadType;
                         return (
                           <button
@@ -1040,7 +1037,7 @@ export function StepTerritories({ roomSetup, onSubmit }: Props) {
                       {showAdvancedSpreads && (
                         <div className="grid gap-1.5 sm:grid-cols-2">
                           {specializedSpreads.map((choice) => {
-                            const selected = spreadType === choice.id;
+                            const selected = effectiveSpreadType === choice.id;
                             const recommended = recommendedSpread.spreadType === choice.id;
                             return (
                               <button

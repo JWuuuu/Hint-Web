@@ -147,7 +147,7 @@ export function HoldExperience() {
       errorMessage,
       advance,
       reset,
-      submitIntake,
+      submitRoomIntake,
       startRoom,
       updateSession,
       redraw,
@@ -158,7 +158,7 @@ export function HoldExperience() {
       case "setup":
         return (
           <Breath key={stepKey("setup")} duration={1.2}>
-            <RoomSetup onStart={startRoom} />
+            <RoomSetup initialSetup={roomSetup} onStart={startRoom} />
           </Breath>
         );
       case "ritual":
@@ -172,7 +172,7 @@ export function HoldExperience() {
       case "territories":
         return (
           <Breath key={stepKey("territories")} duration={2}>
-            <StepTerritories roomSetup={roomSetup} onSubmit={submitIntake} />
+            <StepTerritories roomSetup={roomSetup} onSubmit={submitRoomIntake} />
           </Breath>
         );
       case "acknowledgment":

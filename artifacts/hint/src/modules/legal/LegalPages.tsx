@@ -80,7 +80,7 @@ export function PrivacyPolicyView() {
           <LegalList
             items={[
               "Hint uses an anonymous browser id to keep your profile, readings, daily pulls, and journal entries connected to this device.",
-              "Profile details and emotional notes are used to make the app feel continuous and personal inside your own Hint experience.",
+              "Profile details and emotional notes are used to make the website feel continuous and personal inside your own Hint experience.",
               "You can clear local and saved Hint history from the Me page settings.",
               `For beta support or privacy questions, contact ${CONTACT_EMAIL}.`,
             ]}
@@ -113,7 +113,7 @@ export function TermsView() {
             items={[
               "Hint is a reflective tarot and journaling experience, not a professional advice service.",
               "Do not use Hint as a substitute for medical care, therapy, legal advice, financial advice, emergency support, or crisis services.",
-              "You are responsible for the choices you make outside the app.",
+              "You are responsible for the choices you make outside the web experience.",
               "Beta features may change, break, or be removed as the product develops.",
             ]}
           />

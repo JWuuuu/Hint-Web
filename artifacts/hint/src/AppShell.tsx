@@ -21,7 +21,10 @@ import {
   HINT_THEME_STORAGE_KEY,
   type HintTheme,
 } from "./components/app/theme";
-import { useLanguage } from "./lib/i18n";
+import {
+  getHintPreferences,
+  HINT_PREFERENCES_UPDATED_EVENT,
+} from "./lib/preferences";
 
 /** Immersive room routes own the full screen (their own back link + pinned
  *  inputs), so the global bottom nav is hidden there. */
@@ -35,6 +38,9 @@ const IMMERSIVE_ROUTES = ["/tarot", "/ask"];
 export function AppShell({ children }: { children: ReactNode }) {
   const [location] = useLocation();
   const [theme, setTheme] = useState<HintTheme>(getInitialHintTheme);
+  const [reduceMotion, setReduceMotion] = useState(
+    () => getHintPreferences().reduceMotion,
+  );
   const showNav = !IMMERSIVE_ROUTES.some(
     (r) => location === r || location.startsWith(r + "/"),
   );
@@ -62,6 +68,24 @@ export function AppShell({ children }: { children: ReactNode }) {
       // Local storage can be unavailable in private browsing.
     }
   }, [theme]);
+
+  useEffect(() => {
+    document.documentElement.dataset.hintReduceMotion = reduceMotion ? "true" : "false";
+  }, [reduceMotion]);
+
+  useEffect(() => {
+    const syncPreferences = () => {
+      setTheme(getInitialHintTheme());
+      setReduceMotion(getHintPreferences().reduceMotion);
+    };
+
+    window.addEventListener(HINT_PREFERENCES_UPDATED_EVENT, syncPreferences);
+    window.addEventListener("storage", syncPreferences);
+    return () => {
+      window.removeEventListener(HINT_PREFERENCES_UPDATED_EVENT, syncPreferences);
+      window.removeEventListener("storage", syncPreferences);
+    };
+  }, []);
 
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0 });
@@ -128,10 +152,8 @@ function WebsiteHomeNav({
   const [menuOpen, setMenuOpen] = useState(false);
   const homeNavItems = [
     { href: "#today", label: "Today", section: true },
-    { href: "#your-card", label: "Your card", section: true },
-    { href: "#signals", label: "Signals", section: true },
     { href: "#rewards", label: "Rewards", section: true },
-    { href: "/readings", label: "Readings", section: false },
+    { href: "/readings", label: "History", section: false },
     { href: "/me", label: "Me", section: false },
   ];
 
@@ -252,7 +274,7 @@ function WebsiteHomeNav({
               boxShadow: isDark ? "0 14px 28px rgba(241,166,107,0.18)" : "0 14px 28px rgba(41,35,49,0.14)",
             }}
           >
-            Open app
+            Open Tarot
             <ArrowMark />
           </Link>
         </div>

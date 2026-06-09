@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Palette,
+  Sparkles,
   Wind,
   Volume2,
   Lock,
@@ -15,9 +16,18 @@ import type { LucideIcon } from "lucide-react";
 import { Link } from "wouter";
 import { ACCENT, GLASS } from "../../hold/atmosphere";
 import { SectionLabel, GlassPanel } from "../../../components/app/AppChrome";
+import { LanguageToggle } from "../../../components/LanguageToggle";
 import { useLanguage } from "../../../lib/i18n";
 import { apiUrl } from "../../../lib/api";
 import { getAnonId } from "../../../lib/identity";
+import {
+  setHintThemePreference,
+  useHintPreferences,
+} from "../../../lib/preferences";
+import {
+  getInitialHintTheme,
+  type HintTheme,
+} from "../../../components/app/theme";
 
 interface Row {
   icon: LucideIcon;
@@ -25,6 +35,7 @@ interface Row {
   detail?: string;
   href?: string;
   danger?: boolean;
+  comingSoon?: boolean;
   onClick?: () => void;
 }
 
@@ -48,16 +59,38 @@ async function clearHistory(confirmMessage: string) {
 }
 
 export function SettingsList() {
-  const [reduceMotion, setReduceMotion] = useState(false);
-  const [sound, setSound] = useState(true);
+  const [appearanceOpen, setAppearanceOpen] = useState(false);
+  const [theme, setTheme] = useState<HintTheme>(getInitialHintTheme);
+  const { preferences, setPreference } = useHintPreferences();
   const { t } = useLanguage();
 
+  function chooseTheme(nextTheme: HintTheme) {
+    setTheme(nextTheme);
+    setHintThemePreference(nextTheme);
+  }
+
   const rows: Row[] = [
-    { icon: Palette, label: t("me.more.appearance"), detail: t("me.settings.appearanceDetail") },
+    {
+      icon: Palette,
+      label: t("me.more.appearance"),
+      detail: t("me.settings.appearanceDetail"),
+      onClick: () => setAppearanceOpen((open) => !open),
+    },
+    {
+      icon: Sparkles,
+      label: "Tarot room",
+      detail: "Change your saved deck, room mood, and background.",
+      href: "/tarot?setup=1",
+    },
     { icon: Lock, label: t("me.privacyPolicy"), detail: t("me.settings.privacyDetail"), href: "/privacy" },
     { icon: Info, label: t("me.terms"), detail: t("me.termsDetail"), href: "/terms" },
-    { icon: ShieldAlert, label: "Disclaimer", detail: "Entertainment-only boundaries and professional advice limits.", href: "/disclaimer" },
-    { icon: LifeBuoy, label: t("me.support"), detail: t("me.supportDetail") },
+    {
+      icon: ShieldAlert,
+      label: "Disclaimer",
+      detail: "Entertainment-only boundaries and professional advice limits.",
+      href: "/disclaimer",
+    },
+    { icon: LifeBuoy, label: t("me.support"), detail: t("me.supportDetail"), href: "/contact" },
     { icon: Mail, label: t("me.contact"), detail: t("me.contactDetail"), href: "/contact" },
     {
       icon: Trash2,
@@ -66,115 +99,207 @@ export function SettingsList() {
       danger: true,
       onClick: () => void clearHistory(t("me.clearConfirm")),
     },
-    { icon: Info, label: t("me.about"), detail: t("me.aboutDetail") },
-  ];
-
-  const toggles: { icon: LucideIcon; label: string; on: boolean; set: (v: boolean) => void }[] = [
-    { icon: Wind, label: t("me.reduceMotion"), on: reduceMotion, set: setReduceMotion },
-    { icon: Volume2, label: t("me.sound"), on: sound, set: setSound },
+    { icon: Info, label: t("me.about"), detail: t("me.aboutDetail"), comingSoon: true },
   ];
 
   return (
     <section>
       <SectionLabel>{t("me.settings")}</SectionLabel>
       <GlassPanel padded={false}>
-        {toggles.map((t, i) => {
-          const Icon = t.icon;
-          return (
-            <div
-              key={t.label}
-              className="flex items-center gap-4 px-5 py-4"
-              style={{ borderTop: i === 0 ? "none" : `1px solid ${GLASS.border}` }}
-            >
-              <Icon size={17} color={ACCENT.aqua} className="shrink-0 opacity-90" />
-              <span className="flex-1 font-serif text-[14px]" style={{ color: GLASS.text }}>
-                {t.label}
-              </span>
-              <button
-                type="button"
-                role="switch"
-                aria-checked={t.on}
-                aria-label={t.label}
-                onClick={() => t.set(!t.on)}
-                className="relative w-11 h-6 rounded-full transition-colors shrink-0"
+        {rows.map((row, index) => (
+          <div key={row.label}>
+            <SettingsRow row={row} isFirst={index === 0} />
+            {row.label === t("me.more.appearance") && appearanceOpen ? (
+              <div
+                className="mx-4 mb-4 rounded-[8px] border p-4"
                 style={{
-                  background: t.on ? "rgba(100,156,158,0.55)" : "rgba(255,255,255,0.1)",
-                  border: `1px solid ${t.on ? "rgba(100,156,158,0.7)" : GLASS.border}`,
+                  borderColor: GLASS.border,
+                  background: "rgba(255,255,255,0.035)",
                 }}
               >
-                <span
-                  className="absolute top-0.5 w-4.5 h-4.5 rounded-full transition-all"
-                  style={{
-                    width: 18,
-                    height: 18,
-                    left: t.on ? 22 : 3,
-                    background: "rgba(246,248,252,0.95)",
-                  }}
-                />
-              </button>
-            </div>
-          );
-        })}
+                <div className="mb-4 grid grid-cols-2 gap-2">
+                  {(["dark", "bright"] as const).map((option) => (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => chooseTheme(option)}
+                      className="rounded-[8px] border px-3 py-3 text-left font-sans text-[12px] font-semibold transition-colors"
+                      style={{
+                        borderColor:
+                          theme === option ? "rgba(206,178,110,0.65)" : GLASS.border,
+                        color: theme === option ? "rgba(255,232,170,0.98)" : GLASS.text,
+                        background:
+                          theme === option ? "rgba(206,178,110,0.12)" : "rgba(0,0,0,0.14)",
+                      }}
+                    >
+                      {option === "dark" ? "Dark room" : "Bright room"}
+                    </button>
+                  ))}
+                </div>
 
-        {rows.map((r) => {
-          const Icon = r.icon;
-          const content = (
-            <>
-              <Icon
-                size={17}
-                color={r.danger ? "rgba(214,140,140,0.9)" : ACCENT.aqua}
-                className="shrink-0 opacity-90"
-              />
-              <span
-                className="flex-1 font-serif text-[14px]"
-                style={{ color: r.danger ? "rgba(224,168,168,0.95)" : GLASS.text }}
-              >
-                <span className="block">{r.label}</span>
-                {r.detail && (
-                  <span
-                    className="block mt-0.5 font-sans text-[11px] leading-snug"
-                    style={{ color: r.danger ? "rgba(224,168,168,0.72)" : GLASS.faint }}
-                  >
-                    {r.detail}
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <span className="font-serif text-[13px]" style={{ color: GLASS.text }}>
+                    Language
                   </span>
-                )}
-              </span>
-              <ChevronRight size={15} color={GLASS.faint} />
-            </>
-          );
+                  <LanguageToggle menuPlacement="bottom" />
+                </div>
 
-          const className =
-            "w-full flex items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-white/[0.03]";
-          const style = { borderTop: `1px solid ${GLASS.border}` };
-
-          return r.href ? (
-            <Link key={r.label} href={r.href} className={className} style={style}>
-              {content}
-            </Link>
-          ) : (
-            <button
-              key={r.label}
-              type="button"
-              onClick={r.onClick}
-              className={className}
-              style={style}
-              data-testid={r.danger ? "button-clear-history" : undefined}
-            >
-              {content}
-            </button>
-          );
-        })}
+                <PreferenceSwitch
+                  icon={Wind}
+                  label={t("me.reduceMotion")}
+                  description="Reduce major motion in the website and tarot room."
+                  checked={preferences.reduceMotion}
+                  onChange={(checked) => setPreference("reduceMotion", checked)}
+                />
+                <PreferenceSwitch
+                  icon={Volume2}
+                  label={t("me.sound")}
+                  description="Store sound and browser haptics preference for supported devices."
+                  checked={preferences.soundAndHaptics}
+                  onChange={(checked) => setPreference("soundAndHaptics", checked)}
+                />
+              </div>
+            ) : null}
+          </div>
+        ))}
       </GlassPanel>
 
       <div
-        className="flex items-start gap-3 mt-4 px-4 py-3.5 rounded-[8px]"
+        className="mt-4 flex items-start gap-3 rounded-[8px] px-4 py-3.5"
         style={{ background: GLASS.panel, border: `1px solid ${GLASS.border}` }}
       >
-        <ShieldAlert size={15} color={GLASS.faint} className="shrink-0 mt-0.5" />
+        <ShieldAlert size={15} color={GLASS.faint} className="mt-0.5 shrink-0" />
         <p className="font-sans text-[11.5px] leading-relaxed" style={{ color: GLASS.faint }}>
           {t("me.disclaimer")}
         </p>
       </div>
     </section>
+  );
+}
+
+function SettingsRow({ row, isFirst }: { row: Row; isFirst: boolean }) {
+  const Icon = row.icon;
+  const content = (
+    <>
+      <Icon
+        size={17}
+        color={row.danger ? "rgba(214,140,140,0.9)" : ACCENT.aqua}
+        className="shrink-0 opacity-90"
+      />
+      <span
+        className="flex-1 font-serif text-[14px]"
+        style={{ color: row.danger ? "rgba(224,168,168,0.95)" : GLASS.text }}
+      >
+        <span className="block">{row.label}</span>
+        {row.detail && (
+          <span
+            className="mt-0.5 block font-sans text-[11px] leading-snug"
+            style={{ color: row.danger ? "rgba(224,168,168,0.72)" : GLASS.faint }}
+          >
+            {row.detail}
+          </span>
+        )}
+      </span>
+      {row.comingSoon ? (
+        <span
+          className="rounded-full border px-2 py-1 font-sans text-[9px] uppercase tracking-[0.12em]"
+          style={{
+            borderColor: GLASS.border,
+            color: GLASS.faint,
+            background: "rgba(255,255,255,0.035)",
+          }}
+        >
+          Soon
+        </span>
+      ) : (
+        <ChevronRight size={15} color={GLASS.faint} />
+      )}
+    </>
+  );
+
+  const className =
+    "flex w-full items-center gap-4 px-5 py-4 text-left transition-colors hover:bg-white/[0.03]";
+  const style = { borderTop: isFirst ? "none" : `1px solid ${GLASS.border}` };
+
+  if (row.href) {
+    return (
+      <Link href={row.href} className={className} style={style}>
+        {content}
+      </Link>
+    );
+  }
+
+  if (row.comingSoon) {
+    return (
+      <div
+        aria-disabled="true"
+        className={`${className} cursor-default opacity-65 hover:bg-transparent`}
+        style={style}
+      >
+        {content}
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={row.onClick}
+      className={className}
+      style={style}
+      data-testid={row.danger ? "button-clear-history" : undefined}
+    >
+      {content}
+    </button>
+  );
+}
+
+function PreferenceSwitch({
+  icon: Icon,
+  label,
+  description,
+  checked,
+  onChange,
+}: {
+  icon: LucideIcon;
+  label: string;
+  description: string;
+  checked: boolean;
+  onChange: (checked: boolean) => void;
+}) {
+  return (
+    <div className="flex items-center gap-4 border-t py-3" style={{ borderColor: GLASS.border }}>
+      <Icon size={16} color={ACCENT.aqua} className="shrink-0 opacity-90" />
+      <span className="flex-1">
+        <span className="block font-serif text-[13px]" style={{ color: GLASS.text }}>
+          {label}
+        </span>
+        <span className="block font-sans text-[11px] leading-snug" style={{ color: GLASS.faint }}>
+          {description}
+        </span>
+      </span>
+      <button
+        type="button"
+        role="switch"
+        aria-checked={checked}
+        aria-label={label}
+        onClick={() => onChange(!checked)}
+        className="relative h-6 w-11 shrink-0 rounded-full transition-colors"
+        style={{
+          background: checked ? "rgba(100,156,158,0.55)" : "rgba(255,255,255,0.1)",
+          border: `1px solid ${checked ? "rgba(100,156,158,0.7)" : GLASS.border}`,
+        }}
+      >
+        <span
+          className="absolute top-0.5 rounded-full transition-transform"
+          style={{
+            width: 18,
+            height: 18,
+            transform: `translateX(${checked ? 22 : 3}px)`,
+            background: "rgba(246,248,252,0.95)",
+          }}
+        />
+      </button>
+    </div>
   );
 }

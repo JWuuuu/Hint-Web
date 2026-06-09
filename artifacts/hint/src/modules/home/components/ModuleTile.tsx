@@ -38,7 +38,9 @@ export function ModuleTile({ module, index, baseDelay = 0, variant = "grid" }: P
       transition={{ delay: baseDelay + index * 0.05, duration: 0.5 }}
       whileHover={!locked ? { y: -2, scale: 1.02 } : undefined}
       whileTap={!locked ? { scale: 0.98 } : undefined}
-      className={`relative h-full min-h-[178px] flex flex-col overflow-hidden rounded-[14px] cursor-pointer ${
+      className={`relative h-full min-h-[178px] flex flex-col overflow-hidden rounded-[14px] ${
+        locked ? "cursor-default" : "cursor-pointer"
+      } ${
         isLibrary ? "items-start justify-between p-4" : "items-center justify-between p-4"
       }`}
       style={{

@@ -9,6 +9,7 @@ type HintTarotCardFrontProps = {
   backStyle?: TarotCardBackStyle;
   compact?: boolean;
   positionLabel?: string;
+  showCaption?: boolean;
 };
 
 type CardPalette = {
@@ -273,6 +274,7 @@ export function HintTarotCardFront({
   backStyle = "nocturne",
   compact = false,
   positionLabel,
+  showCaption = true,
 }: HintTarotCardFrontProps) {
   const palette = PALETTES[backStyle];
   const keywords = getCardKeywords(card.cardId);
@@ -303,41 +305,33 @@ export function HintTarotCardFront({
             boxShadow: "inset 0 0 0 4px rgba(6,8,16,0.64)",
           }}
         />
-        <div
-          className="pointer-events-none absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-full border font-serif text-sm"
-          style={{
-            background: "rgba(5,7,14,0.74)",
-            borderColor: palette.border,
-            color: palette.gold,
-          }}
-        >
-          H
-        </div>
-        <div
-          className="absolute inset-x-2 bottom-2 rounded-[8px] border px-2 py-2 text-center backdrop-blur-[2px]"
-          style={{
-            background: backStyle === "ivory" ? "rgba(255,250,236,0.84)" : "rgba(5,7,14,0.78)",
-            borderColor: palette.inner,
-            color: backStyle === "ivory" ? "#292536" : "#f8ebcf",
-          }}
-        >
-          {positionLabel && !compact && (
-            <p className="mb-1 font-sans text-[7px] uppercase tracking-[0.16em]" style={{ color: palette.gold }}>
-              {positionLabel}
+        {showCaption && (
+          <div
+            className="absolute inset-x-2 bottom-2 rounded-[8px] border px-2 py-2 text-center backdrop-blur-[2px]"
+            style={{
+              background: backStyle === "ivory" ? "rgba(255,250,236,0.84)" : "rgba(5,7,14,0.78)",
+              borderColor: palette.inner,
+              color: backStyle === "ivory" ? "#292536" : "#f8ebcf",
+            }}
+          >
+            {positionLabel && !compact && (
+              <p className="mb-1 font-sans text-[7px] uppercase tracking-[0.16em]" style={{ color: palette.gold }}>
+                {positionLabel}
+              </p>
+            )}
+            <p className={`${compact ? "text-[10px]" : "text-[13px]"} font-serif leading-tight`}>
+              {card.name}
             </p>
-          )}
-          <p className={`${compact ? "text-[10px]" : "text-[13px]"} font-serif leading-tight`}>
-            {card.name}
-          </p>
-          <p className="mt-1 font-sans text-[7px] uppercase tracking-[0.16em]" style={{ color: palette.gold }}>
-            {reversed ? "Reversed" : "Upright"}
-          </p>
-          {!compact && (
-            <p className="mt-1 font-sans text-[8px] leading-tight opacity-80">
-              {keywords.join(" · ")}
+            <p className="mt-1 font-sans text-[7px] uppercase tracking-[0.16em]" style={{ color: palette.gold }}>
+              {reversed ? "Reversed" : "Upright"}
             </p>
-          )}
-        </div>
+            {!compact && (
+              <p className="mt-1 font-sans text-[8px] leading-tight opacity-80">
+                {keywords.join(" · ")}
+              </p>
+            )}
+          </div>
+        )}
       </div>
     );
   }

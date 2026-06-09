@@ -9,50 +9,87 @@ type TarotCardVisualProps = {
   faceDown?: boolean;
   revealed?: boolean;
   compact?: boolean;
+  subtleBack?: boolean;
   active?: boolean;
   selected?: boolean;
   backStyle?: TarotCardBackStyle;
   positionLabel?: string;
   ariaLabel?: string;
   className?: string;
+  showFrontCaption?: boolean;
   onClick?: () => void;
 };
 
 function BackDesign({
+  subtle = false,
   backStyle = "nocturne",
 }: {
   compact?: boolean;
+  subtle?: boolean;
   backStyle?: TarotCardBackStyle;
 }) {
   const styles: Record<TarotCardBackStyle, {
+    surface: string;
     borderColor: string;
+    filter: string;
+    imageOpacity: number;
     shadow: string;
   }> = {
     nocturne: {
+      surface: "linear-gradient(155deg,#2d527d,#173452 58%,#0b1a2d)",
       borderColor: "rgba(231,197,121,0.86)",
-      shadow: "inset 0 1px 0 rgba(255,255,255,0.14), inset 0 -14px 24px rgba(0,0,0,0.28)",
+      filter: "brightness(1.28) saturate(1.08)",
+      imageOpacity: 0.82,
+      shadow: "0 10px 18px rgba(0,0,0,0.42), inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -14px 24px rgba(0,0,0,0.24)",
     },
     ivory: {
+      surface: "linear-gradient(155deg,#fff4d8,#ead7aa 58%,#cab477)",
       borderColor: "rgba(181,136,55,0.68)",
-      shadow: "inset 0 1px 0 rgba(255,255,255,0.56), inset 0 -14px 24px rgba(96,70,34,0.14)",
+      filter: "brightness(1.04) saturate(1.03)",
+      imageOpacity: 0.88,
+      shadow: "0 10px 18px rgba(58,42,20,0.24), inset 0 1px 0 rgba(255,255,255,0.60), inset 0 -14px 24px rgba(96,70,34,0.12)",
     },
     rose: {
+      surface: "linear-gradient(155deg,#f5c7ea,#9f73d0 56%,#3b275c)",
       borderColor: "rgba(255,219,180,0.72)",
-      shadow: "inset 0 1px 0 rgba(255,255,255,0.18), inset 0 -14px 24px rgba(42,29,68,0.24)",
+      filter: "brightness(1.12) saturate(1.06)",
+      imageOpacity: 0.86,
+      shadow: "0 10px 18px rgba(26,12,36,0.34), inset 0 1px 0 rgba(255,255,255,0.20), inset 0 -14px 24px rgba(42,29,68,0.20)",
     },
   };
   const style = styles[backStyle];
   const imageUrl = `/brand/tarot/hint-back-${backStyle}.svg`;
+  const imageOpacity = subtle ? style.imageOpacity * 0.68 : style.imageOpacity;
+  const shadow = subtle
+    ? "0 6px 12px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.10), inset 0 -10px 18px rgba(0,0,0,0.16)"
+    : style.shadow;
 
   return (
     <div
-      className="absolute inset-0 overflow-hidden rounded-[10px] border bg-cover bg-center"
+      className="absolute inset-0 overflow-hidden rounded-[10px] border"
       style={{
-        backgroundImage: `url("${imageUrl}")`,
+        background: style.surface,
         borderColor: style.borderColor,
-        boxShadow: style.shadow,
+        boxShadow: shadow,
       }}
-    />
+    >
+      <div
+        className="absolute inset-0 bg-cover bg-center"
+        style={{
+          backgroundImage: `url("${imageUrl}")`,
+          filter: style.filter,
+          opacity: imageOpacity,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 rounded-[10px]"
+        style={{
+          boxShadow:
+            "inset 0 0 0 1px rgba(255,255,255,0.08), inset 0 -18px 28px rgba(0,0,0,0.16)",
+        }}
+      />
+    </div>
   );
 }
 
@@ -61,12 +98,14 @@ export function TarotCardVisual({
   faceDown = true,
   revealed = false,
   compact = false,
+  subtleBack = false,
   active = false,
   selected = false,
   backStyle = "nocturne",
   positionLabel,
   ariaLabel,
   className = "",
+  showFrontCaption = true,
   onClick,
 }: TarotCardVisualProps) {
   const isFront = Boolean(card && (revealed || card.revealed) && !faceDown);
@@ -101,7 +140,7 @@ export function TarotCardVisual({
         style={{ transformStyle: "preserve-3d" }}
       >
         <div className="absolute inset-0 backface-hidden">
-          <BackDesign compact={compact} backStyle={backStyle} />
+          <BackDesign compact={compact} subtle={subtleBack} backStyle={backStyle} />
         </div>
         {isFront && card && (
           <div
@@ -113,6 +152,7 @@ export function TarotCardVisual({
               compact={compact}
               backStyle={backStyle}
               positionLabel={positionLabel}
+              showCaption={showFrontCaption}
             />
           </div>
         )}

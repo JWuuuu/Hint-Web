@@ -21,19 +21,32 @@ interface Record {
   label: string;
   count: string;
   href?: string;
+  comingSoon?: boolean;
 }
 
-export function RecordsGrid({ stats }: { stats?: UserStats }) {
+export function RecordsGrid({
+  stats,
+  localReadingCount = 0,
+  localPullCount = 0,
+  localQuestionCount = 0,
+}: {
+  stats?: UserStats;
+  localReadingCount?: number;
+  localPullCount?: number;
+  localQuestionCount?: number;
+}) {
   const { t } = useLanguage();
+  const readingCount = Math.max(stats?.readings ?? 0, localReadingCount);
+  const pullCount = Math.max(stats?.pulls ?? 0, localPullCount);
   const records: Record[] = [
-    { icon: BookOpen, label: t("me.record.archive"), count: String(stats?.readings ?? 0), href: "/readings" },
+    { icon: BookOpen, label: t("me.record.archive"), count: String(readingCount), href: "/readings" },
     { icon: NotebookPen, label: t("me.record.journals"), count: `${stats?.journals ?? 0} ${t("me.notes")}`, href: "/journal" },
-    { icon: Bookmark, label: t("me.record.saved"), count: "0" },
-    { icon: History, label: t("me.record.history"), count: `${stats?.pulls ?? 0}` },
-    { icon: HelpCircle, label: t("me.record.questions"), count: "0" },
-    { icon: HeartPulse, label: t("me.record.mood"), count: `0 ${t("me.notes")}` },
-    { icon: ShoppingBag, label: t("me.record.orders"), count: "0" },
-    { icon: Users, label: t("me.record.circle"), count: "0" },
+    { icon: Bookmark, label: t("me.record.saved"), count: "0", comingSoon: true },
+    { icon: History, label: t("me.record.history"), count: `${pullCount}`, href: "/readings" },
+    { icon: HelpCircle, label: t("me.record.questions"), count: String(localQuestionCount), href: "/readings" },
+    { icon: HeartPulse, label: t("me.record.mood"), count: `0 ${t("me.notes")}`, comingSoon: true },
+    { icon: ShoppingBag, label: t("me.record.orders"), count: "0", comingSoon: true },
+    { icon: Users, label: t("me.record.circle"), count: "0", comingSoon: true },
   ];
 
   return (
@@ -66,7 +79,7 @@ export function RecordsGrid({ stats }: { stats?: UserStats }) {
               </div>
             </div>
           );
-          return (
+          const card = (
             <motion.div
               key={r.label}
               initial={{ opacity: 0, y: 8 }}
@@ -79,10 +92,23 @@ export function RecordsGrid({ stats }: { stats?: UserStats }) {
                   {inner}
                 </Link>
               ) : (
-                inner
+                <div aria-disabled="true" className="relative cursor-default opacity-60">
+                  {inner}
+                  <span
+                    className="absolute right-3 top-3 rounded-full border px-2 py-0.5 font-sans text-[8px] uppercase tracking-[0.1em]"
+                    style={{
+                      color: GLASS.faint,
+                      borderColor: GLASS.border,
+                      background: "rgba(255,255,255,0.035)",
+                    }}
+                  >
+                    Soon
+                  </span>
+                </div>
               )}
             </motion.div>
           );
+          return card;
         })}
       </div>
     </section>

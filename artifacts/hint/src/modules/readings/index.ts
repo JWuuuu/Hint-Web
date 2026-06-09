@@ -1,1 +1,1 @@
-export { ReadingsView } from "./ReadingsView";
+export { ReadingDetailView, ReadingsView } from "./ReadingsView";

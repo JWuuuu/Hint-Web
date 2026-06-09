@@ -1,6 +1,6 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "wouter";
+import { Link, useRoute } from "wouter";
 import { ACCENT, GLASS } from "../hold/atmosphere";
 import { AppScreen, ScreenHeader, GlassPanel, SectionLabel } from "../../components/app/AppChrome";
 import { useListReadings } from "@workspace/api-client-react";
@@ -8,6 +8,7 @@ import type { ReadingSummary } from "@workspace/api-client-react";
 import { getAnonId } from "../../lib/identity";
 import { useLanguage, type HintLanguage } from "../../lib/i18n";
 import {
+  getLocalDailyReading,
   listLocalDailyReadings,
   subscribeToLocalDailyReadings,
 } from "./localDailyReadings";
@@ -16,7 +17,14 @@ import {
   subscribeToLocalQuestionHistory,
   type QuestionHistoryItem,
 } from "./localQuestionHistory";
+import {
+  getLocalTarotReading,
+  listLocalTarotReadings,
+  subscribeToLocalTarotReadings,
+  type LocalTarotReading,
+} from "./localTarotReadings";
 import type { SpreadType } from "../hold/chat/types";
+import { getTarotCardImage } from "../tarot/logic/cardImageMap";
 
 /**
  * ReadingsView — the room's memory. A real archive of every tarot reading the
@@ -87,7 +95,8 @@ function ReadingCard({
   const displayed = displayReading(reading, language);
 
   return (
-    <div
+    <Link
+      href={`/readings/${reading.id}`}
       className={`flex gap-4 rounded-[8px] ${featured ? "px-5 py-5" : "px-4 py-4"}`}
       style={{ background: GLASS.panel, border: `1px solid ${GLASS.border}` }}
     >
@@ -129,8 +138,20 @@ function ReadingCard({
           {displayed.whisper}
         </p>
       </div>
-    </div>
+    </Link>
   );
+}
+
+function tarotToSummary(reading: LocalTarotReading): ReadingSummary {
+  return {
+    id: reading.id,
+    cardName: reading.spreadLabel,
+    whisper: reading.shortAnswer,
+    spreadType: reading.spreadType,
+    question: reading.question,
+    territory: reading.focusLabel ?? "tarot",
+    createdAt: reading.createdAt,
+  };
 }
 
 const SPREAD_LABELS: Record<SpreadType, string> = {
@@ -182,14 +203,14 @@ function QuestionCard({
         {item.focus}
       </p>
       <Link
-        href="/tarot"
+        href={`/readings/${item.readingId ?? item.id}`}
         className="mt-4 inline-flex h-9 items-center justify-center rounded-[8px] px-3 font-sans text-[12px] font-semibold"
         style={{
           color: "#08070B",
           background: "rgba(243,212,144,0.9)",
         }}
       >
-        Ask again
+        Open
       </Link>
     </div>
   );
@@ -221,24 +242,27 @@ export function ReadingsView() {
   const [questionHistory, setQuestionHistory] = useState<QuestionHistoryItem[]>(() =>
     listLocalQuestionHistory(anonId),
   );
+  const [tarotReadings, setTarotReadings] = useState<LocalTarotReading[]>(() =>
+    listLocalTarotReadings(anonId),
+  );
   const readings = useMemo(() => {
     const apiReadings = (data ?? []) as ReadingSummary[];
     const byId = new Map<string, ReadingSummary>();
-    [...localReadings, ...apiReadings].forEach((reading) => {
+    [...tarotReadings.map(tarotToSummary), ...localReadings, ...apiReadings].forEach((reading) => {
       byId.set(reading.id, reading);
     });
     return [...byId.values()].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-  }, [data, localReadings]);
+  }, [data, localReadings, tarotReadings]);
   const savedReadings = useMemo(
     () =>
-      ((data ?? []) as ReadingSummary[]).sort(
+      [...tarotReadings.map(tarotToSummary), ...localReadings, ...((data ?? []) as ReadingSummary[])].sort(
         (a, b) =>
           new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
       ),
-    [data],
+    [data, localReadings, tarotReadings],
   );
   const lastReading = readings[0];
   const recentHistory = readings.slice(1, 7);
@@ -252,6 +276,12 @@ export function ReadingsView() {
   useEffect(() => {
     return subscribeToLocalQuestionHistory(() => {
       setQuestionHistory(listLocalQuestionHistory(anonId));
+    });
+  }, [anonId]);
+
+  useEffect(() => {
+    return subscribeToLocalTarotReadings(() => {
+      setTarotReadings(listLocalTarotReadings(anonId));
     });
   }, [anonId]);
 
@@ -292,7 +322,7 @@ export function ReadingsView() {
         </TabButton>
       </div>
 
-      {isLoading ? (
+      {isLoading && readings.length === 0 && questionHistory.length === 0 ? (
         <p className="font-serif italic text-[13px] py-8 text-center" style={{ color: GLASS.muted }}>
           {t("readings.loading")}
         </p>
@@ -409,6 +439,193 @@ export function ReadingsView() {
         </>
       )}
     </AppScreen>
+  );
+}
+
+export function ReadingDetailView() {
+  const [, params] = useRoute("/readings/:id");
+  const id = params?.id ?? "";
+  const anonId = getAnonId();
+  const { data } = useListReadings({ anonId });
+  const tarotReading = getLocalTarotReading(id, anonId);
+  const dailyReading = getLocalDailyReading(id, anonId);
+  const question = listLocalQuestionHistory(anonId).find((item) => item.id === id);
+  const apiReading = ((data ?? []) as ReadingSummary[]).find((reading) => reading.id === id);
+  const fallbackReading = dailyReading ?? apiReading;
+
+  if (tarotReading) {
+    return (
+      <AppScreen>
+        <ScreenHeader
+          eyebrow="Reading detail"
+          title={tarotReading.spreadLabel}
+          subtitle={tarotReading.question ?? "A saved Tarot Room reading."}
+          backHref="/readings"
+          backLabel="History"
+        />
+        <ReadingDetailMeta
+          spreadType={tarotReading.spreadLabel}
+          createdAt={tarotReading.createdAt}
+          question={tarotReading.question}
+        />
+        <section className="mb-6">
+          <SectionLabel>Cards drawn</SectionLabel>
+          <GlassPanel>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+              {tarotReading.cards.map((card, index) => {
+                const image = getTarotCardImage(card.cardId);
+                return (
+                  <div key={`${card.cardId}-${index}`} className="min-w-0 text-center">
+                    <div
+                      className="mx-auto h-[132px] w-[82px] overflow-hidden rounded-[8px] border"
+                      style={{
+                        borderColor: "rgba(206,178,110,0.42)",
+                        background: "rgba(0,0,0,0.22)",
+                      }}
+                    >
+                      {image ? (
+                        <img
+                          src={image}
+                          alt={card.name}
+                          className={`h-full w-full object-cover ${card.orientation === "reversed" ? "rotate-180" : ""}`}
+                        />
+                      ) : null}
+                    </div>
+                    <p className="mt-2 font-sans text-[9px] uppercase tracking-[0.16em]" style={{ color: ACCENT.gold }}>
+                      {card.positionLabel}
+                    </p>
+                    <p className="truncate font-serif text-[13px]" style={{ color: GLASS.text }}>
+                      {card.name}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </GlassPanel>
+        </section>
+        <section className="mb-6">
+          <SectionLabel>Answer</SectionLabel>
+          <GlassPanel>
+            <p className="font-serif text-[18px] leading-relaxed" style={{ color: GLASS.text }}>
+              {tarotReading.shortAnswer}
+            </p>
+            <div className="mt-4 grid gap-2 md:grid-cols-2">
+              {tarotReading.cardMeanings.map((meaning, index) => (
+                <p
+                  key={`${tarotReading.id}-meaning-${index}`}
+                  className="rounded-[8px] border px-3 py-2.5 font-sans text-[13px] leading-relaxed"
+                  style={{ borderColor: GLASS.border, color: GLASS.muted }}
+                >
+                  {meaning}
+                </p>
+              ))}
+            </div>
+            <p className="mt-4 font-sans text-[14px] leading-relaxed" style={{ color: GLASS.muted }}>
+              {tarotReading.questionMeaning}
+            </p>
+          </GlassPanel>
+        </section>
+      </AppScreen>
+    );
+  }
+
+  if (fallbackReading) {
+    return (
+      <AppScreen>
+        <ScreenHeader
+          eyebrow="Reading detail"
+          title={fallbackReading.cardName}
+          subtitle={fallbackReading.question ?? "Saved daily reading."}
+          backHref="/readings"
+          backLabel="History"
+        />
+        <ReadingDetailMeta
+          spreadType={String(fallbackReading.spreadType)}
+          createdAt={fallbackReading.createdAt}
+          question={fallbackReading.question ?? undefined}
+        />
+        <GlassPanel hero>
+          <p className="font-sans text-[14px] leading-relaxed" style={{ color: GLASS.muted }}>
+            {fallbackReading.whisper}
+          </p>
+        </GlassPanel>
+      </AppScreen>
+    );
+  }
+
+  if (question) {
+    return (
+      <AppScreen>
+        <ScreenHeader
+          eyebrow="Question detail"
+          title={SPREAD_LABELS[question.spreadType] ?? question.spreadType}
+          subtitle={question.question}
+          backHref="/readings"
+          backLabel="History"
+        />
+        <ReadingDetailMeta
+          spreadType={SPREAD_LABELS[question.spreadType] ?? question.spreadType}
+          createdAt={question.createdAt}
+          question={question.question}
+        />
+        <GlassPanel hero>
+          <p className="font-sans text-[14px] leading-relaxed" style={{ color: GLASS.muted }}>
+            {question.focus}
+          </p>
+        </GlassPanel>
+      </AppScreen>
+    );
+  }
+
+  return (
+    <AppScreen>
+      <ScreenHeader
+        eyebrow="History"
+        title="Reading not found"
+        subtitle="This saved reading is not available in this browser."
+        backHref="/readings"
+        backLabel="History"
+      />
+      <EmptyPanel>Try opening History again after completing a reading.</EmptyPanel>
+    </AppScreen>
+  );
+}
+
+function ReadingDetailMeta({
+  spreadType,
+  createdAt,
+  question,
+}: {
+  spreadType: string;
+  createdAt: string;
+  question?: string;
+}) {
+  return (
+    <section className="mb-6">
+      <SectionLabel>Summary</SectionLabel>
+      <GlassPanel>
+        <div className="grid gap-3 font-sans text-[13px] sm:grid-cols-3" style={{ color: GLASS.muted }}>
+          <p>
+            <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: GLASS.faint }}>
+              Spread
+            </span>
+            {spreadType}
+          </p>
+          <p>
+            <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: GLASS.faint }}>
+              Time
+            </span>
+            {new Date(createdAt).toLocaleString()}
+          </p>
+          <p>
+            <span className="block text-[10px] uppercase tracking-[0.18em]" style={{ color: GLASS.faint }}>
+              Question
+            </span>
+            {question || "No question saved."}
+          </p>
+        </div>
+      </GlassPanel>
+    </section>
   );
 }
 

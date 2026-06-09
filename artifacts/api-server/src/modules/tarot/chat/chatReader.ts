@@ -3,25 +3,16 @@
  * Same OpenAI integration pattern as tarotReader.ts.
  */
 
-import OpenAI from "openai";
 import type { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import {
-  openaiBaseURL,
+  getOpenAIClient,
   openaiModel,
-  requireOpenAIKey,
 } from "../../../lib/openaiConfig.js";
 import type { DrawnCard } from "../logic/drawCards.js";
 import {
   HINT_CHAT_SYSTEM_PROMPT,
   buildSessionContextBlock,
 } from "./chatPrompt.js";
-
-const openai = new OpenAI({
-  apiKey: requireOpenAIKey(),
-  baseURL: openaiBaseURL,
-  maxRetries: 0,
-  timeout: 20_000,
-});
 
 export interface TarotChatTurn {
   role: "user" | "assistant";
@@ -60,7 +51,7 @@ export async function generateTarotChatReply(params: {
     { role: "user", content: params.followUp },
   ];
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: openaiModel,
     max_completion_tokens: 700,
     messages,

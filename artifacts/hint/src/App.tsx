@@ -7,7 +7,7 @@ import { HomeDashboard } from "./modules/home";
 import { TarotRoom } from "./modules/tarot";
 import { AskHint } from "./modules/ask";
 import { RoomsLibrary } from "./modules/rooms";
-import { ReadingsView } from "./modules/readings";
+import { ReadingDetailView, ReadingsView } from "./modules/readings";
 import { MeView } from "./modules/me";
 import { ContactView, DisclaimerView, PrivacyPolicyView, TermsView } from "./modules/legal";
 import {
@@ -27,6 +27,7 @@ function Router() {
       <Route path="/tarot" component={TarotRoom} />
       <Route path="/ask" component={AskHint} />
       <Route path="/rooms" component={RoomsLibrary} />
+      <Route path="/readings/:id" component={ReadingDetailView} />
       <Route path="/readings" component={ReadingsView} />
       <Route path="/me" component={MeView} />
       <Route path="/astrology" component={AstrologyView} />

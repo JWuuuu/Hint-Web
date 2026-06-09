@@ -34,10 +34,8 @@ export function BottomNav({ theme, onThemeToggle }: BottomNavProps) {
 
   const navItems = [
     { href: "/#today", label: "Today", section: true },
-    { href: "/#your-card", label: "Your card", section: true },
-    { href: "/#signals", label: "Signals", section: true },
     { href: "/#rewards", label: "Rewards", section: true },
-    { href: "/readings", label: t("nav.readings"), section: false },
+    { href: "/readings", label: "History", section: false },
     { href: "/me", label: t("nav.me"), section: false },
   ];
 
@@ -140,7 +138,7 @@ export function BottomNav({ theme, onThemeToggle }: BottomNavProps) {
               boxShadow: isDark ? "0 14px 28px rgba(241,166,107,0.18)" : "0 14px 28px rgba(41,35,49,0.14)",
             }}
           >
-            Open app
+            Open Tarot
             <ArrowMark />
           </Link>
         </div>

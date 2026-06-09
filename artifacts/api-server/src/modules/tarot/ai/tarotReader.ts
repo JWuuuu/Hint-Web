@@ -2,21 +2,12 @@
  * AI tarot reader — calls OpenAI with the Hint persona.
  */
 
-import OpenAI from "openai";
 import type { DrawnCard } from "../logic/drawCards.js";
 import {
-  openaiBaseURL,
+  getOpenAIClient,
   openaiModel,
-  requireOpenAIKey,
 } from "../../../lib/openaiConfig.js";
 import { HINT_SYSTEM_PROMPT, buildReadingPrompt } from "./tarotPrompt.js";
-
-const openai = new OpenAI({
-  apiKey: requireOpenAIKey(),
-  baseURL: openaiBaseURL,
-  maxRetries: 0,
-  timeout: 20_000,
-});
 
 export interface TarotInterpretation {
   interpretation: string;
@@ -31,7 +22,7 @@ export async function generateTarotReading(params: {
 }): Promise<TarotInterpretation> {
   const userPrompt = buildReadingPrompt(params);
 
-  const response = await openai.chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: openaiModel,
     max_completion_tokens: 1024,
     messages: [

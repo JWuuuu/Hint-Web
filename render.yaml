@@ -10,7 +10,7 @@ services:
   - type: web
     name: mydailyhint-api
     runtime: node
-    buildCommand: corepack enable && corepack prepare pnpm@10.25.0 --activate && pnpm install --frozen-lockfile && pnpm run build:api
+    buildCommand: corepack enable && corepack prepare pnpm@11.5.0 --activate && pnpm install --frozen-lockfile && pnpm run build:api
     preDeployCommand: pnpm run db:push
     startCommand: pnpm run start:api
     envVars:

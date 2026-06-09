@@ -133,8 +133,8 @@ export function CompatibilityView() {
     <AppScreen>
       <ScreenHeader
         eyebrow={t("compat.eyebrow")}
-        title={t("compat.title")}
-        subtitle={t("compat.subtitle")}
+        title={`${t("compat.title")} preview`}
+        subtitle="Compatibility preview. Full relationship chart calculation can be connected later."
         sigil={CompatibilitySigil}
         backHref="/rooms"
         backLabel={t("common.back")}
@@ -168,7 +168,7 @@ export function CompatibilityView() {
         </GlassPanel>
       </section>
 
-      <FeatureFooter note={t("compat.footer")} />
+      <FeatureFooter note="This is a compatibility preview, not a full real synastry calculation yet. It stays here as a clear coming-soon web module." />
     </AppScreen>
   );
 }

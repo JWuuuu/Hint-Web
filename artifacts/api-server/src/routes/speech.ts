@@ -1,11 +1,9 @@
 import { Router } from "express";
-import OpenAI from "openai";
 import * as z from "zod";
 import {
-  openaiBaseURL,
+  getOpenAIClient,
   openaiTtsModel,
   openaiTtsVoice,
-  requireOpenAIKey,
 } from "../lib/openaiConfig.js";
 import { consumeAiBudget } from "../lib/aiCostGuards.js";
 
@@ -13,13 +11,6 @@ const router = Router();
 
 const speechInputSchema = z.object({
   text: z.string().trim().min(1).max(4096),
-});
-
-const openai = new OpenAI({
-  apiKey: requireOpenAIKey(),
-  baseURL: openaiBaseURL,
-  maxRetries: 0,
-  timeout: 20_000,
 });
 
 router.post("/speech", async (req, res) => {
@@ -33,7 +24,7 @@ router.post("/speech", async (req, res) => {
     return;
   }
 
-  const speech = await openai.audio.speech.create({
+  const speech = await getOpenAIClient().audio.speech.create({
     model: openaiTtsModel,
     voice: openaiTtsVoice,
     input: parsed.data.text,

@@ -49,7 +49,7 @@ function checkChatRateLimit(clientKey: string, now = Date.now()) {
 
 function isQuotaError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error ?? "");
-  return /429|quota|billing|too many requests/i.test(message);
+  return /429|quota|billing|too many requests|missing openai|credentials|api[_\s-]?key/i.test(message);
 }
 
 const chatMessageSchema = z.object({

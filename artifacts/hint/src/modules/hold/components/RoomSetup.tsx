@@ -20,9 +20,10 @@ import { useLanguage } from "../../../lib/i18n";
 
 interface Props {
   onStart: (setup: TarotRoomSetup) => void;
+  initialSetup?: TarotRoomSetup;
 }
 
-const NEXT_STEP_KEYS = ["wash", "cut", "choose", "reveal"] as const;
+const NEXT_STEP_KEYS = ["story", "question", "spread", "wash", "choose"] as const;
 const ADVANCED_SPREAD_IDS: readonly SpreadType[] = [
   "futureLover",
   "peachBlossom",
@@ -576,12 +577,11 @@ function translateSpread(spread: SpreadChoice, t: (key: string) => string): Spre
   };
 }
 
-export function RoomSetup({ onStart }: Props) {
+export function RoomSetup({ onStart, initialSetup = DEFAULT_TAROT_ROOM_SETUP }: Props) {
   const { t } = useLanguage();
   const scrollRef = useRef<HTMLDivElement | null>(null);
-  const [setup, setSetup] = useState<TarotRoomSetup>(DEFAULT_TAROT_ROOM_SETUP);
+  const [setup, setSetup] = useState<TarotRoomSetup>(initialSetup);
   const [showAdvancedSpreads, setShowAdvancedSpreads] = useState(false);
-  const [showNextSteps, setShowNextSteps] = useState(false);
   const [showAllPositions, setShowAllPositions] = useState(false);
 
   const readingShapeChoices = useMemo(
@@ -670,7 +670,7 @@ export function RoomSetup({ onStart }: Props) {
         />
 
         <div ref={scrollRef} className="relative flex-1 space-y-3.5 overflow-y-auto p-4 pb-4 sm:p-5 sm:pb-4">
-          <header className="grid gap-4 md:grid-cols-[1fr_260px] md:items-start">
+          <header>
             <div>
               <div className="flex items-center gap-2">
                 <Sparkles size={16} strokeWidth={1.7} style={{ color: GOLD.ink }} />
@@ -691,17 +691,18 @@ export function RoomSetup({ onStart }: Props) {
                 {t("tarot.setup.body")}
               </p>
             </div>
-            <div className="hidden md:block">
-              <RoomLivePreview
-                presetLabel={t(`tarot.preset.${selectedPreset.id}.label`)}
-                presetMood={t(`tarot.presetMood.${selectedPreset.id}`)}
-                deckLabel={t(`tarot.deck.${selectedDeck.id}.label`)}
-                deckPreview={selectedDeck.preview}
-                backgroundLabel={t(`tarot.background.${selectedBackground.id}.label`)}
-                backgroundPreview={selectedBackground.preview}
-              />
-            </div>
           </header>
+
+          <SetupSection icon={<Sparkles size={15} />} title="Preview">
+            <RoomLivePreview
+              presetLabel={t(`tarot.preset.${selectedPreset.id}.label`)}
+              presetMood={t(`tarot.presetMood.${selectedPreset.id}`)}
+              deckLabel={t(`tarot.deck.${selectedDeck.id}.label`)}
+              deckPreview={selectedDeck.preview}
+              backgroundLabel={t(`tarot.background.${selectedBackground.id}.label`)}
+              backgroundPreview={selectedBackground.preview}
+            />
+          </SetupSection>
 
           <SetupSection icon={<Sparkles size={15} />} title={t("tarot.setup.presets")}>
             <div className="grid gap-2 min-[520px]:grid-cols-3">
@@ -716,17 +717,6 @@ export function RoomSetup({ onStart }: Props) {
               ))}
             </div>
           </SetupSection>
-
-          <div className="md:hidden">
-            <RoomLivePreview
-              presetLabel={t(`tarot.preset.${selectedPreset.id}.label`)}
-              presetMood={t(`tarot.presetMood.${selectedPreset.id}`)}
-              deckLabel={t(`tarot.deck.${selectedDeck.id}.label`)}
-              deckPreview={selectedDeck.preview}
-              backgroundLabel={t(`tarot.background.${selectedBackground.id}.label`)}
-              backgroundPreview={selectedBackground.preview}
-            />
-          </div>
 
           <div className="grid gap-4 min-[560px]:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]">
             <div className="min-w-0 space-y-4">
@@ -762,98 +752,37 @@ export function RoomSetup({ onStart }: Props) {
             </div>
 
             <div className="min-w-0 space-y-3">
-              <SetupSection icon={<Layers size={15} />} title={t("tarot.setup.spread")}>
-                <div className="grid gap-2 min-[430px]:grid-cols-2">
-                  {readingShapeChoices.map((choice) => (
-                    <ReadingShapeButton
-                      key={choice.id}
-                      title={choice.title}
-                      cardCount={choice.cardCount}
-                      body={choice.body}
-                      badge={choice.badge}
-                      selected={setup.spreadType === choice.spreadType}
-                      onClick={() => chooseSpread(choice.spreadType)}
-                    />
-                  ))}
+              <section className="rounded-[8px] border px-3 py-3" style={{
+                borderColor: "rgba(180,160,120,0.18)",
+                background: "rgba(255,255,255,0.22)",
+              }}>
+                <div className="mb-2 flex items-center gap-2">
+                  <Shuffle size={13} strokeWidth={1.7} style={{ color: GOLD.ink }} />
+                  <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.16em]" style={{ color: IVORY.mute }}>
+                    {t("tarot.next.title")}
+                  </p>
                 </div>
-              </SetupSection>
-
-              <CompactSpreadPreview
-                spread={selectedSpread}
-                cardLabel={t("tarot.spreadChooser.card")}
-                cardsLabel={t("tarot.spreadChooser.cards")}
-                showAllPositions={showAllPositions}
-                onShowAllPositions={() => setShowAllPositions(true)}
-                onShowLessPositions={() => setShowAllPositions(false)}
-                t={t}
-              />
-
-              <CollapsedSection
-                icon={<Layers size={15} />}
-                title={t("tarot.advancedSpreads.title")}
-                subtitle={t("tarot.advancedSpreads.subtitle")}
-                openLabel={t("tarot.advancedSpreads.open")}
-                closeLabel={t("tarot.advancedSpreads.close")}
-                open={showAdvancedSpreads}
-                onToggle={() => setShowAdvancedSpreads((current) => !current)}
-              >
-                <div className="grid gap-2 sm:grid-cols-2">
-                  {specializedSpreads.map((spread) => (
-                    <button
-                      type="button"
-                      key={spread.id}
-                      onClick={() => chooseSpread(spread.id)}
-                      className="min-h-[62px] rounded-[8px] border p-2.5 text-left transition-all duration-500"
-                      style={{
-                        borderColor: setup.spreadType === spread.id ? GOLD.edge : "var(--hint-border)",
-                        background: setup.spreadType === spread.id
-                          ? "rgba(228,198,138,0.12)"
-                          : "var(--hint-card-surface-muted)",
-                      }}
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <p className="font-sans text-[12.5px] font-semibold leading-tight" style={{ color: IVORY.strong }}>
-                          {spread.label}
-                        </p>
-                        {setup.spreadType === spread.id && <Check size={13} style={{ color: GOLD.ink }} />}
-                      </div>
-                      <p className="mt-1 font-sans text-[9.5px] font-semibold uppercase tracking-[0.12em]" style={{ color: GOLD.ink }}>
-                        {spread.cardCount} {spread.cardCount === 1 ? t("tarot.spreadChooser.card") : t("tarot.spreadChooser.cards")}
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </CollapsedSection>
-
-              <CollapsedSection
-                icon={<Shuffle size={15} />}
-                title={t("tarot.next.title")}
-                subtitle={t("tarot.next.subtitle")}
-                openLabel={t("tarot.advancedSpreads.open")}
-                closeLabel={t("tarot.advancedSpreads.close")}
-                open={showNextSteps}
-                onToggle={() => setShowNextSteps((current) => !current)}
-              >
-                <ol className="grid gap-2 sm:grid-cols-2">
+                <ol className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
                   {NEXT_STEP_KEYS.map((step, index) => (
                     <li
                       key={step}
-                      className="grid grid-cols-[1.75rem_1fr] items-center gap-2 rounded-[8px] border px-3 py-2"
+                      className="flex shrink-0 items-center gap-1.5 rounded-full border px-2.5 py-1.5"
                       style={{
-                        borderColor: "var(--hint-border)",
-                        background: "var(--hint-card-surface-muted)",
+                        borderColor: "rgba(180,160,120,0.16)",
+                        background: "rgba(255,255,255,0.24)",
+                        color: IVORY.body,
                       }}
                     >
-                      <span className="font-sans text-[10px] font-semibold" style={{ color: GOLD.ink }}>
+                      <span className="font-sans text-[9px] font-semibold leading-none" style={{ color: GOLD.ink }}>
                         {index + 1}
                       </span>
-                      <span className="font-sans text-[12px] font-semibold" style={{ color: IVORY.body }}>
+                      <span className="whitespace-nowrap font-sans text-[10.5px] leading-none" style={{ color: IVORY.mute }}>
                         {t(`tarot.next.${step}`)}
                       </span>
                     </li>
                   ))}
                 </ol>
-              </CollapsedSection>
+              </section>
             </div>
           </div>
         </div>
@@ -906,7 +835,7 @@ export function RoomSetup({ onStart }: Props) {
                 "0 10px 26px rgba(196,160,82,0.22), inset 0 0 0 1px rgba(255,255,255,0.22)",
             }}
           >
-            {t("tarot.setup.enter")}
+            {t("tarot.setup.continue")}
             <ChevronRight size={15} />
           </button>
         </footer>

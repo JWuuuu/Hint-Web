@@ -178,6 +178,7 @@ export function TarotRoom() {
           maxCards={MAX_SELECTED_CARDS}
           spread={SPREAD_CHOICES.find((spread) => spread.id === "three") ?? SPREAD_CHOICES[0]!}
           onSelect={selectFromRibbon}
+          onContinue={() => setStage("reveal")}
         />
       )}
 

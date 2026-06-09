@@ -17,7 +17,7 @@ const router = Router();
 
 function isQuotaError(error: unknown): boolean {
   const message = error instanceof Error ? error.message : String(error ?? "");
-  return /429|quota|billing|too many requests/i.test(message);
+  return /429|quota|billing|too many requests|missing openai|credentials|api[_\s-]?key/i.test(message);
 }
 
 function firstContextLine(emotionalContext: string | null | undefined): string | null {

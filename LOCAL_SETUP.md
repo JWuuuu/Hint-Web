@@ -48,13 +48,13 @@ pnpm install
 Terminal 1 - API:
 
 ```bash
-API_PORT=5050 OPENAI_API_KEY=your_key OPENAI_MODEL=gpt-4o-mini OPENAI_TTS_MODEL=gpt-4o-mini-tts OPENAI_TTS_VOICE=coral DATABASE_URL=your_database_url pnpm --filter @workspace/api-server run dev
+API_PORT=5050 OPENAI_API_KEY=your_key OPENAI_MODEL=gpt-4o-mini OPENAI_TTS_MODEL=gpt-4o-mini-tts OPENAI_TTS_VOICE=coral DATABASE_URL=your_database_url pnpm run dev:api
 ```
 
 Terminal 2 - Frontend:
 
 ```bash
-PORT=5173 BASE_PATH=/ API_PROXY_TARGET=http://localhost:5050 pnpm --filter @workspace/hint run dev
+PORT=5173 BASE_PATH=/ API_PROXY_TARGET=http://localhost:5050 pnpm run dev:web
 ```
 
 Open the frontend URL printed by Vite, usually `http://localhost:5173`.
@@ -94,13 +94,15 @@ For production, prefer routing `/api/*` from the frontend domain to the API serv
 
 ## Important note
 
-This project is not a simple single-folder React app. It is a pnpm workspace:
+This project is intentionally a pnpm monorepo. It is already separated by package:
 
-- `artifacts/hint` = frontend app
-- `artifacts/api-server` = backend API
+- `artifacts/hint` = frontend app. Deploys as static Vite output.
+- `artifacts/api-server` = backend API. Deploys as a Node service.
 - `lib/api-client-react` = generated React API client
 - `lib/api-zod` = generated API validators
 - `lib/api-spec` = OpenAPI source
 - `lib/db` = database schema/client
 
-Do not delete the `lib` folders unless you also rewrite imports.
+Do not split or delete the `lib` folders unless you also replace the shared API
+contract, generated client imports, and database imports. The frontend and
+backend deploy separately, but they share these workspace packages.

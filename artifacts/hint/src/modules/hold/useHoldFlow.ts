@@ -30,6 +30,9 @@ export interface TarotRoomSetup {
   backgroundId: RoomBackgroundId;
   cardColor: string;
   spreadType: SpreadType;
+  story?: string;
+  question?: string;
+  focusLabel?: string;
 }
 
 export interface Territory {
@@ -343,6 +346,72 @@ export const BACKGROUND_STYLES: readonly VisualChoice<RoomBackgroundId>[] = [
   },
 ] as const;
 
+const TAROT_ROOM_SETUP_STORAGE_KEY = "hint.tarotRoomSetup.v1";
+
+function canUseBrowserStorage() {
+  return typeof window !== "undefined" && typeof window.localStorage !== "undefined";
+}
+
+function isRoomPresetId(value: unknown): value is RoomPresetId {
+  return ROOM_PRESETS.some((preset) => preset.id === value);
+}
+
+function isDeckStyleId(value: unknown): value is DeckStyleId {
+  return DECK_STYLES.some((deck) => deck.id === value);
+}
+
+function isRoomBackgroundId(value: unknown): value is RoomBackgroundId {
+  return BACKGROUND_STYLES.some((background) => background.id === value);
+}
+
+function isSetupForcedFromUrl() {
+  if (typeof window === "undefined") return false;
+  const params = new URLSearchParams(window.location.search);
+  return params.get("setup") === "1" || params.get("roomSetup") === "1";
+}
+
+function clearSetupUrlFlag() {
+  if (typeof window === "undefined") return;
+  const url = new URL(window.location.href);
+  url.searchParams.delete("setup");
+  url.searchParams.delete("roomSetup");
+  window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+}
+
+export function loadSavedTarotRoomSetup(): TarotRoomSetup | null {
+  if (!canUseBrowserStorage()) return null;
+  try {
+    const raw = window.localStorage.getItem(TAROT_ROOM_SETUP_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as Partial<TarotRoomSetup>;
+    return {
+      ...DEFAULT_TAROT_ROOM_SETUP,
+      presetId: isRoomPresetId(parsed.presetId) ? parsed.presetId : DEFAULT_TAROT_ROOM_SETUP.presetId,
+      deckStyleId: isDeckStyleId(parsed.deckStyleId) ? parsed.deckStyleId : DEFAULT_TAROT_ROOM_SETUP.deckStyleId,
+      backgroundId: isRoomBackgroundId(parsed.backgroundId) ? parsed.backgroundId : DEFAULT_TAROT_ROOM_SETUP.backgroundId,
+      cardColor: typeof parsed.cardColor === "string" ? parsed.cardColor : DEFAULT_TAROT_ROOM_SETUP.cardColor,
+    };
+  } catch {
+    return null;
+  }
+}
+
+export function saveTarotRoomSetupPreference(setup: TarotRoomSetup) {
+  if (!canUseBrowserStorage()) return;
+  const preference: TarotRoomSetup = {
+    ...DEFAULT_TAROT_ROOM_SETUP,
+    presetId: setup.presetId,
+    deckStyleId: setup.deckStyleId,
+    backgroundId: setup.backgroundId,
+    cardColor: setup.cardColor,
+  };
+  try {
+    window.localStorage.setItem(TAROT_ROOM_SETUP_STORAGE_KEY, JSON.stringify(preference));
+  } catch {
+    // If storage is blocked, the in-memory setup still works for the current reading.
+  }
+}
+
 function newSessionId(): string {
   return `s-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
 }
@@ -385,11 +454,13 @@ function userFacingReadingError(error: unknown, t: Translate): string {
 
 export function useHoldFlow() {
   const { t } = useLanguage();
-  const [step, setStep] = useState<HoldStep>("setup");
+  const initialSavedRoomSetup = loadSavedTarotRoomSetup();
+  const initialRoomSetup = initialSavedRoomSetup ?? DEFAULT_TAROT_ROOM_SETUP;
+  const [step, setStep] = useState<HoldStep>(() => (initialSavedRoomSetup && !isSetupForcedFromUrl() ? "territories" : "setup"));
   const [territory, setTerritory] = useState<Territory | null>(null);
   const [session, setSession] = useState<ReadingSession | null>(null);
   const [intake, setIntake] = useState<TarotIntake | null>(null);
-  const [roomSetup, setRoomSetup] = useState<TarotRoomSetup>(DEFAULT_TAROT_ROOM_SETUP);
+  const [roomSetup, setRoomSetup] = useState<TarotRoomSetup>(initialRoomSetup);
   const [pendingReading, setPendingReading] = useState<TarotReading | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -485,10 +556,45 @@ export function useHoldFlow() {
   );
 
   const startRoom = useCallback((next: TarotRoomSetup) => {
+    saveTarotRoomSetupPreference(next);
     setRoomSetup(next);
     setErrorMessage(null);
-    setStep("ritual");
+    clearSetupUrlFlag();
+    setStep("territories");
   }, []);
+
+  const submitRoomIntake = useCallback(
+    (next: TarotIntake) => {
+      const localizedFocus = {
+        ...next.focus,
+        label: t(`territory.${next.focus.id}.label`),
+        questionSeed: t(`territory.${next.focus.id}.seed`),
+      };
+      const question = cleanInput(next.question || localizedFocus.questionSeed);
+      const normalized: TarotIntake = {
+        ...next,
+        focus: localizedFocus,
+        context: next.context.trim(),
+        question,
+        roomSetup: next.roomSetup ?? roomSetup,
+      };
+      const nextRoomSetup: TarotRoomSetup = {
+        ...(normalized.roomSetup ?? roomSetup),
+        spreadType: normalized.spreadType,
+        story: normalized.context,
+        question,
+        focusLabel: normalized.focus.label,
+      };
+
+      setTerritory(normalized.focus);
+      setIntake(normalized);
+      setRoomSetup(nextRoomSetup);
+      setPendingReading(null);
+      setErrorMessage(null);
+      setStep("ritual");
+    },
+    [roomSetup, t]
+  );
 
   /** Pull a fresh set of cards for the same territory. Keeps chat history. */
   const redraw = useCallback(() => {
@@ -527,11 +633,12 @@ export function useHoldFlow() {
   }, []);
 
   const reset = useCallback(() => {
-    setStep("setup");
+    const savedRoomSetup = loadSavedTarotRoomSetup();
+    setStep(savedRoomSetup ? "territories" : "setup");
     setTerritory(null);
     setIntake(null);
     setSession(null);
-    setRoomSetup(DEFAULT_TAROT_ROOM_SETUP);
+    setRoomSetup(savedRoomSetup ?? DEFAULT_TAROT_ROOM_SETUP);
     setPendingReading(null);
     setErrorMessage(null);
   }, []);
@@ -546,6 +653,7 @@ export function useHoldFlow() {
     errorMessage,
     isPending: mutation.isPending,
     submitIntake,
+    submitRoomIntake,
     startRoom,
     advance,
     reset,

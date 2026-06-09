@@ -1,7 +1,20 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-export function loadDotEnv(filePath = path.resolve(process.cwd(), ".env")) {
+function findDotEnv(startDir = process.cwd()): string {
+  let current = path.resolve(startDir);
+
+  while (true) {
+    const candidate = path.join(current, ".env");
+    if (existsSync(candidate)) return candidate;
+
+    const parent = path.dirname(current);
+    if (parent === current) return path.resolve(startDir, ".env");
+    current = parent;
+  }
+}
+
+export function loadDotEnv(filePath = findDotEnv()) {
   if (!existsSync(filePath)) return;
 
   const lines = readFileSync(filePath, "utf8").split(/\r?\n/);

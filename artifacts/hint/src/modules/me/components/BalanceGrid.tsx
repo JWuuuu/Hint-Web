@@ -24,10 +24,10 @@ export function BalanceGrid() {
         {ITEMS.map((it, i) => {
           const Icon = it.icon;
           return (
-            <button
+            <div
               key={it.labelKey}
-              type="button"
-              className="flex flex-col items-center gap-1.5 py-4 transition-colors hover:bg-white/[0.03]"
+              aria-disabled="true"
+              className="flex cursor-default flex-col items-center gap-1.5 py-4"
               style={{ borderLeft: i === 0 ? "none" : `1px solid ${GLASS.border}` }}
             >
               <Icon size={19} color={ACCENT.gold} className="opacity-90" />
@@ -37,7 +37,10 @@ export function BalanceGrid() {
               <span className="font-sans text-[11px]" style={{ color: GLASS.faint }}>
                 {t(it.labelKey)}
               </span>
-            </button>
+              <span className="font-sans text-[8px] uppercase tracking-[0.12em]" style={{ color: GLASS.faint }}>
+                Soon
+              </span>
+            </div>
           );
         })}
       </div>

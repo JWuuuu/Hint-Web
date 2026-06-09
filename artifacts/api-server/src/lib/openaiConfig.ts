@@ -1,3 +1,5 @@
+import OpenAI from "openai";
+
 export const openaiApiKey =
   process.env.AI_INTEGRATIONS_OPENAI_API_KEY ?? process.env.OPENAI_API_KEY;
 
@@ -19,4 +21,17 @@ export function requireOpenAIKey(): string {
   }
 
   return openaiApiKey;
+}
+
+let openaiClient: OpenAI | null = null;
+
+export function getOpenAIClient(): OpenAI {
+  openaiClient ??= new OpenAI({
+    apiKey: requireOpenAIKey(),
+    baseURL: openaiBaseURL,
+    maxRetries: 0,
+    timeout: 20_000,
+  });
+
+  return openaiClient;
 }

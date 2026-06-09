@@ -9,19 +9,21 @@ import {
   LifeBuoy,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
+import { Link } from "wouter";
 import { ACCENT, GLASS } from "../../hold/atmosphere";
 import { SectionLabel } from "../../../components/app/AppChrome";
 import { useLanguage } from "../../../lib/i18n";
 
-const ITEMS: { icon: LucideIcon; labelKey: string }[] = [
-  { icon: MessageSquare, labelKey: "me.more.feedback" },
-  { icon: Sparkles, labelKey: "me.more.creator" },
-  { icon: Ticket, labelKey: "me.more.invite" },
-  { icon: ShieldCheck, labelKey: "me.more.trust" },
-  { icon: Gift, labelKey: "me.more.gift" },
-  { icon: Palette, labelKey: "me.more.appearance" },
-  { icon: Lock, labelKey: "me.more.privacy" },
-  { icon: LifeBuoy, labelKey: "me.more.support" },
+const ITEMS: { icon: LucideIcon; labelKey: string; href?: string; comingSoon?: boolean }[] = [
+  { icon: MessageSquare, labelKey: "me.more.feedback", href: "/contact" },
+  { icon: Sparkles, labelKey: "me.more.creator", comingSoon: true },
+  { icon: Ticket, labelKey: "me.more.invite", comingSoon: true },
+  { icon: ShieldCheck, labelKey: "me.more.trust", href: "/disclaimer" },
+  { icon: Gift, labelKey: "me.more.gift", comingSoon: true },
+  { icon: Sparkles, labelKey: "section.astrology.label", href: "/astrology" },
+  { icon: Palette, labelKey: "me.more.appearance", href: "/me#me-settings" },
+  { icon: Lock, labelKey: "me.more.privacy", href: "/privacy" },
+  { icon: LifeBuoy, labelKey: "me.more.support", href: "/contact" },
 ];
 
 export function MoreGrid() {
@@ -36,14 +38,10 @@ export function MoreGrid() {
       >
         {ITEMS.map((it) => {
           const Icon = it.icon;
-          return (
-            <button
-              key={it.labelKey}
-              type="button"
-              className="flex flex-col items-center gap-2 transition-opacity hover:opacity-80"
-            >
+          const content = (
+            <>
               <span
-                className="w-11 h-11 rounded-[8px] flex items-center justify-center"
+                className="flex h-11 w-11 items-center justify-center rounded-[8px]"
                 style={{
                   background: "rgba(255,255,255,0.04)",
                   border: `1px solid ${GLASS.border}`,
@@ -54,7 +52,30 @@ export function MoreGrid() {
               <span className="font-sans text-[10.5px] text-center leading-tight" style={{ color: GLASS.muted }}>
                 {t(it.labelKey)}
               </span>
-            </button>
+              {it.comingSoon ? (
+                <span className="font-sans text-[8px] uppercase tracking-[0.12em]" style={{ color: GLASS.faint }}>
+                  Soon
+                </span>
+              ) : null}
+            </>
+          );
+
+          return it.href ? (
+            <Link
+              key={it.labelKey}
+              href={it.href}
+              className="flex flex-col items-center gap-2 transition-opacity hover:opacity-80"
+            >
+              {content}
+            </Link>
+          ) : (
+            <div
+              key={it.labelKey}
+              aria-disabled="true"
+              className="flex cursor-default flex-col items-center gap-1.5 opacity-60"
+            >
+              {content}
+            </div>
           );
         })}
       </div>

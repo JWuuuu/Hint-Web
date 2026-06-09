@@ -66,15 +66,17 @@ export function MembershipCard() {
 
       <button
         type="button"
-        className="relative w-full h-11 rounded-[8px] font-serif text-[12px] uppercase tracking-[0.24em] transition-opacity hover:opacity-90"
+        disabled
+        aria-disabled="true"
+        className="relative w-full h-11 cursor-not-allowed rounded-[8px] font-serif text-[12px] uppercase tracking-[0.24em] opacity-70"
         style={{
-          background: "linear-gradient(180deg, rgba(214,184,106,0.9), rgba(176,142,74,0.92))",
-          color: "#1A130A",
-          boxShadow: "0 6px 20px rgba(196,169,98,0.28)",
+          background: "rgba(255,255,255,0.055)",
+          color: GLASS.faint,
+          border: `1px solid ${GLASS.border}`,
         }}
         data-testid="button-upgrade"
       >
-        {t("me.plusTrial")}
+        {t("me.plusTrial")} · Soon
       </button>
     </motion.div>
   );
