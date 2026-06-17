@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Settings } from "lucide-react";
+import { Link } from "wouter";
 import { ACCENT, GLASS } from "../hold/atmosphere";
-import { AppScreen, GlassPanel, SectionLabel } from "../../components/web/AppChrome";
-import { useGetUserStats } from "@workspace/api-client-react";
+import { AppScreen, GlassPanel, ScreenHeader, SectionLabel } from "../../components/web/AppChrome";
+import type { UserStats } from "@workspace/api-client-react";
 import { useProfile } from "../../lib/useProfile";
 import { saveBirthProfileFromAccountProfile } from "../../lib/astro/userBirthProfile";
 import { getAnonId } from "../../lib/identity";
@@ -39,7 +40,6 @@ import {
 export function MeView() {
   const anonId = getAnonId();
   const { profile, saveProfile, isSaving } = useProfile();
-  const { data: stats } = useGetUserStats({ anonId });
   const [editing, setEditing] = useState(false);
   const { t } = useLanguage();
   const [localDailyCount, setLocalDailyCount] = useState(() => listLocalDailyReadings(anonId).length);
@@ -48,6 +48,14 @@ export function MeView() {
   const localReadingCount = useMemo(
     () => localDailyCount + localTarotCount,
     [localDailyCount, localTarotCount],
+  );
+  const stats = useMemo<UserStats>(
+    () => ({
+      readings: localReadingCount,
+      journals: 0,
+      pulls: localDailyCount,
+    }),
+    [localDailyCount, localReadingCount],
   );
 
   useEffect(() => {
@@ -74,12 +82,6 @@ export function MeView() {
     setEditing(false);
   }
 
-  function scrollToSettings() {
-    document
-      .getElementById("me-settings")
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
   return (
     <AppScreen>
       {/* Header */}
@@ -97,16 +99,15 @@ export function MeView() {
             {t("me.subtitle")}
           </p>
         </div>
-        <button
-          type="button"
-          onClick={scrollToSettings}
+        <Link
+          href="/settings"
           className="w-9 h-9 rounded-[8px] flex items-center justify-center"
           style={{ background: GLASS.panel, border: `1px solid ${GLASS.border}` }}
           aria-label={t("me.settings")}
           data-testid="button-open-settings"
         >
           <Settings size={16} color={ACCENT.aqua} />
-        </button>
+        </Link>
       </motion.header>
 
       {editing ? (
@@ -136,11 +137,26 @@ export function MeView() {
             localQuestionCount={localQuestionCount}
           />
           <MoreGrid />
-          <div id="me-settings" className="scroll-mt-6">
-            <SettingsList />
-          </div>
         </div>
       )}
+    </AppScreen>
+  );
+}
+
+export function SettingsView() {
+  const { t } = useLanguage();
+
+  return (
+    <AppScreen>
+      <ScreenHeader
+        eyebrow="Profile controls"
+        title={t("me.settings")}
+        subtitle="Manage appearance, language, account access, privacy, and local web history."
+        backHref="/me"
+        backLabel={t("nav.me")}
+        sigil={Settings}
+      />
+      <SettingsList />
     </AppScreen>
   );
 }

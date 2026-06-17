@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { Link, useRoute } from "wouter";
 import { ACCENT, GLASS } from "../hold/atmosphere";
 import { AppScreen, ScreenHeader, GlassPanel, SectionLabel } from "../../components/web/AppChrome";
-import { useListReadings } from "@workspace/api-client-react";
 import type { ReadingSummary } from "@workspace/api-client-react";
 import { getAnonId } from "../../lib/identity";
 import { useLanguage, type HintLanguage } from "../../lib/i18n";
@@ -445,7 +444,6 @@ function AstrologyArchiveGrid({ profile }: { profile: BirthProfile | null }) {
 export function ReadingsView() {
   const { language, t } = useLanguage();
   const anonId = getAnonId();
-  const { data, isLoading } = useListReadings({ anonId });
   const [activeTab, setActiveTab] = useState<HistoryTab>("all");
   const [localReadings, setLocalReadings] = useState<ReadingSummary[]>(() =>
     listLocalDailyReadings(anonId),
@@ -457,7 +455,6 @@ export function ReadingsView() {
     listLocalTarotReadings(anonId),
   );
   const [birthProfile, setBirthProfile] = useState<BirthProfile | null>(() => readBirthProfile());
-  const apiReadings = useMemo(() => (data ?? []) as ReadingSummary[], [data]);
   const tarotHistory = useMemo(
     () =>
       tarotReadings
@@ -474,14 +471,14 @@ export function ReadingsView() {
   );
   const readings = useMemo(() => {
     const byId = new Map<string, ReadingSummary>();
-    [...tarotHistory, ...dailyHistory, ...apiReadings].forEach((reading) => {
+    [...tarotHistory, ...dailyHistory].forEach((reading) => {
       byId.set(reading.id, reading);
     });
     return [...byId.values()].sort(
       (a, b) =>
         new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
     );
-  }, [apiReadings, dailyHistory, tarotHistory]);
+  }, [dailyHistory, tarotHistory]);
   const displayedQuestionHistory = useMemo(
     () => mergeQuestionHistory(questionHistory, tarotReadings),
     [questionHistory, tarotReadings],
@@ -569,11 +566,7 @@ export function ReadingsView() {
         ))}
       </div>
 
-      {isLoading && readings.length === 0 && displayedQuestionHistory.length === 0 ? (
-        <p className="font-serif italic text-[13px] py-8 text-center" style={{ color: GLASS.muted }}>
-          {t("readings.loading")}
-        </p>
-      ) : activeTab === "questions" ? (
+      {activeTab === "questions" ? (
         <section className="mb-10">
           <SectionLabel>{t("readings.questions")}</SectionLabel>
           <QuestionList
@@ -687,12 +680,10 @@ export function ReadingDetailView() {
   const id = params?.id ?? "";
   const anonId = getAnonId();
   const [chatOpen, setChatOpen] = useState(false);
-  const { data } = useListReadings({ anonId });
   const tarotReading = getLocalTarotReading(id, anonId);
   const dailyReading = getLocalDailyReading(id, anonId);
   const question = listLocalQuestionHistory(anonId).find((item) => item.id === id);
-  const apiReading = ((data ?? []) as ReadingSummary[]).find((reading) => reading.id === id);
-  const fallbackReading = dailyReading ?? apiReading;
+  const fallbackReading = dailyReading;
 
   if (tarotReading) {
     const spread = SPREAD_CHOICES.find((choice) => choice.id === tarotReading.spreadType) ?? SPREAD_CHOICES[0]!;

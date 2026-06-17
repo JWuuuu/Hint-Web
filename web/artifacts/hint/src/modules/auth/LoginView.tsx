@@ -2,8 +2,11 @@ import { useState } from "react";
 import { Link, useLocation } from "wouter";
 import {
   AlertCircle,
+  Apple,
   ArrowRight,
   Check,
+  Chrome,
+  Facebook,
   KeyRound,
   LogIn,
   Mail,
@@ -29,16 +32,23 @@ type PendingVerification = {
   target: string;
 };
 
+type SocialProviderItem = {
+  id: SocialProvider;
+  label: string;
+  icon: typeof Apple;
+  featured?: boolean;
+};
+
 const SOCIAL_AUTH_URLS: Record<SocialProvider, string | undefined> = {
   apple: import.meta.env.VITE_APPLE_AUTH_URL,
   google: import.meta.env.VITE_GOOGLE_AUTH_URL,
   facebook: import.meta.env.VITE_FACEBOOK_AUTH_URL,
 };
 
-const SOCIAL_PROVIDERS: Array<{ id: SocialProvider; label: string; mark: string }> = [
-  { id: "apple", label: "Apple", mark: "A" },
-  { id: "google", label: "Google", mark: "G" },
-  { id: "facebook", label: "Facebook", mark: "f" },
+const SOCIAL_PROVIDERS: SocialProviderItem[] = [
+  { id: "apple", label: "Continue with Apple", icon: Apple, featured: true },
+  { id: "google", label: "Google", icon: Chrome },
+  { id: "facebook", label: "Facebook", icon: Facebook },
 ];
 
 function emailIsValid(value: string) {
@@ -240,7 +250,7 @@ export function LoginView() {
                   setMode(item);
                   resetVerification(method);
                 }}
-                className="rounded-full border px-4 py-2 font-sans text-[12px] font-black uppercase tracking-[0.12em]"
+                className="rounded-full border px-4 py-2 font-sans text-[13px] font-semibold"
                 style={{
                   background: mode === item ? "rgba(203,168,102,0.18)" : "rgba(255,255,255,0.04)",
                   borderColor: mode === item ? "rgba(203,168,102,0.58)" : GLASS.border,
@@ -255,7 +265,7 @@ export function LoginView() {
           <button
             type="button"
             onClick={() => void handleUseTesterAccount()}
-            className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-[8px] border font-serif text-[12px] uppercase tracking-[0.2em] transition-opacity hover:opacity-85"
+            className="mt-5 flex h-12 w-full items-center justify-center gap-2 rounded-[8px] border font-sans text-[13px] font-semibold transition-opacity hover:opacity-85"
             style={{
               background: "rgba(100,156,158,0.14)",
               borderColor: "rgba(100,156,158,0.34)",
@@ -268,28 +278,31 @@ export function LoginView() {
           </button>
 
           <section className="mt-6">
-            <p className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+            <p className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
               {t("login.continueWith")}
             </p>
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
-              {SOCIAL_PROVIDERS.map((provider) => (
+            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+              {SOCIAL_PROVIDERS.map((provider) => {
+                const Icon = provider.icon;
+                return (
                 <button
                   key={provider.id}
                   type="button"
                   onClick={() => handleSocialProvider(provider.id)}
-                  className="flex h-11 items-center justify-center gap-2 rounded-[8px] border font-sans text-[12px] font-black transition-opacity hover:opacity-85"
+                  className={`flex h-11 items-center justify-center gap-2 rounded-[8px] border font-sans text-[13px] font-semibold transition-opacity hover:opacity-85 ${provider.featured ? "sm:col-span-2" : ""}`}
                   style={{
-                    background: "rgba(255,255,255,0.045)",
-                    borderColor: GLASS.border,
-                    color: GLASS.text,
+                    background: provider.featured ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.045)",
+                    borderColor: provider.featured ? "rgba(255,255,255,0.24)" : GLASS.border,
+                    color: provider.featured ? "#fff8ee" : GLASS.text,
                   }}
                 >
-                  <span className="grid size-5 place-items-center rounded-full border text-[11px]" style={{ borderColor: GLASS.border }}>
-                    {provider.mark}
+                  <span className="grid size-6 place-items-center rounded-full border" style={{ borderColor: provider.featured ? "rgba(255,255,255,0.28)" : GLASS.border }}>
+                    <Icon size={15} />
                   </span>
                   {provider.label}
                 </button>
-              ))}
+                );
+              })}
             </div>
           </section>
 
@@ -307,7 +320,7 @@ export function LoginView() {
                 key={item}
                 type="button"
                 onClick={() => resetVerification(item)}
-                className="inline-flex h-10 items-center justify-center gap-2 rounded-[8px] border font-sans text-[12px] font-black uppercase tracking-[0.1em]"
+                className="inline-flex h-10 items-center justify-center gap-2 rounded-[8px] border font-sans text-[13px] font-semibold"
                 style={{
                   background: method === item ? "rgba(100,156,158,0.16)" : "rgba(255,255,255,0.04)",
                   borderColor: method === item ? "rgba(100,156,158,0.38)" : GLASS.border,
@@ -323,7 +336,7 @@ export function LoginView() {
           <form onSubmit={pending ? handleVerify : handleRequestCode} className="grid gap-4">
             {mode === "signup" ? (
               <label className="block">
-                <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                   {t("birthProfile.name")}
                 </span>
                 <input
@@ -331,7 +344,7 @@ export function LoginView() {
                   onChange={(event) => setName(event.target.value)}
                   placeholder={t("login.namePlaceholder")}
                   autoComplete="name"
-                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                   style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                 />
               </label>
@@ -340,7 +353,7 @@ export function LoginView() {
             {mode === "signup" ? (
               <div className="grid gap-4 sm:grid-cols-2">
                 <label className="block">
-                  <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                  <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                     {t("birthProfile.birthDate")}
                   </span>
                   <input
@@ -350,24 +363,24 @@ export function LoginView() {
                     autoComplete="bday"
                     inputMode="numeric"
                     maxLength={10}
-                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                     style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                   />
                 </label>
                 <label className="block">
-                  <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                  <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                     {t("birthProfile.birthTime")}
                   </span>
                   <input
                     value={birthTime}
                     onChange={(event) => setBirthTime(event.target.value)}
                     type="time"
-                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                     style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                   />
                 </label>
                 <label className="block sm:col-span-2">
-                  <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                  <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                     {t("birthProfile.birthPlace")}
                   </span>
                   <input
@@ -375,7 +388,7 @@ export function LoginView() {
                     onChange={(event) => setBirthPlace(event.target.value)}
                     placeholder={t("login.birthPlacePlaceholder")}
                     autoComplete="address-level2"
-                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                    className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                     style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                   />
                   <p className="mt-2 font-sans text-[11px] leading-relaxed" style={{ color: GLASS.faint }}>
@@ -387,7 +400,7 @@ export function LoginView() {
 
             {method === "email" ? (
               <label className="block">
-                <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                   {t("login.email")}
                 </span>
                 <input
@@ -399,13 +412,13 @@ export function LoginView() {
                   placeholder="you@example.com"
                   autoComplete="email"
                   inputMode="email"
-                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                   style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                 />
               </label>
             ) : (
               <label className="block">
-                <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                   {t("login.phone")}
                 </span>
                 <input
@@ -417,7 +430,7 @@ export function LoginView() {
                   placeholder="+1 555 123 4567"
                   autoComplete="tel"
                   inputMode="tel"
-                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                   style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                 />
               </label>
@@ -425,7 +438,7 @@ export function LoginView() {
 
             {pending ? (
               <label className="block">
-                <span className="font-serif text-[10px] uppercase tracking-[0.28em]" style={{ color: GLASS.muted }}>
+                <span className="font-sans text-[12px] font-semibold" style={{ color: GLASS.muted }}>
                   {t("login.verificationCode")}
                 </span>
                 <input
@@ -433,7 +446,7 @@ export function LoginView() {
                   onChange={(event) => setVerificationCode(event.target.value.replace(/\D/g, "").slice(0, 6))}
                   placeholder={t("login.codePlaceholder")}
                   inputMode="numeric"
-                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-serif text-[15px] outline-none"
+                  className="mt-2 h-12 w-full rounded-[8px] bg-transparent px-4 font-sans text-[14px] outline-none"
                   style={{ background: "rgba(0,0,0,0.25)", border: `1px solid ${GLASS.border}`, color: GLASS.text }}
                 />
                 <p className="mt-2 font-sans text-[11px] leading-relaxed" style={{ color: GLASS.faint }}>
@@ -452,7 +465,7 @@ export function LoginView() {
 
             <button
               type="submit"
-              className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] font-serif text-[12px] uppercase tracking-[0.22em] transition-opacity disabled:opacity-45"
+              className="inline-flex h-12 items-center justify-center gap-2 rounded-[8px] font-sans text-[13px] font-semibold transition-opacity disabled:opacity-45"
               style={{
                 background: "rgba(206,178,110,0.14)",
                 border: "1px solid rgba(206,178,110,0.34)",
@@ -497,7 +510,7 @@ export function LoginView() {
             </div>
             <Link
               href="/me"
-              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[8px] font-serif text-[12px] uppercase tracking-[0.2em]"
+              className="mt-5 inline-flex h-11 w-full items-center justify-center gap-2 rounded-[8px] font-sans text-[13px] font-semibold"
               style={{ background: "rgba(100,156,158,0.14)", border: "1px solid rgba(100,156,158,0.28)", color: ACCENT.aqua }}
             >
               {t("login.backToProfile")}

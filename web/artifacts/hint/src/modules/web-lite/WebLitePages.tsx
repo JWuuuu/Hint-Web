@@ -36,17 +36,17 @@ const tarotLiteCards = [
 const animalCards = [
   {
     animal: "Wolf",
-    card: "The Moon",
+    card: "Nocturnal path",
     image: tarotImage("18-TheMoon.jpg"),
-    meaning: "The Wolf appears when instinct is louder than certainty. Trust the quiet signal, but do not run from the question.",
-    prompt: "Where do I already know the answer, but keep asking for permission?",
+    meaning: "The Wolf reads the room through scent, distance, and the shape of the pack. Its symbol is alert instinct before movement.",
+    prompt: "Signals: night travel, pack memory, quiet leadership, and choosing the clean path before the loud one.",
   },
   {
     animal: "Sun Deer",
-    card: "The Sun",
+    card: "Open field",
     image: tarotImage("19-TheSun.jpg"),
-    meaning: "The Sun Deer brings soft confidence. Choose the path that lets your body unclench.",
-    prompt: "What would feel easier if I stopped apologizing for wanting it?",
+    meaning: "The Sun Deer stands where warmth is visible and escape routes stay open. Its symbol is gentleness with fast awareness.",
+    prompt: "Signals: dawn grazing, soft confidence, quick ears, and knowing when a place is safe enough to stay.",
   },
 ];
 
@@ -170,9 +170,9 @@ export function AnimalTarotLitePage() {
   return (
     <AppScreen>
       <LiteHero
-        eyebrow="Animal Tarot Lite"
-        title="Meet one animal for tonight."
-        subtitle="A short emotional meaning is available here. Saving animals, animal history, and deeper profiles belong in the Hint app."
+        eyebrow="Animal Tarot"
+        title="Meet tonight's animal guide."
+        subtitle="Explore animal symbols, traits, habitats, and instinct patterns. The web preview stays focused on the animal itself."
         icon={<Cat className="size-6" />}
       />
       <GlassPanel className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
@@ -181,7 +181,7 @@ export function AnimalTarotLitePage() {
           <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--hint-gold)" }}>{animal.card}</p>
           <h2 className="mt-1 font-serif text-[36px]" style={{ color: "var(--hint-text)" }}>{animal.animal}</h2>
           <p className="mt-2 font-sans text-[14px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>{animal.meaning}</p>
-          <PreviewTextBlock eyebrow="Reflection" title="One prompt">
+          <PreviewTextBlock eyebrow="Animal signal" title="Behavior to watch">
             {animal.prompt}
           </PreviewTextBlock>
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -191,9 +191,9 @@ export function AnimalTarotLitePage() {
               className="h-11 rounded-full border px-5 font-sans text-[13px] font-semibold"
               style={{ color: "var(--hint-text)", borderColor: "var(--hint-border)", background: "var(--hint-surface-soft)" }}
             >
-              Try another sample
+              Meet another animal
             </button>
-            <OpenAppButton appPath="/animal-tarot">Save This Animal in Hint App</OpenAppButton>
+            <OpenAppButton appPath="/animal-tarot">Save Animal Profile</OpenAppButton>
           </div>
         </div>
       </GlassPanel>

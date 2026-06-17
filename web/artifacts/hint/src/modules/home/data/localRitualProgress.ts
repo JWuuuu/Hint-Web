@@ -99,14 +99,16 @@ function longestStreakFor(dates: string[]): number {
 }
 
 function weekFor(dates: Set<string>, today: string): RitualWeekDay[] {
-  const labels = ["M", "T", "W", "T", "F", "S", "S"];
+  const labels = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const todayDay = parseLocalDate(today).getDay();
+  const mondayOffset = todayDay === 0 ? -6 : 1 - todayDay;
+  const weekStart = addDays(today, mondayOffset);
 
   return Array.from({ length: RITUAL_CYCLE_DAYS }, (_, index) => {
-    const date = addDays(today, index);
-    const dateDay = parseLocalDate(date).getDay();
+    const date = addDays(weekStart, index);
     return {
       date,
-      label: index === 0 ? "Today" : labels[(dateDay + 6) % 7],
+      label: labels[index]!,
       completed: dates.has(date),
       today: date === today,
     };

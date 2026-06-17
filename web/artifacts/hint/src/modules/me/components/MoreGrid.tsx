@@ -1,4 +1,5 @@
 import {
+  Cat,
   MessageSquare,
   UserRound,
   Sparkles,
@@ -15,15 +16,15 @@ import { ACCENT, GLASS } from "../../hold/atmosphere";
 import { SectionLabel } from "../../../components/web/AppChrome";
 import { useLanguage } from "../../../lib/i18n";
 
-const ITEMS: { icon: LucideIcon; labelKey: string; href?: string; comingSoon?: boolean }[] = [
+const ITEMS: { icon: LucideIcon; labelKey?: string; label?: string; href?: string; comingSoon?: boolean }[] = [
   { icon: MessageSquare, labelKey: "me.more.feedback", href: "/contact" },
   { icon: UserRound, labelKey: "me.account", href: "/login" },
-  { icon: Sparkles, labelKey: "me.more.creator", comingSoon: true },
+  { icon: Cat, label: "Animal Tarot", href: "/animal-tarot" },
   { icon: Ticket, labelKey: "me.more.invite", comingSoon: true },
   { icon: ShieldCheck, labelKey: "me.more.trust", href: "/disclaimer" },
   { icon: Gift, labelKey: "me.more.gift", comingSoon: true },
   { icon: Sparkles, labelKey: "section.astrology.label", href: "/astrology" },
-  { icon: Palette, labelKey: "me.more.appearance", href: "/me#me-settings" },
+  { icon: Palette, labelKey: "me.more.appearance", href: "/settings" },
   { icon: Lock, labelKey: "me.more.privacy", href: "/privacy" },
   { icon: LifeBuoy, labelKey: "me.more.support", href: "/contact" },
 ];
@@ -40,6 +41,7 @@ export function MoreGrid() {
       >
         {ITEMS.map((it) => {
           const Icon = it.icon;
+          const itemKey = it.labelKey ?? it.label ?? it.href ?? "more-item";
           const content = (
             <>
               <span
@@ -52,7 +54,7 @@ export function MoreGrid() {
                 <Icon size={18} color={ACCENT.aqua} className="opacity-90" />
               </span>
               <span className="font-sans text-[10.5px] text-center leading-tight" style={{ color: GLASS.muted }}>
-                {t(it.labelKey)}
+                {it.label ?? (it.labelKey ? t(it.labelKey) : "")}
               </span>
               {it.comingSoon ? (
                 <span className="font-sans text-[8px] uppercase tracking-[0.12em]" style={{ color: GLASS.faint }}>
@@ -64,7 +66,7 @@ export function MoreGrid() {
 
           return it.href ? (
             <Link
-              key={it.labelKey}
+              key={itemKey}
               href={it.href}
               className="flex flex-col items-center gap-2 transition-opacity hover:opacity-80"
             >
@@ -72,7 +74,7 @@ export function MoreGrid() {
             </Link>
           ) : (
             <div
-              key={it.labelKey}
+              key={itemKey}
               aria-disabled="true"
               className="flex cursor-default flex-col items-center gap-1.5 opacity-60"
             >

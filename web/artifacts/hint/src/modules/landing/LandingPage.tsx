@@ -20,6 +20,7 @@ import type {
   ScoreArea,
   TarotCardData,
 } from "./components/experience-kit/src/shared/data/tarot";
+import { LanguageToggle } from "../../components/LanguageToggle";
 import { getHintAppUrl } from "../../lib/appUrl";
 
 type Theme = "nocturne" | "daybreak";
@@ -33,6 +34,7 @@ type SpreadOption = {
 
 const tarot = (file: string) => `/assets/tarot/${file}`;
 const lucky = (file: string) => `/assets/lucky/${file}`;
+const WEB_DEMO_URL = "/preview#today";
 
 const dailyCard: TarotCardData = {
   id: "the-star",
@@ -242,6 +244,7 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
           <a href="#pricing">Pricing</a>
         </div>
         <div className="hint-site__actions">
+          <LanguageToggle className="hint-site__language" menuPlacement="bottom" />
           <button className="hint-site__theme" type="button" onClick={onToggleTheme} aria-label="Toggle day and night">
             <span className={!night ? "is-active" : ""}>
               <SunIcon />
@@ -250,8 +253,8 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
               <MoonIcon />
             </span>
           </button>
-          <a className="hint-site__open" href={getHintAppUrl()}>
-            Open Hint App
+          <a className="hint-site__open" href={WEB_DEMO_URL}>
+            Try Demo Online
           </a>
         </div>
       </nav>
@@ -261,9 +264,9 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
 
 function HeroStats() {
   const stats = [
-    ["30%", "playable web"],
-    ["100%", "inside app"],
-    ["1", "clear path"],
+    ["Free", "web demo"],
+    ["No", "download needed"],
+    ["1", "tap to start"],
   ];
 
   return (
@@ -292,9 +295,9 @@ function HeroCarousel() {
       id: "animal",
       eyebrow: "Animal Tarot",
       title: "Meet the creature that walks the night with you.",
-      body: "Every reader carries an animal spirit. Hint draws yours from your chart, a quiet companion for the dark hours.",
+      body: "Animal Tarot opens symbols through habitat, instinct, and behavior: wolf paths, deer signals, night movement, and quiet companions.",
       ctaLabel: "Explore Animal Tarot",
-      href: "#animal",
+      href: "/animal-tarot",
       accent: "aqua",
       visual: <FeatureVisual kind="animal" />,
     },
@@ -634,12 +637,12 @@ export function LandingPage() {
         <section className="hint-site__hero">
           <div className="hint-site__pill">
             <span />
-            Hint Web Preview
+            Try Hint Demo Online
           </div>
           <h1>
-            Try a little Hint before <em>the app.</em>
+            Try Hint online, then go <em>deeper.</em>
           </h1>
-          <p>Tarot Lite, Daily Pull Lite, astrology previews, and collection glimpses. The full saved experience lives in Hint app.</p>
+          <p>Open the playable web demo for Daily Pull, Tarot Room, astrology previews, and collection glimpses. No download needed.</p>
           <HeroStats />
         </section>
         <HeroCarousel />

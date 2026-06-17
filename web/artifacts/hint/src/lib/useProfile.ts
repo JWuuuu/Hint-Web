@@ -5,11 +5,6 @@
  */
 
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import {
-  getProfile,
-  useSaveProfile,
-  getGetProfileQueryKey,
-} from "@workspace/api-client-react";
 import type { Profile, ProfileInput } from "@workspace/api-client-react";
 import { getAnonId } from "./identity";
 
@@ -50,47 +45,22 @@ function writeLocalProfile(anonId: string, input: Omit<ProfileInput, "anonId">):
 export function useProfile() {
   const anonId = getAnonId();
   const queryClient = useQueryClient();
-  const queryKey = getGetProfileQueryKey({ anonId });
+  const queryKey = ["profile", anonId];
 
   const query = useQuery<Profile | null>({
     queryKey,
-    queryFn: async () => {
-      try {
-        return await getProfile({ anonId });
-      } catch (error) {
-        if ((error as { status?: number }).status === 404) {
-          return readLocalProfile(anonId);
-        }
-
-        return readLocalProfile(anonId);
-      }
-    },
+    queryFn: async () => readLocalProfile(anonId),
     retry: false,
     staleTime: 5 * 60 * 1000,
-  });
-
-  const saveMutation = useSaveProfile({
-    mutation: {
-      onSuccess: (saved) => {
-        queryClient.setQueryData(queryKey, saved);
-      },
-    },
   });
 
   const profile = query.data ?? null;
   const isMissing = query.isSuccess && query.data === null;
 
   async function saveProfile(input: Omit<ProfileInput, "anonId">) {
-    try {
-      const saved = await saveMutation.mutateAsync({ data: { ...input, anonId } });
-      queryClient.setQueryData(queryKey, saved);
-      writeLocalProfile(anonId, input);
-      return saved;
-    } catch {
-      const saved = writeLocalProfile(anonId, input);
-      queryClient.setQueryData(queryKey, saved);
-      return saved;
-    }
+    const saved = writeLocalProfile(anonId, input);
+    queryClient.setQueryData(queryKey, saved);
+    return saved;
   }
 
   return {
@@ -100,7 +70,7 @@ export function useProfile() {
     isMissing,
     isError: query.isError,
     saveProfile,
-    isSaving: saveMutation.isPending,
+    isSaving: false,
     refetch: query.refetch,
   };
 }

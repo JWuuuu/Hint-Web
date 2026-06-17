@@ -49,7 +49,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const showNav = location !== "/" && !IMMERSIVE_ROUTES.some(
     (r) => location === r || location.startsWith(r + "/"),
   );
-  const showImmersiveLanguage = !(
+  const showImmersiveLanguage = location !== "/" && !(
     location === "/tarot" || location.startsWith("/tarot/")
   );
 
@@ -157,7 +157,7 @@ function WebsiteHomeNav({
     { href: "/astrology", label: t("nav.astrology"), section: false },
     { href: "/readings", label: t("nav.history"), section: false },
   ];
-  const profileActive = location === "/me" || location.startsWith("/me/");
+  const profileActive = location === "/me" || location.startsWith("/me/") || location === "/login" || location === "/settings";
   const isActiveNavItem = (href: string, section: boolean) => {
     if (section) return location === "/preview" && activeHash === "#today";
     return location === href || location.startsWith(`${href}/`);
@@ -272,9 +272,9 @@ function WebsiteHomeNav({
           >
             {isDark ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </button>
-          <a
-            href={getHintAppUrl("/me")}
-            aria-label="Open account in Hint app"
+          <Link
+            href="/me"
+            aria-label="Open profile"
             className="grid size-9 place-items-center rounded-full border transition-[transform,opacity] duration-200 hover:-translate-y-0.5 xl:size-11"
             style={{
               color: profileActive ? (isDark ? "#fffaf2" : "#241d18") : "var(--hint-text)",
@@ -291,7 +291,7 @@ function WebsiteHomeNav({
             }}
           >
             <UserRound aria-hidden="true" className="size-4 xl:size-5" />
-          </a>
+          </Link>
           <a
             href={getHintAppUrl("/ask")}
             className="hidden h-11 items-center justify-center gap-2 rounded-full px-5 font-sans text-[13px] font-semibold xl:inline-flex"
@@ -467,8 +467,11 @@ function AccountMenu({ profileActive, isDark }: { profileActive: boolean; isDark
           </div>
 
           <div className="mt-3 grid gap-2">
-            <AccountMenuLink href="/me" onNavigate={() => setOpen(false)} icon={<Settings className="size-4" />}>
+            <AccountMenuLink href="/me" onNavigate={() => setOpen(false)} icon={<UserRound className="size-4" />}>
               {t("account.viewProfile")}
+            </AccountMenuLink>
+            <AccountMenuLink href="/settings" onNavigate={() => setOpen(false)} icon={<Settings className="size-4" />}>
+              {t("me.settings")}
             </AccountMenuLink>
             <AccountMenuLink href="/astrology?tab=birth" onNavigate={() => setOpen(false)} icon={<Sparkles className="size-4" />}>
               {t("account.editBirthProfile")}

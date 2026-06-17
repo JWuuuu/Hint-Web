@@ -7,14 +7,15 @@ import { LanguageProvider } from "./lib/i18n";
 import { LandingPage } from "./modules/landing/LandingPage";
 import { HomeDashboard } from "./modules/home";
 import { AboutView, ContactView, DisclaimerView, PrivacyPolicyView, TermsView } from "./modules/legal";
+import { LoginView } from "./modules/auth/LoginView";
+import { MeView, SettingsView } from "./modules/me";
+import { ReadingDetailView, ReadingsView } from "./modules/readings/ReadingsView";
 import {
-  AccountGatePage,
   AnimalTarotLitePage,
   AstrologyLitePage,
   CollectionPreviewPage,
   DailyPullLitePage,
   GenericAppGatePage,
-  HistoryGatePage,
   PricingPreviewPage,
   RoomsLitePage,
   TarotLitePage,
@@ -47,10 +48,11 @@ function Router() {
       </Route>
       <Route path="/animal-tarot" component={AnimalTarotLitePage} />
       <Route path="/rooms" component={RoomsLitePage} />
-      <Route path="/readings/:id" component={HistoryGatePage} />
-      <Route path="/readings" component={HistoryGatePage} />
-      <Route path="/login" component={AccountGatePage} />
-      <Route path="/me" component={AccountGatePage} />
+      <Route path="/readings/:id" component={ReadingDetailView} />
+      <Route path="/readings" component={ReadingsView} />
+      <Route path="/login" component={LoginView} />
+      <Route path="/me" component={MeView} />
+      <Route path="/settings" component={SettingsView} />
       <Route path="/astrology" component={AstrologyLitePage} />
       <Route path="/compatibility/invite/:token">
         <GenericAppGatePage title="Relationship reports unlock in Hint app." body="The website keeps astrology light. Full compatibility, invite links, and relationship reports live in the app." cta="Open Relationship Report" appPath="/compatibility" />

@@ -28,6 +28,7 @@ import { useLanguage } from "../../../lib/i18n";
 import { generateSkyCardReading } from "../../../lib/readings/generateSkyCardReading";
 import { useProfile } from "../../../lib/useProfile";
 import { readBirthProfile } from "../../../lib/astro/userBirthProfile";
+import { getTarotCardImage } from "../../tarot/logic/cardImageMap";
 import type { DailyReport, DailyScore } from "../types/home.types";
 import { LuckyIllustration } from "./LuckyIllustration";
 import { SkyEvidence } from "../../../components/tarot/SkyEvidence";
@@ -471,17 +472,17 @@ function ThemeAwareDailyCard({
   report: DailyReport;
   revealed: boolean;
 }) {
+  const cardImage = getTarotCardImage(report.card.cardId);
+
   return (
     <div
-      className="tarot-flip mx-auto aspect-[46/71] w-[132px] max-w-full sm:w-[158px] lg:w-[176px]"
+      className="tarot-flip mx-auto aspect-[300/527] w-[132px] max-w-full sm:w-[158px] lg:w-[176px]"
       style={{
         filter: "drop-shadow(0 18px 28px rgba(31, 25, 34, 0.18))",
       }}
     >
-      <motion.div
-        className="tarot-flip-inner"
-        animate={{ rotateY: revealed ? 180 : 0 }}
-        transition={{ duration: 0.9, ease: [0.45, 0, 0.2, 1] }}
+      <div
+        className={`tarot-flip-inner${revealed ? " flipped" : ""}`}
       >
         <div
           className="tarot-flip-face overflow-hidden rounded-[20px] border"
@@ -524,19 +525,30 @@ function ThemeAwareDailyCard({
         <div
           className="tarot-flip-face tarot-flip-back overflow-hidden rounded-[20px] border"
           style={{
-            background: "var(--hint-daily-card-face-bg)",
+            background: cardImage ? "color-mix(in srgb, var(--hint-input-bg) 78%, black)" : "var(--hint-daily-card-face-bg)",
             borderColor: "color-mix(in srgb, var(--hint-gold, #cba866) 58%, var(--hint-border))",
             boxShadow: "inset 0 1px 0 rgba(255,255,255,0.14), 0 0 34px rgba(203,168,102,0.12)",
           }}
         >
-          <div
-            aria-hidden
-            className="absolute inset-[10px] rounded-[14px] border"
-            style={{ borderColor: "color-mix(in srgb, var(--hint-gold, #cba866) 34%, transparent)" }}
-          />
-          {revealed ? <CardSigil cardId={report.card.cardId} /> : null}
+          {cardImage ? (
+            <img
+              src={cardImage}
+              alt={report.card.cardName}
+              className="absolute inset-0 h-full w-full object-cover"
+              draggable={false}
+            />
+          ) : (
+            <>
+              <div
+                aria-hidden
+                className="absolute inset-[10px] rounded-[14px] border"
+                style={{ borderColor: "color-mix(in srgb, var(--hint-gold, #cba866) 34%, transparent)" }}
+              />
+              {revealed ? <CardSigil cardId={report.card.cardId} /> : null}
+            </>
+          )}
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }
@@ -975,10 +987,15 @@ function RitualStreakPanel({
   tasks: Array<{ text: string; reason: string }>;
   onToggleTask: (index: number) => void;
 }) {
-  const progress = ritual.progressPercent;
-  const rewardText = ritual.todayCompleted ? "+20 XP preview complete" : "+20 XP preview after three checks";
+  const weeklyStars = ritual.week.filter((day) => day.completed).length;
+  const progress = Math.round((weeklyStars / ritual.week.length) * 100);
+  const starsRemaining = ritual.week.length - weeklyStars;
+  const rewardText =
+    weeklyStars === ritual.week.length
+      ? "Weekly experience token unlocked"
+      : `${starsRemaining} star${starsRemaining === 1 ? "" : "s"} until this week's token`;
   const ritualStatus = ritual.todayCompleted
-    ? "today's three tasks are complete"
+    ? "Today's star is lit"
     : `${ritual.todayTaskCompletions.length}/3 tasks checked today`;
 
   return (
@@ -988,7 +1005,7 @@ function RitualStreakPanel({
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.35 }}
       transition={{ duration: 0.72, ease: "easeOut" }}
-      className="relative scroll-mt-28 overflow-hidden rounded-[22px] border px-4 py-5 sm:rounded-[28px] sm:px-7 sm:py-7 lg:px-8"
+      className="relative scroll-mt-28 overflow-hidden rounded-[18px] border px-3 py-3 sm:rounded-[22px] sm:px-5 sm:py-4"
       style={{
         background:
           "linear-gradient(115deg, color-mix(in srgb, var(--hint-surface) 86%, transparent), color-mix(in srgb, var(--hint-input-bg) 70%, transparent))",
@@ -996,24 +1013,24 @@ function RitualStreakPanel({
         boxShadow: "var(--hint-elevated-shadow)",
       }}
     >
-      <div className="mb-5 flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
+      <div className="mb-3 flex flex-col justify-between gap-2 sm:flex-row sm:items-center">
         <div className="flex flex-wrap items-baseline gap-2 sm:gap-3">
-          <h2 className="font-serif text-[32px] leading-none sm:text-[44px]" style={{ color: "var(--hint-text)" }}>
-            Energy tasks
+          <h2 className="font-serif text-[24px] leading-none sm:text-[28px]" style={{ color: "var(--hint-text)" }}>
+            Weekly streak
           </h2>
-          <p className="font-serif text-[15px] italic sm:text-[18px]" style={{ color: "var(--hint-muted)" }}>
-            complete three small check-ins to finish today's ritual
+          <p className="font-sans text-[12px] font-semibold sm:text-[13px]" style={{ color: "var(--hint-muted)" }}>
+            Light one star each day, Monday to Sunday.
           </p>
         </div>
-        <OpenAppButton appPath="/rewards" tone="quiet" className="h-10 px-4 text-[12px]">
-          Save Progress in Hint App
+        <OpenAppButton appPath="/rewards" tone="quiet" className="h-9 px-3 text-[11px]">
+          Save progress
         </OpenAppButton>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1.35fr_0.65fr] lg:items-start">
+      <div className="grid gap-3">
         <div>
           <div
-            className="rounded-[18px] border p-3 sm:p-4"
+            className="rounded-[14px] border p-2 sm:p-2.5"
             style={{
               background: "color-mix(in srgb, var(--hint-input-bg) 80%, transparent)",
               borderColor: "var(--hint-border)",
@@ -1027,21 +1044,21 @@ function RitualStreakPanel({
                     key={task.text}
                     type="button"
                     onClick={() => onToggleTask(index)}
-                    className="grid grid-cols-[38px_1fr] items-center gap-3 rounded-[12px] px-2 py-3 text-left transition hover:bg-white/5"
+                    className="grid grid-cols-[30px_1fr] items-center gap-2 rounded-[10px] px-2 py-1.5 text-left transition hover:bg-white/5"
                   >
                     <span
-                      className="grid size-7 place-items-center rounded-[8px] border"
+                      className="grid size-6 place-items-center rounded-[7px] border"
                       style={{
                         background: checked ? "linear-gradient(135deg, #8ee2d4, #f3cf82)" : "rgba(255,255,255,0.08)",
                         borderColor: checked ? "rgba(142,226,212,0.72)" : "color-mix(in srgb, var(--hint-border-strong) 78%, transparent)",
                         color: checked ? "#172422" : "var(--hint-faint)",
                       }}
                     >
-                      {checked ? <Check size={17} strokeWidth={2.5} /> : null}
+                      {checked ? <Check size={15} strokeWidth={2.5} /> : null}
                     </span>
                     <span className="min-w-0">
                       <span
-                        className="font-serif text-[17px] leading-snug sm:text-[20px]"
+                        className="font-sans text-[13px] font-semibold leading-snug sm:text-[14px]"
                         style={{
                           color: checked ? "var(--hint-faint)" : "var(--hint-text)",
                           textDecoration: checked ? "line-through" : "none",
@@ -1050,7 +1067,7 @@ function RitualStreakPanel({
                       >
                         {task.text}
                       </span>
-                      <span className="ml-2 font-sans text-[12px] font-semibold" style={{ color: "var(--hint-faint)" }}>
+                      <span className="ml-2 hidden font-sans text-[11px] font-semibold xl:inline" style={{ color: "var(--hint-faint)" }}>
                         ({task.reason})
                       </span>
                     </span>
@@ -1060,37 +1077,49 @@ function RitualStreakPanel({
             </div>
           </div>
 
-          <div className="mt-5 grid grid-cols-7 items-start gap-2">
+          <div className="mt-3 grid grid-cols-7 items-start gap-2">
             {ritual.week.map((day, index) => {
               const done = day.completed;
+              const activeToday = day.today && !done;
+              const primedToday = activeToday && ritual.todayTaskCompletions.length > 0;
               return (
                 <div key={day.date} className="text-center">
                   <motion.div
-                    className="mx-auto grid size-8 place-items-center rounded-full sm:size-10"
+                    className="relative mx-auto grid size-8 place-items-center rounded-full sm:size-9"
                     style={{
                       background: done
-                        ? "linear-gradient(135deg, #e2a245, #f09974)"
-                        : "color-mix(in srgb, var(--hint-surface-soft) 86%, transparent)",
+                        ? "radial-gradient(circle at 32% 24%, #fff7c6, #f3bf5f 42%, #c77742 100%)"
+                        : primedToday
+                          ? "linear-gradient(135deg, rgba(142,226,212,0.24), rgba(243,207,130,0.18))"
+                          : "color-mix(in srgb, var(--hint-surface-soft) 86%, transparent)",
                       border: done
                         ? "0"
-                        : day.today
+                        : activeToday
                           ? "2px solid rgba(218, 163, 71, 0.92)"
                           : "1px solid color-mix(in srgb, var(--hint-border-strong) 72%, transparent)",
                       color: done ? "#231d2a" : ACCENT.gold,
                       boxShadow: done
-                        ? "0 14px 28px rgba(224, 146, 80, 0.24)"
-                        : day.today
-                          ? "0 0 0 7px rgba(218, 163, 71, 0.1)"
+                        ? "0 0 0 3px rgba(243,191,95,0.12), 0 10px 22px rgba(224, 146, 80, 0.24), 0 0 20px rgba(243,191,95,0.3)"
+                        : activeToday
+                          ? "0 0 0 5px rgba(218, 163, 71, 0.1), 0 0 18px rgba(142,226,212,0.16)"
                           : "none",
                     }}
                     initial={{ scale: 0.7, opacity: 0 }}
                     whileInView={{ scale: 1, opacity: 1 }}
                     viewport={{ once: true }}
                     transition={{ delay: index * 0.05, duration: 0.38, ease: "easeOut" }}
+                    aria-label={`${day.label}: ${done ? "completed" : day.today ? ritualStatus : "not completed"}`}
                   >
-                    {done ? <Check size={16} /> : <Sparkles size={16} />}
+                    {done ? <Star size={15} fill="currentColor" strokeWidth={2.1} /> : activeToday ? <Sparkles size={14} /> : <Star size={13} />}
+                    {activeToday && (
+                      <span
+                        aria-hidden
+                        className="absolute -bottom-1 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full"
+                        style={{ background: primedToday ? ACCENT.aqua : ACCENT.gold, boxShadow: `0 0 10px ${primedToday ? ACCENT.aqua : ACCENT.gold}` }}
+                      />
+                    )}
                   </motion.div>
-                  <p className="mt-2 font-sans text-[10px] font-semibold sm:text-[11px]" style={{ color: "var(--hint-muted)" }}>
+                  <p className="mt-1.5 font-sans text-[10px] font-semibold" style={{ color: "var(--hint-muted)" }}>
                     {day.label}
                   </p>
                 </div>
@@ -1098,16 +1127,21 @@ function RitualStreakPanel({
             })}
           </div>
 
-          <div className="mt-5">
-            <div className="mb-3 flex items-center justify-between gap-4">
-              <p className="font-sans text-[13px] sm:text-[14px]" style={{ color: "var(--hint-text)" }}>
-                {rewardText}
-              </p>
+          <div className="mt-3">
+            <div className="mb-2 flex items-center justify-between gap-4">
+              <div>
+                <p className="font-sans text-[13px] font-semibold" style={{ color: "var(--hint-text)" }}>
+                  {weeklyStars} / 7 stars lit
+                </p>
+                <p className="mt-0.5 font-sans text-[11px]" style={{ color: "var(--hint-faint)" }}>
+                  {rewardText}
+                </p>
+              </div>
               <p className="font-sans text-[13px]" style={{ color: "var(--hint-faint)" }}>
                 {progress}%
               </p>
             </div>
-            <div className="h-2 overflow-hidden rounded-full" style={{ background: "color-mix(in srgb, var(--hint-border) 52%, transparent)" }}>
+            <div className="h-1.5 overflow-hidden rounded-full" style={{ background: "color-mix(in srgb, var(--hint-border) 52%, transparent)" }}>
               <motion.div
                 className="h-full rounded-full"
                 style={{ background: "linear-gradient(90deg, #d7a246, #f19573, #a997ea)" }}
@@ -1120,23 +1154,44 @@ function RitualStreakPanel({
           </div>
         </div>
 
-        <div className="grid gap-3">
-          <RewardStat icon={Star} value="Lite" label="Web mode" />
-          <RewardStat icon={Gift} value="+20" label="XP preview" />
-          <RewardStat icon={Sparkles} value="App" label="Saved streaks" />
+        <div className="grid grid-cols-3 gap-2">
+          <RewardStat icon={Star} value={`${weeklyStars}/7`} label="Stars this week" />
+          <RewardStat icon={Gift} value="+20" label={ritual.todayCompleted ? "XP earned today" : "XP after 3 checks"} />
+          <RewardStat icon={Sparkles} value={`${ritual.currentStreak}`} label="Day streak" />
           <div
-            className="rounded-[18px] border p-4"
+            className="col-span-3 rounded-[14px] border p-2.5"
             style={{
               background: "var(--hint-me-plus-surface)",
               borderColor: "var(--hint-me-plus-border)",
               boxShadow: "var(--hint-me-plus-shadow)",
             }}
           >
-            <p className="font-serif text-[21px] leading-tight" style={{ color: "var(--hint-text)" }}>
-              Weekly reward
-            </p>
-            <p className="mt-2 font-sans text-[12px] leading-relaxed sm:text-[13px]" style={{ color: "var(--hint-muted)" }}>
-              Check three small tasks here for the feeling. Saved progress, streaks, rewards, and real XP live inside the Hint app.
+            <div className="flex items-center gap-2.5">
+              <div
+                className="grid size-10 shrink-0 place-items-center rounded-full border"
+                style={{
+                  color: weeklyStars === ritual.week.length ? "#231d2a" : ACCENT.gold,
+                  background:
+                    weeklyStars === ritual.week.length
+                      ? "radial-gradient(circle at 32% 24%, #fff7c6, #f3bf5f 48%, #a997ea 100%)"
+                      : "radial-gradient(circle at 36% 24%, rgba(243,207,130,0.26), rgba(169,151,234,0.14) 58%, rgba(255,255,255,0.06))",
+                  borderColor: "color-mix(in srgb, var(--hint-gold, #cba866) 46%, var(--hint-border))",
+                  boxShadow: weeklyStars === ritual.week.length ? "0 0 28px rgba(243,191,95,0.36)" : "inset 0 1px 0 rgba(255,255,255,0.14)",
+                }}
+              >
+                <span className="font-serif text-[16px] leading-none">XP</span>
+              </div>
+              <div>
+                <p className="font-serif text-[17px] leading-tight" style={{ color: "var(--hint-text)" }}>
+                  Experience token
+                </p>
+                <p className="mt-1 font-sans text-[10px] font-semibold uppercase tracking-[0.1em]" style={{ color: ACCENT.gold }}>
+                  {ritualStatus}
+                </p>
+              </div>
+            </div>
+            <p className="mt-1.5 font-sans text-[11px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>
+              Three check-ins light today’s star. Seven stars complete the weekly token.
             </p>
           </div>
         </div>
@@ -1156,20 +1211,20 @@ function RewardStat({
 }) {
   return (
     <div
-      className="flex items-center gap-3 rounded-[16px] border p-3.5"
+      className="flex min-w-0 items-center gap-2 rounded-[12px] border p-2"
       style={{
         background: "color-mix(in srgb, var(--hint-surface-soft) 82%, transparent)",
         borderColor: "var(--hint-border)",
       }}
     >
-      <div className="grid size-10 place-items-center rounded-[12px]" style={{ background: "rgba(228, 198, 138, 0.16)", color: ACCENT.gold }}>
-        <Icon size={16} />
+      <div className="grid size-7 shrink-0 place-items-center rounded-[9px]" style={{ background: "rgba(228, 198, 138, 0.16)", color: ACCENT.gold }}>
+        <Icon size={13} />
       </div>
-      <div>
-        <p className="font-serif text-[24px] leading-none" style={{ color: "var(--hint-text)" }}>
+      <div className="min-w-0">
+        <p className="font-serif text-[18px] leading-none" style={{ color: "var(--hint-text)" }}>
           {value}
         </p>
-        <p className="font-sans text-[12px]" style={{ color: "var(--hint-muted)" }}>
+        <p className="truncate font-sans text-[10px]" style={{ color: "var(--hint-muted)" }}>
           {label}
         </p>
       </div>

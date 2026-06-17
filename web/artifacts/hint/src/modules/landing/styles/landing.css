@@ -159,6 +159,11 @@ input {
   flex: none;
 }
 
+.hint-site__language {
+  display: inline-flex;
+  flex: none;
+}
+
 .hint-site__theme {
   display: inline-flex;
   align-items: center;
@@ -985,6 +990,20 @@ input {
   .hint-site__actions {
     width: 100%;
     justify-content: space-between;
+    gap: 8px;
+  }
+
+  .hint-site__language {
+    order: 2;
+  }
+
+  .hint-site__theme {
+    order: 1;
+  }
+
+  .hint-site__open {
+    order: 3;
+    padding-inline: 16px;
   }
 
   .hint-site__mini-grid,
