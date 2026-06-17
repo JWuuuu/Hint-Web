@@ -1,0 +1,403 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/app/**",
+              "components/core/**",
+              "components/tarot/**",
+              "prototypes/nightly-checkin/**",
+              "ui_kits/hint-app/**",
+              "ui_kits/hint-app/screens/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Fraunces|Hanken Grotesk))/i]",
+        "message": "Font not provided by the design system. Available: Fraunces, Hanken Grotesk."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|children|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: tone, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:neutral|gold|aqua|rose|soon)$/]",
+        "message": "<Badge> tone must be one of 'neutral' | 'gold' | 'aqua' | 'rose' | 'soon'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|size|fullWidth|iconLeft|iconRight|disabled|href|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, size, fullWidth, iconLeft, iconRight, disabled, href, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='variant'] > Literal[value!=/^(?:primary|gold|secondary|ghost|outline)$/]",
+        "message": "<Button> variant must be one of 'primary' | 'gold' | 'secondary' | 'ghost' | 'outline'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute[name.name='size'] > Literal[value!=/^(?:sm|md|lg)$/]",
+        "message": "<Button> size must be one of 'sm' | 'md' | 'lg'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ChatBubble'] > JSXAttribute > JSXIdentifier[name!=/^(?:role|children|key|ref|className|style|children)$/]",
+        "message": "<ChatBubble> doesn't accept that prop. Declared props: role, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ChatBubble'] > JSXAttribute[name.name='role'] > Literal[value!=/^(?:user|hint)$/]",
+        "message": "<ChatBubble> role must be one of 'user' | 'hint'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Eyebrow'] > JSXAttribute > JSXIdentifier[name!=/^(?:tone|tracking|children|key|ref|className|style|children)$/]",
+        "message": "<Eyebrow> doesn't accept that prop. Declared props: tone, tracking, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Eyebrow'] > JSXAttribute[name.name='tone'] > Literal[value!=/^(?:gold|muted|aqua)$/]",
+        "message": "<Eyebrow> tone must be one of 'gold' | 'muted' | 'aqua'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Eyebrow'] > JSXAttribute[name.name='tracking'] > Literal[value!=/^(?:normal|wide)$/]",
+        "message": "<Eyebrow> tracking must be one of 'normal' | 'wide'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:elevation|glow|radius|padding|children|key|ref|className|style|children)$/]",
+        "message": "<GlassCard> doesn't accept that prop. Declared props: elevation, glow, radius, padding, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute[name.name='elevation'] > Literal[value!=/^(?:soft|card|hero)$/]",
+        "message": "<GlassCard> elevation must be one of 'soft' | 'card' | 'hero'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='GlassCard'] > JSXAttribute[name.name='radius'] > Literal[value!=/^(?:sm|md|lg|xl)$/]",
+        "message": "<GlassCard> radius must be one of 'sm' | 'md' | 'lg' | 'xl'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='LuckyTile'] > JSXAttribute > JSXIdentifier[name!=/^(?:image|value|label|swatch|key|ref|className|style|children)$/]",
+        "message": "<LuckyTile> doesn't accept that prop. Declared props: image, value, label, swatch."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ModuleTile'] > JSXAttribute > JSXIdentifier[name!=/^(?:title|hint|icon|locked|key|ref|className|style|children)$/]",
+        "message": "<ModuleTile> doesn't accept that prop. Declared props: title, hint, icon, locked."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ScoreMeter'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|score|area|layout|key|ref|className|style|children)$/]",
+        "message": "<ScoreMeter> doesn't accept that prop. Declared props: label, score, area, layout."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ScoreMeter'] > JSXAttribute[name.name='area'] > Literal[value!=/^(?:love|wealth|career|study|people|overall)$/]",
+        "message": "<ScoreMeter> area must be one of 'love' | 'wealth' | 'career' | 'study' | 'people' | 'overall'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ScoreMeter'] > JSXAttribute[name.name='layout'] > Literal[value!=/^(?:row|stack)$/]",
+        "message": "<ScoreMeter> layout must be one of 'row' | 'stack'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TarotCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:name|whisper|image|back|width|flipped|onFlip|key|ref|className|style|children)$/]",
+        "message": "<TarotCard> doesn't accept that prop. Declared props: name, whisper, image, back, width, flipped, onFlip."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TarotCard'] > JSXAttribute[name.name='back'] > Literal[value!=/^(?:nocturne|deck)$/]",
+        "message": "<TarotCard> back must be one of 'nocturne' | 'deck'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ThemeToggle'] > JSXAttribute > JSXIdentifier[name!=/^(?:theme|onChange|sunIcon|moonIcon|key|ref|className|style|children)$/]",
+        "message": "<ThemeToggle> doesn't accept that prop. Declared props: theme, onChange, sunIcon, moonIcon."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ThemeToggle'] > JSXAttribute[name.name='theme'] > Literal[value!=/^(?:nocturne|daybreak)$/]",
+        "message": "<ThemeToggle> theme must be one of 'nocturne' | 'daybreak'."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Badge": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "ChatBubble": {
+        "replaces": []
+      },
+      "Eyebrow": {
+        "replaces": []
+      },
+      "GlassCard": {
+        "replaces": []
+      },
+      "LuckyTile": {
+        "replaces": []
+      },
+      "ModuleTile": {
+        "replaces": []
+      },
+      "ScoreMeter": {
+        "replaces": []
+      },
+      "TarotCard": {
+        "replaces": []
+      },
+      "ThemeToggle": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--accent-aqua",
+      "--accent-gold",
+      "--accent-rose",
+      "--app-max",
+      "--bg",
+      "--bg-solid",
+      "--blur-glass",
+      "--blur-veil",
+      "--border",
+      "--border-strong",
+      "--card-surface",
+      "--content-max",
+      "--dur-base",
+      "--dur-quick",
+      "--dur-slow",
+      "--dur-theme",
+      "--ease-flip",
+      "--ease-out",
+      "--font-sans",
+      "--font-serif",
+      "--gold-bloom",
+      "--gold-edge",
+      "--gold-halo",
+      "--gold-line",
+      "--grad-aqua-portal",
+      "--grad-deck",
+      "--grad-ember",
+      "--grad-gold",
+      "--grad-tile",
+      "--halo-soft",
+      "--halo-strong",
+      "--hint-aqua",
+      "--hint-aqua-deep",
+      "--hint-ash",
+      "--hint-ember",
+      "--hint-ember-soft",
+      "--hint-gold",
+      "--hint-gold-bright",
+      "--hint-gold-foil",
+      "--hint-ivory",
+      "--hint-ivory-dim",
+      "--hint-lavender",
+      "--hint-navy-0",
+      "--hint-navy-1",
+      "--hint-navy-2",
+      "--hint-obsidian",
+      "--hint-rose",
+      "--hint-teal-glow",
+      "--input-bg",
+      "--leading-relaxed",
+      "--leading-snug",
+      "--leading-tight",
+      "--nav-height",
+      "--radius-2xl",
+      "--radius-lg",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--radius-xl",
+      "--radius-xs",
+      "--score-career",
+      "--score-ink",
+      "--score-love",
+      "--score-people",
+      "--score-shadow",
+      "--score-study",
+      "--score-wealth",
+      "--shadow-card",
+      "--shadow-elevated",
+      "--shadow-nav",
+      "--shadow-soft",
+      "--space-1",
+      "--space-10",
+      "--space-12",
+      "--space-16",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-8",
+      "--surface",
+      "--surface-soft",
+      "--surface-strong",
+      "--tap-min",
+      "--tarot-ratio",
+      "--text",
+      "--text-faint",
+      "--text-muted",
+      "--text-on-accent",
+      "--text-strong",
+      "--track-eyebrow",
+      "--track-tight",
+      "--track-wide",
+      "--type-body",
+      "--type-body-sm",
+      "--type-card-name",
+      "--type-display",
+      "--type-eyebrow",
+      "--type-label",
+      "--type-meta",
+      "--type-score",
+      "--type-title",
+      "--type-whisper",
+      "--weight-light",
+      "--weight-medium",
+      "--weight-regular",
+      "--weight-semibold"
+    ],
+    "tokenKinds": {
+      "--hint-obsidian": "color",
+      "--hint-navy-0": "color",
+      "--hint-navy-1": "color",
+      "--hint-navy-2": "color",
+      "--hint-ivory": "color",
+      "--hint-ivory-dim": "color",
+      "--hint-ash": "color",
+      "--hint-gold": "color",
+      "--hint-gold-bright": "color",
+      "--hint-gold-foil": "color",
+      "--hint-aqua": "color",
+      "--hint-aqua-deep": "color",
+      "--hint-teal-glow": "color",
+      "--hint-rose": "color",
+      "--hint-lavender": "color",
+      "--hint-ember": "color",
+      "--hint-ember-soft": "color",
+      "--score-love": "color",
+      "--score-wealth": "color",
+      "--score-career": "color",
+      "--score-study": "color",
+      "--score-people": "color",
+      "--bg": "color",
+      "--bg-solid": "color",
+      "--surface": "color",
+      "--surface-soft": "color",
+      "--surface-strong": "color",
+      "--card-surface": "color",
+      "--input-bg": "color",
+      "--text": "font",
+      "--text-strong": "font",
+      "--text-muted": "font",
+      "--text-faint": "font",
+      "--text-on-accent": "font",
+      "--border": "color",
+      "--border-strong": "color",
+      "--gold-edge": "color",
+      "--gold-line": "color",
+      "--accent-gold": "color",
+      "--accent-aqua": "color",
+      "--accent-rose": "color",
+      "--score-ink": "color",
+      "--score-shadow": "shadow",
+      "--font-serif": "font",
+      "--font-sans": "font",
+      "--type-display": "font",
+      "--type-title": "font",
+      "--type-card-name": "font",
+      "--type-whisper": "font",
+      "--type-score": "font",
+      "--type-body": "font",
+      "--type-body-sm": "font",
+      "--type-label": "font",
+      "--type-meta": "font",
+      "--type-eyebrow": "font",
+      "--weight-light": "font",
+      "--weight-regular": "font",
+      "--weight-medium": "font",
+      "--weight-semibold": "font",
+      "--track-eyebrow": "spacing",
+      "--track-wide": "spacing",
+      "--track-tight": "spacing",
+      "--leading-tight": "font",
+      "--leading-snug": "font",
+      "--leading-relaxed": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-8": "spacing",
+      "--space-10": "spacing",
+      "--space-12": "spacing",
+      "--space-16": "spacing",
+      "--radius-xs": "radius",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-lg": "radius",
+      "--radius-xl": "radius",
+      "--radius-2xl": "radius",
+      "--radius-pill": "radius",
+      "--tarot-ratio": "other",
+      "--content-max": "spacing",
+      "--app-max": "spacing",
+      "--nav-height": "spacing",
+      "--tap-min": "spacing",
+      "--shadow-card": "shadow",
+      "--shadow-elevated": "shadow",
+      "--shadow-nav": "shadow",
+      "--shadow-soft": "shadow",
+      "--gold-bloom": "color",
+      "--gold-halo": "shadow",
+      "--halo-soft": "shadow",
+      "--halo-strong": "shadow",
+      "--blur-glass": "other",
+      "--blur-veil": "other",
+      "--grad-ember": "color",
+      "--grad-gold": "color",
+      "--grad-aqua-portal": "color",
+      "--grad-tile": "color",
+      "--grad-deck": "color",
+      "--ease-out": "other",
+      "--ease-flip": "other",
+      "--dur-quick": "other",
+      "--dur-base": "other",
+      "--dur-slow": "other",
+      "--dur-theme": "other"
+    },
+    "fontFamilies": [
+      "Fraunces",
+      "Hanken Grotesk"
+    ]
+  }
+}

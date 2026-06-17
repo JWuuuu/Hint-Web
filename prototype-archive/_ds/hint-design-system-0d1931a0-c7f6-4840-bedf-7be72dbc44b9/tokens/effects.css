@@ -1,0 +1,45 @@
+/* ─────────────────────────────────────────────────────────────
+   HINT · EFFECTS — shadows, glows, gradients, motion
+   Hint's depth comes from frosted glass + warm/cool glows, never
+   hard drop shadows. Gold gets a "bloom" (wide low-opacity halo);
+   aqua scores get a soft teal halo. Backdrop blur is used on nav
+   and inputs. Motion is slow and eased — fades and gentle floats,
+   no bounce.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  /* Elevation — layered inner highlight + soft cast */
+  --shadow-card:     0 18px 44px rgba(0,0,0,0.24), inset 0 1px 0 rgba(255,255,255,0.08);
+  --shadow-elevated: 0 24px 70px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.08);
+  --shadow-nav:      0 18px 44px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.08);
+  --shadow-soft:     0 10px 30px rgba(0,0,0,0.45);
+
+  /* Gold bloom + foil */
+  --gold-bloom:  rgba(255, 220, 160, 0.26);
+  --gold-halo:   0 0 34px rgba(203, 168, 102, 0.18);
+
+  /* Text halos — wide & faint so glyph edges stay crisp */
+  --halo-soft:   0 0 24px rgba(255, 240, 210, 0.10);
+  --halo-strong: 0 0 30px rgba(255, 238, 205, 0.16);
+
+  /* Frosted glass */
+  --blur-glass: blur(24px) saturate(1.22); /* @kind other */
+  --blur-veil:  blur(8px); /* @kind other */
+
+  /* CTA gradients */
+  --grad-ember: linear-gradient(135deg, #EFA260, #F6C28F); /* @kind color */
+  --grad-gold:  linear-gradient(135deg, rgba(228,164,82,1), rgba(242,148,111,0.98)); /* @kind color */
+  --grad-aqua-portal: radial-gradient(circle at 50% 32%, rgba(110,240,224,0.95) 0%, rgba(64,224,208,0.9) 45%, rgba(44,158,150,0.92) 100%); /* @kind color */
+
+  /* Tile gradient (module tiles, deck cards) */
+  --grad-tile: linear-gradient(155deg, #0F1626 0%, #0A0F1A 55%, #060913 100%); /* @kind color */
+  --grad-deck: linear-gradient(160deg, #131D32, #0A0F1C 62%, #080B14); /* @kind color */
+
+  /* Motion — slow, eased, never bouncy */
+  --ease-out:  cubic-bezier(0.45, 0, 0.2, 1); /* @kind other */
+  --ease-flip: cubic-bezier(0.6, 0.05, 0.2, 1); /* @kind other */
+  --dur-quick: 0.42s; /* @kind other */
+  --dur-base:  0.72s; /* @kind other */
+  --dur-slow:  1.2s; /* @kind other */
+  --dur-theme: 1s; /* @kind other */
+}

@@ -1,0 +1,7 @@
+/* Hint webfonts — served from Google Fonts.
+   Fraunces  → serif display (opsz 9–144), weights 400/500/600
+   Hanken Grotesk → sans / UI, weights 300/400/500/600
+   Substitution note: the production app links these exact families from
+   Google Fonts, so no binaries are vendored here. If you need fully offline
+   fonts, drop the .woff2 files into tokens/fonts/ and add @font-face rules. */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap');

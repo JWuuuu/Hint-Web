@@ -1,0 +1,12 @@
+/* ═══════════════════════════════════════════════════════════════
+   HINT DESIGN SYSTEM · global entry
+   Consumers link THIS one file. It only @imports — every token,
+   font-face closure, and base rule is reached from here.
+   ═══════════════════════════════════════════════════════════════ */
+
+@import "./tokens/fonts.css";
+@import "./tokens/colors.css";
+@import "./tokens/typography.css";
+@import "./tokens/spacing.css";
+@import "./tokens/effects.css";
+@import "./tokens/base.css";

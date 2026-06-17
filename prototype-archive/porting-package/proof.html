@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Porting package — visual proof</title>
+
+<!-- REAL Hint design-system tokens (same ones the .dc.html uses) -->
+<link rel="stylesheet" href="../_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/fonts.css">
+<link rel="stylesheet" href="../_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/colors.css">
+<link rel="stylesheet" href="../_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/typography.css">
+<link rel="stylesheet" href="../_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/spacing.css">
+<link rel="stylesheet" href="../_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/effects.css">
+
+<!-- REAL ported CSS from the package (unmodified) -->
+<link rel="stylesheet" href="src/shared/styles/animations.css">
+<link rel="stylesheet" href="src/shared/styles/hint-tokens.css">
+<link rel="stylesheet" href="src/product/collection/rare-card-unlock.css">
+<link rel="stylesheet" href="src/product/daily/daily-energy-score.css">
+<link rel="stylesheet" href="src/product/daily/energy-task.css">
+<link rel="stylesheet" href="src/product/tarot/tarot-room.css">
+<link rel="stylesheet" href="src/product/sky-deck/sky-deck-draw.css">
+
+<style>
+  body { margin: 0; background: #05070e; color: #e9e2d2; font-family: var(--font-sans, system-ui); }
+  .wrap { max-width: 1200px; margin: 0 auto; padding: 40px 24px 80px; }
+  h1 { font-family: var(--font-serif); font-weight: 300; font-size: 30px; letter-spacing: -0.02em; }
+  .note { color: var(--text-faint); font-size: 13px; margin-bottom: 32px; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 20px; }
+  .panel { position: relative; border-radius: 20px; border: 1px solid var(--border); background: var(--surface-strong); min-height: 360px; padding: 24px; overflow: hidden; }
+  .panel.dark { background: radial-gradient(120% 100% at 50% 30%, rgba(8,11,20,0.6), rgba(4,6,12,0.9)); }
+  .tag { position: absolute; top: 12px; left: 12px; z-index: 5; font-size: 10px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase; color: var(--accent-gold); }
+  .center { display: grid; place-items: center; min-height: 320px; }
+  /* render the rcu stage inline (not as fixed overlay) for the proof */
+  .rcu-inline { position: relative; }
+  .rcu-inline .hint-rcu__aura { top: 34%; }
+  .rcu-inline .hint-rcu__ring { top: 34%; }
+</style>
+</head>
+<body data-hint-theme="nocturne">
+<div class="wrap">
+  <h1>Ported components · rendered from the real package CSS</h1>
+  <p class="note">Same DS tokens as Hint&nbsp;Website.dc.html · same keyframes · components shown in their revealed state.</p>
+
+  <div class="grid">
+
+    <!-- RARE CARD UNLOCK (revealed) -->
+    <div class="panel dark">
+      <span class="tag">RareCardUnlock · revealed</span>
+      <div class="rcu-inline center">
+        <div class="hint-rcu__stage is-revealed">
+          <div class="hint-rcu__aura"></div>
+          <span class="hint-rcu__ring hint-rcu__ring--gold"></span>
+          <span class="hint-rcu__ring hint-rcu__ring--aqua"></span>
+          <span class="hint-rcu__eyebrow">Rare card unlocked</span>
+          <div class="hint-rcu__card">
+            <div class="hint-rcu__face hint-rcu__back">
+              <svg width="92" height="92" viewBox="-24 -36 48 72" fill="none" stroke="var(--gold-line)" stroke-width="1.4"><path d="M 0 -28 L 18 0 L 0 28 L -18 0 Z"/><path d="M 0 -15 L 10 0 L 0 15 L -10 0 Z"/><circle cx="0" cy="0" r="2.4" fill="var(--gold-line)"/></svg>
+            </div>
+            <div class="hint-rcu__face hint-rcu__front">
+              <img src="../assets/tarot/19-TheSun.jpg" alt="The Sun">
+              <span class="hint-rcu__shimmer"></span>
+              <span class="hint-rcu__badge">Rare</span>
+            </div>
+          </div>
+          <p class="hint-rcu__name">The Sun</p>
+          <p class="hint-rcu__blurb">Warmth you didn't ask for, arriving anyway.</p>
+          <button class="hint-rcu__cta">Add to collection</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DAILY ENERGY SCORE (filled) -->
+    <div class="panel">
+      <span class="tag">DailyEnergyScore</span>
+      <div class="center">
+        <div class="hint-des">
+          <div class="hint-des__overall">
+            <span class="hint-des__overall-num">78</span>
+            <span class="hint-des__overall-label">Overall tonight</span>
+          </div>
+          <div class="hint-des__rings">
+            <div class="hint-des__ring-wrap"><div class="hint-des__ring" style="--tone:var(--score-love);--hint-ang:295deg"><div class="hint-des__hole"><span class="hint-des__num" style="color:var(--score-love)">82</span></div></div><span class="hint-des__label">Love</span></div>
+            <div class="hint-des__ring-wrap"><div class="hint-des__ring" style="--tone:var(--score-career);--hint-ang:277deg"><div class="hint-des__hole"><span class="hint-des__num" style="color:var(--score-career)">77</span></div></div><span class="hint-des__label">Career</span></div>
+            <div class="hint-des__ring-wrap"><div class="hint-des__ring" style="--tone:var(--score-people);--hint-ang:245deg"><div class="hint-des__hole"><span class="hint-des__num" style="color:var(--score-people)">68</span></div></div><span class="hint-des__label">Emotion</span></div>
+            <div class="hint-des__ring-wrap"><div class="hint-des__ring" style="--tone:var(--score-wealth);--hint-ang:324deg"><div class="hint-des__hole"><span class="hint-des__num" style="color:var(--score-wealth)">90</span></div></div><span class="hint-des__label">Luck</span></div>
+            <div class="hint-des__ring-wrap"><div class="hint-des__ring" style="--tone:var(--score-study);--hint-ang:266deg"><div class="hint-des__hole"><span class="hint-des__num" style="color:var(--score-study)">74</span></div></div><span class="hint-des__label">Energy</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENERGY TASK -->
+    <div class="panel">
+      <span class="tag">EnergyTask</span>
+      <div class="center">
+        <div class="hint-task">
+          <div class="hint-task__head">
+            <span class="hint-task__title">Tonight's ritual</span>
+            <span class="hint-task__moon"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg></span>
+          </div>
+          <ul class="hint-task__list">
+            <li><button class="hint-task__item is-done"><span class="hint-task__check">✓</span><span class="hint-task__label">Drink a glass of water slowly</span></button></li>
+            <li><button class="hint-task__item"><span class="hint-task__check"></span><span class="hint-task__label">Reply to one message you've avoided</span></button></li>
+            <li><button class="hint-task__item"><span class="hint-task__check"></span><span class="hint-task__label">Step outside for three slow breaths</span></button></li>
+          </ul>
+          <div class="hint-task__reward">
+            <span class="hint-task__reward-img"><img src="../assets/lucky/lavender.png" alt=""></span>
+            <div><p class="hint-task__reward-top">Finish to earn</p><p class="hint-task__reward-amt">+20 XP · New moon badge</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAROT ROOM -->
+    <div class="panel">
+      <span class="tag">TarotRoom</span>
+      <div class="center">
+        <div class="hint-room">
+          <div class="hint-room__glow"></div>
+          <div class="hint-room__portal">
+            <div class="hint-room__head">
+              <span class="hint-room__orb"></span>
+              <div><p class="hint-room__title">Tarot Room</p><p class="hint-room__status">listening · just now</p></div>
+            </div>
+            <div class="hint-room__thread">
+              <div class="hint-room__bubble hint-room__bubble--user">I keep avoiding a message I should send. Why?</div>
+              <div class="hint-room__bubble hint-room__bubble--hint">Something you said earlier this week is still standing in the room. You already know the shape of it — you just haven't named it out loud.</div>
+            </div>
+            <div class="hint-room__input">
+              <input placeholder="Say it, or just sit with it…">
+              <button>↑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

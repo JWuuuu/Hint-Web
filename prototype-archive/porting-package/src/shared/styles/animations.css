@@ -1,0 +1,82 @@
+/* ───────────────────────────────────────────────────────────────
+   Hint · shared animation keyframes
+   Global, reusable. Import ONCE near your app root:
+       import "@/shared/styles/animations.css";
+   Every feature CSS file references these by name.
+   All motion is gated by prefers-reduced-motion at the bottom.
+   ─────────────────────────────────────────────────────────────── */
+
+/* Registered angle property so a conic-gradient ring can be animated
+   (the Daily Energy Score rings fill from 0deg → their value).        */
+@property --hint-ang {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes hint-ring-fill {
+  from { --hint-ang: 0deg; }
+  to   { --hint-ang: var(--ring-deg, 0deg); }
+}
+
+/* The rare-unlock shock rings: scale out from the card and fade. */
+@keyframes hint-burst {
+  0%   { transform: scale(0.4); opacity: 0; }
+  35%  { opacity: 1; }
+  100% { transform: scale(2.6); opacity: 0; }
+}
+
+/* Wide radial aura breathing behind a hero card. */
+@keyframes hint-aura {
+  0%, 100% { transform: scale(1);    opacity: 0.55; }
+  50%      { transform: scale(1.12); opacity: 0.9; }
+}
+
+/* Gentle vertical float for floating cards / panels. */
+@keyframes hint-float-y {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-18px); }
+}
+@keyframes hint-float-y2 {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50%      { transform: translateY(-30px) rotate(2deg); }
+}
+
+/* Slow rotating sigil rings. */
+@keyframes hint-spin { to { transform: rotate(360deg); } }
+
+/* Starfield / spark twinkle. */
+@keyframes hint-twinkle {
+  0%, 100% { opacity: 0.25; }
+  50%      { opacity: 1; }
+}
+
+/* Streak ring pulse. */
+@keyframes hint-glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(230, 203, 142, 0); }
+  50%      { box-shadow: 0 0 30px 4px rgba(230, 203, 142, 0.35); }
+}
+
+/* Content rise-in (used by scroll/enter reveals). */
+@keyframes hint-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes hint-reveal {
+  from { opacity: 0; transform: translateY(34px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Foil shimmer sweep across a rare card front. */
+@keyframes hint-shimmer {
+  0%   { background-position: -180% 0; }
+  100% { background-position: 180% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /* Neutralise every Hint animation; components also check the hook. */
+  [class*="hint-"] {
+    animation: none !important;
+    transition-duration: 0.001ms !important;
+  }
+}

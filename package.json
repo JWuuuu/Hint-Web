@@ -1,0 +1,11 @@
+{
+  "name": "hint-web",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --dir app dev:web",
+    "build": "pnpm --dir app build:web",
+    "typecheck": "pnpm --dir app typecheck:web",
+    "serve": "pnpm --dir app serve:web"
+  }
+}

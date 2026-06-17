@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Living Night Sky — background</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { background: #05070d; color: #F4EEE0; font-family: system-ui, sans-serif; }
+
+  /* ── fixed living sky behind everything ──────────────────────────────── */
+  .scene { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+
+  /* twinkling, parallaxing starfield (drawn on canvas) */
+  #stars { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* soft colored nebula wash */
+  .aurora {
+    position: absolute; inset: -20% -10% 0 -10%;
+    background:
+      radial-gradient(46% 40% at 78% 8%, rgba(28,64,92,0.5), transparent 60%),
+      radial-gradient(50% 46% at 12% 86%, rgba(40,28,66,0.5), transparent 60%),
+      radial-gradient(40% 34% at 60% 60%, rgba(20,52,58,0.36), transparent 62%);
+    filter: blur(8px); will-change: transform;
+  }
+
+  /* the moon */
+  .moon {
+    position: absolute; top: 7vh; right: 9vw; width: 224px; height: 224px; border-radius: 50%;
+    background: radial-gradient(circle at 38% 36%, #efe6cf 0%, #b9ac8a 40%, #574f3d 74%, #211f1b 100%);
+    box-shadow: 0 0 70px 16px rgba(214,180,104,0.12), inset -22px -18px 48px rgba(0,0,0,0.55);
+    opacity: 0.3; will-change: transform;
+  }
+  .moon::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background:
+      radial-gradient(7px 7px at 60% 40%, rgba(0,0,0,0.16), transparent 70%),
+      radial-gradient(11px 11px at 44% 62%, rgba(0,0,0,0.14), transparent 70%),
+      radial-gradient(5px 5px at 70% 66%, rgba(0,0,0,0.12), transparent 70%);
+  }
+
+  /* fine film grain */
+  .grain {
+    position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* darkened edges */
+  .vignette { position: absolute; inset: 0; box-shadow: inset 0 0 280px rgba(0,0,0,0.7), inset 0 0 90px rgba(0,0,0,0.4); }
+
+  /* ── your content sits above the sky ─────────────────────────────────── */
+  .content { position: relative; z-index: 1; min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 24px; }
+  .content h1 { font-size: clamp(40px, 8vw, 96px); font-weight: 400; letter-spacing: -0.02em; margin: 0; }
+</style>
+</head>
+<body>
+  <!-- The background. Drop this block into any page. -->
+  <div class="scene">
+    <canvas id="stars"></canvas>
+    <div class="aurora" id="aurora"></div>
+    <div class="moon" id="moon"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <!-- demo content — replace with your own -->
+  <main class="content">
+    <h1>The night already knows.</h1>
+  </main>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── starfield ─────────────────────────────────────────────────────── */
+  var canvas = document.getElementById("stars"), ctx = canvas.getContext("2d");
+  var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2), stars = [];
+
+  function resize() {
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var count = Math.round((W * H) / 5200); stars = [];           // density
+    for (var i = 0; i < count; i++) {
+      var d = Math.random();                                       // 0..1 depth
+      stars.push({
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.3 + d * 1.5,            // size scales with depth
+        depth: 0.2 + d * 0.8,        // parallax strength
+        base: 0.25 + Math.random() * 0.6,   // base brightness
+        tw: Math.random() * Math.PI * 2,    // twinkle phase
+        sp: 0.6 + Math.random() * 1.4,      // twinkle speed
+        gold: Math.random() < 0.16          // ~16% are warm/gold stars
+      });
+    }
+  }
+  window.addEventListener("resize", resize); resize();
+
+  /* draw one static frame immediately (shows even if rAF is throttled) */
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.gold ? "rgba(230,200,140," + s.base + ")" : "rgba(245,240,228," + s.base + ")";
+      ctx.fill();
+    }
+  }
+  drawStatic();
+
+  /* ── pointer + scroll state (lerped for smoothness) ─────────────────── */
+  var pt = { x: 0.5, y: 0.5 }, cur = { x: 0.5, y: 0.5 };
+  window.addEventListener("pointermove", function (e) {
+    pt.x = e.clientX / window.innerWidth; pt.y = e.clientY / window.innerHeight;
+  });
+  var aurora = document.getElementById("aurora"), moon = document.getElementById("moon");
+  var t0 = performance.now(), scrollY = 0;
+  window.addEventListener("scroll", function () { scrollY = window.scrollY || window.pageYOffset; }, { passive: true });
+
+  /* ── animation loop ────────────────────────────────────────────────── */
+  function frame(now) {
+    var t = (now - t0) / 1000;
+    cur.x += (pt.x - cur.x) * 0.06; cur.y += (pt.y - cur.y) * 0.06;   // ease toward cursor
+    var dx = cur.x - 0.5, dy = cur.y - 0.5;
+
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < stars.length; i++) {
+      var s = stars[i];
+      var tw = reduce ? s.base : s.base * (0.55 + 0.45 * Math.sin(s.tw + t * s.sp)); // twinkle
+      var px = s.x - dx * 60 * s.depth;                                              // cursor parallax X
+      var py = s.y - dy * 60 * s.depth - (scrollY * 0.02 * s.depth)                  // cursor + scroll parallax Y
+             + (reduce ? 0 : Math.sin(t * 0.15 + s.depth * 6) * 2);                  // slow drift
+      py = ((py % H) + H) % H;                                                       // wrap vertically
+      ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.gold ? "rgba(230,200,140," + tw + ")" : "rgba(245,240,228," + tw + ")";
+      ctx.fill();
+    }
+
+    if (aurora) aurora.style.transform = "translate(" + (-dx * 26) + "px," + (-dy * 20 - scrollY * 0.05 + (reduce ? 0 : Math.sin(t * 0.2) * 6)) + "px)";
+    if (moon)   moon.style.transform   = "translate(" + (-dx * 40) + "px," + (-dy * 30 + scrollY * 0.08 - (reduce ? 0 : Math.sin(t * 0.25) * 8)) + "px)";
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

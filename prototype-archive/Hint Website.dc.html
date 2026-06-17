@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/fonts.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/colors.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/typography.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/spacing.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/effects.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/tokens/base.css">
+  <link rel="stylesheet" href="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/styles.css">
+  <script src="_ds/hint-design-system-0d1931a0-c7f6-4840-bedf-7be72dbc44b9/_ds_bundle.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+    ::selection { background: rgba(203,168,102,0.30); color: #FCF8EE; }
+    @keyframes hintTwinkle { 0%,100% { opacity: .25; } 50% { opacity: 1; } }
+    @keyframes hintFloatY { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-18px); } }
+    @keyframes hintFloatY2 { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-30px) rotate(2deg); } }
+    @keyframes hintDrift { 0% { transform: translate(0,0); } 50% { transform: translate(40px,-26px); } 100% { transform: translate(0,0); } }
+    @keyframes hintAura { 0%,100% { transform: scale(1); opacity: .55; } 50% { transform: scale(1.12); opacity: .9; } }
+    @keyframes hintSpin { to { transform: rotate(360deg); } }
+    @keyframes hintShimmer { 0% { background-position: -180% 0; } 100% { background-position: 180% 0; } }
+    @keyframes hintRise { from { opacity: 0; transform: translateY(34px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes hintReveal { from { opacity: 0; transform: translateY(40px) scale(.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+    @keyframes hintScrollDot { 0% { transform: translateY(0); opacity: 0; } 30% { opacity: 1; } 100% { transform: translateY(16px); opacity: 0; } }
+    @keyframes hintBurst { 0% { transform: scale(.4); opacity: 0; } 35% { opacity: 1; } 100% { transform: scale(2.6); opacity: 0; } }
+    @keyframes hintGrow { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+    @keyframes hintFlame { 0%,100% { transform: scaleY(1) translateY(0); opacity: 1; } 50% { transform: scaleY(1.18) translateY(-2px); opacity: .82; } }
+    @keyframes hintSpark { 0% { transform: translate(0,0) scale(0); opacity: 1; } 100% { opacity: 0; } }
+    @keyframes hintGlowPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(230,203,142,0); } 50% { box-shadow: 0 0 30px 4px rgba(230,203,142,0.35); } }
+    @property --car-d { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
+    @keyframes ringFill { from { --car-d: 0deg; } to { --car-d: var(--ring-deg); } }
+    @keyframes hintFadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: none; } }
+    [data-reveal] { animation: hintReveal both linear; animation-timeline: view(); animation-range: entry 2% cover 26%; }
+    @media (prefers-reduced-motion: reduce) {
+      *, [data-reveal] { animation: none !important; scroll-behavior: auto; }
+      [data-reveal] { opacity: 1 !important; transform: none !important; }
+    }
+  </style>
+</helmet>
+<div data-hint-theme="{{ theme }}" style="position: relative; min-height: 100vh; width: 100%; overflow-x: clip; background: var(--bg-solid); color: var(--text); font-family: var(--font-sans); transition: background .9s var(--ease-out), color .9s var(--ease-out);">
+
+  <!-- ░░ LIVING SKY — fixed atmosphere behind everything ░░ -->
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; background: var(--bg); transition: background 1s var(--ease-out);"></div>
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(680px 460px at 80% -4%, rgba(64,160,180,0.16), transparent 60%), radial-gradient(560px 520px at 8% 102%, rgba(120,80,170,0.16), transparent 58%);"></div>
+  <div ref="{{ starRef }}" aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none;"></div>
+  <div aria-hidden="true" style="position: fixed; top: -12%; right: -6%; width: 360px; height: 360px; z-index: 0; pointer-events: none; border-radius: 50%; background: radial-gradient(circle at 38% 38%, rgba(246,224,180,0.22), rgba(203,168,102,0.06) 46%, transparent 70%); filter: blur(8px); animation: hintFloatY2 18s var(--ease-out) infinite;"></div>
+  <div aria-hidden="true" style="position: fixed; inset: 0; z-index: 0; pointer-events: none; background: radial-gradient(120% 90% at 50% 0%, transparent 58%, rgba(4,6,12,0.55) 100%);"></div>
+
+  <!-- ░░ STICKY NAV ░░ -->
+  <header ref="{{ navRef }}" style="position: sticky; top: 0; z-index: 60; display: flex; justify-content: center; padding: 16px clamp(16px, 4vw, 40px); transition: padding .4s var(--ease-out);">
+    <nav style="width: 100%; max-width: 1180px; display: flex; align-items: center; justify-content: space-between; gap: 18px; height: 60px; padding: 0 12px 0 18px; border-radius: var(--radius-pill); border: 1px solid var(--border); background: var(--surface); backdrop-filter: blur(24px) saturate(1.22); -webkit-backdrop-filter: blur(24px) saturate(1.22); box-shadow: var(--shadow-nav);">
+      <a href="#top" style="display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--text);">
+        <img src="assets/brand/hint-cardmark-logo.png" alt="Hint" width="30" height="30" style="display: block; border-radius: 7px;">
+        <span style="font-family: var(--font-serif); font-size: 21px; font-weight: 600; letter-spacing: -0.01em;">Hint</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 4px; font-size: 13px;">
+        <a href="#how" style="padding: 8px 14px; border-radius: 999px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color .2s, background .2s;" onMouseEnter="{{ navHover }}" onMouseLeave="{{ navLeave }}">How it works</a>
+        <a href="#reading" style="padding: 8px 14px; border-radius: 999px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color .2s, background .2s;" onMouseEnter="{{ navHover }}" onMouseLeave="{{ navLeave }}">Reading</a>
+        <a href="#score" style="padding: 8px 14px; border-radius: 999px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color .2s, background .2s;" onMouseEnter="{{ navHover }}" onMouseLeave="{{ navLeave }}">Daily score</a>
+        <a href="#rewards" style="padding: 8px 14px; border-radius: 999px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color .2s, background .2s;" onMouseEnter="{{ navHover }}" onMouseLeave="{{ navLeave }}">Rewards</a>
+        <a href="#pricing" style="padding: 8px 14px; border-radius: 999px; color: var(--text-muted); text-decoration: none; font-weight: 500; transition: color .2s, background .2s;" onMouseEnter="{{ navHover }}" onMouseLeave="{{ navLeave }}">Pricing</a>
+      </div>
+      <div style="display: flex; align-items: center; gap: 10px;">
+        <button type="button" onClick="{{ toggleTheme }}" aria-label="Toggle day and night" style="display: inline-flex; align-items: center; gap: 4px; height: 38px; padding: 4px; border-radius: 999px; border: 1px solid var(--border); background: var(--input-bg); cursor: pointer;">
+          <span style="display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; background: {{ sunBg }}; color: {{ sunInk }}; transition: all .5s var(--ease-out);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"></circle><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"></path></svg></span>
+          <span style="display: grid; place-items: center; width: 30px; height: 30px; border-radius: 999px; background: {{ moonBg }}; color: {{ moonInk }}; transition: all .5s var(--ease-out);"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></span>
+        </button>
+        <a href="#cta" style="display: inline-flex; align-items: center; height: 40px; padding: 0 20px; border-radius: 999px; font-size: 13.5px; font-weight: 600; text-decoration: none; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 12px 26px rgba(241,166,107,0.22); transition: transform .18s var(--ease-out), filter .18s;" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}">Open Hint</a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- ░░ MAIN ░░ -->
+  <main id="top" style="position: relative; z-index: 1;">
+
+    <!-- ═══ HERO · FEATURE CAROUSEL ═══ -->
+    <div style="max-width: 1180px; margin: 0 auto; padding: clamp(34px,6vw,74px) clamp(20px,5vw,40px) 0; text-align: center;">
+      <div style="display: inline-flex; align-items: center; gap: 9px; padding: 7px 15px 7px 11px; border-radius: 999px; border: 1px solid var(--gold-edge); background: rgba(203,168,102,0.08); margin-bottom: 22px;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background: var(--hint-aqua); box-shadow: 0 0 10px var(--hint-aqua);"></span>
+        <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-gold);">Inside Hint</span>
+      </div>
+      <h1 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(34px, 5.2vw, 62px); line-height: 1.04; letter-spacing: -0.02em; margin: 0 auto 18px; max-width: 16ch; color: var(--text-strong); text-shadow: var(--halo-soft); text-wrap: balance;">Five doorways into <span style="font-style: italic; color: var(--accent-gold);">the night.</span></h1>
+      <p style="max-width: 34rem; margin: 0 auto; font-size: clamp(15px,1.6vw,17.5px); line-height: 1.6; color: var(--text-muted);">Tarot, a private room, your daily energy — drift through what Hint opens for you each evening.</p>
+    </div>
+
+    <section style="max-width: 1180px; margin: 0 auto; padding: clamp(24px,4vw,38px) clamp(16px,4vw,40px) clamp(18px,3vw,26px);">
+      <div ref="{{ carRef }}" onMouseEnter="{{ carPause }}" onMouseLeave="{{ carResume }}" style="position: relative; border-radius: var(--radius-2xl); border: 1px solid var(--border); background: var(--surface-strong); box-shadow: var(--shadow-elevated); overflow: hidden;">
+        <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; z-index: 1; background: radial-gradient(560px 380px at 84% 6%, rgba(134,214,199,0.10), transparent 62%), radial-gradient(520px 420px at 8% 100%, rgba(203,166,196,0.12), transparent 60%);"></div>
+
+        <!-- top bar -->
+        <div style="position: relative; z-index: 3; display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px clamp(20px,4vw,40px) 0;">
+          <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint);">Feature tour</span>
+          <span data-car-count style="font-family: var(--font-serif); font-size: 14px; color: var(--accent-gold); white-space: nowrap;">01 · Animal Tarot</span>
+        </div>
+        <!-- story progress segments -->
+        <div style="position: relative; z-index: 3; display: flex; gap: 8px; padding: 13px clamp(20px,4vw,40px) 0;">
+          <button type="button" data-car-dot="0" aria-label="Slide 1" style="flex: 1; height: 4px; padding: 0; border: none; border-radius: 999px; overflow: hidden; cursor: pointer; background: color-mix(in srgb, var(--border) 70%, transparent);"><span data-car-fill style="display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; border-radius: 999px; background: var(--grad-gold); transition: transform .1s linear;"></span></button>
+          <button type="button" data-car-dot="1" aria-label="Slide 2" style="flex: 1; height: 4px; padding: 0; border: none; border-radius: 999px; overflow: hidden; cursor: pointer; background: color-mix(in srgb, var(--border) 70%, transparent);"><span data-car-fill style="display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; border-radius: 999px; background: var(--grad-gold); transition: transform .1s linear;"></span></button>
+          <button type="button" data-car-dot="2" aria-label="Slide 3" style="flex: 1; height: 4px; padding: 0; border: none; border-radius: 999px; overflow: hidden; cursor: pointer; background: color-mix(in srgb, var(--border) 70%, transparent);"><span data-car-fill style="display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; border-radius: 999px; background: var(--grad-gold); transition: transform .1s linear;"></span></button>
+          <button type="button" data-car-dot="3" aria-label="Slide 4" style="flex: 1; height: 4px; padding: 0; border: none; border-radius: 999px; overflow: hidden; cursor: pointer; background: color-mix(in srgb, var(--border) 70%, transparent);"><span data-car-fill style="display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; border-radius: 999px; background: var(--grad-gold); transition: transform .1s linear;"></span></button>
+          <button type="button" data-car-dot="4" aria-label="Slide 5" style="flex: 1; height: 4px; padding: 0; border: none; border-radius: 999px; overflow: hidden; cursor: pointer; background: color-mix(in srgb, var(--border) 70%, transparent);"><span data-car-fill style="display: block; height: 100%; width: 100%; transform: scaleX(0); transform-origin: left; border-radius: 999px; background: var(--grad-gold); transition: transform .1s linear;"></span></button>
+        </div>
+
+        <!-- viewport -->
+        <div data-car-vp style="position: relative; z-index: 2; overflow: hidden; margin-top: 6px; cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none;">
+          <div data-car-track style="display: flex; flex-wrap: nowrap; will-change: transform;">
+
+            <!-- ░ SLIDE 1 · ANIMAL TAROT ░ -->
+            <div data-car-slide style="flex: 0 0 100%; width: 100%; min-width: 100%; box-sizing: border-box; position: relative; padding: clamp(30px,4vw,52px) clamp(28px,9vw,92px); display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: clamp(22px,4vw,52px); align-items: center;">
+              <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(620px 420px at 80% 20%, rgba(72,150,170,0.16), transparent 60%);"></div>
+              <div style="position: relative;">
+                <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-aqua);">Animal tarot</span>
+                <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3.3vw,42px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">Meet the creature that walks the night with you.</h2>
+                <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">Every reader carries an animal spirit. Hint draws yours from your chart — a quiet companion for the dark hours, with its own card and counsel.</p>
+                <a href="#cta" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; text-decoration: none; font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 16px 32px rgba(241,166,107,0.24); transition: transform .2s var(--ease-out), filter .2s;">Explore Animal Tarot<span style="font-size: 16px;">→</span></a>
+              </div>
+              <div style="position: relative; display: grid; place-items: center; min-height: 320px;">
+                <div aria-hidden="true" style="position: absolute; width: 280px; height: 280px; border-radius: 50%; background: radial-gradient(circle, rgba(134,214,199,0.22), transparent 62%); filter: blur(12px); animation: hintAura 7s var(--ease-out) infinite;"></div>
+                <div aria-hidden="true" style="position: absolute; width: 250px; height: 250px; border-radius: 50%; border: 1px solid var(--gold-edge); opacity: .5; animation: hintSpin 46s linear infinite;"></div>
+                <div style="position: relative; width: clamp(176px,40vw,212px); aspect-ratio: 46/71; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold-edge); box-shadow: var(--shadow-elevated), 0 0 42px rgba(134,214,199,0.28); animation: hintFloatY 6.5s var(--ease-out) infinite;">
+                  <img src="assets/tarot/18-TheMoon.jpg" alt="The Moon — animal spirit" draggable="false" style="width: 100%; height: 100%; object-fit: cover;">
+                  <span style="position: absolute; top: 11px; left: 11px; display: inline-flex; align-items: center; height: 22px; padding: 0 10px; border-radius: 999px; font-family: var(--font-sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #231D2A; background: var(--grad-gold); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">Spirit</span>
+                </div>
+                <span aria-hidden="true" style="position: absolute; top: 14%; left: 16%; width: 5px; height: 5px; border-radius: 50%; background: var(--hint-aqua); box-shadow: 0 0 10px var(--hint-aqua); animation: hintFloatY2 9s var(--ease-out) infinite;"></span>
+                <span aria-hidden="true" style="position: absolute; bottom: 18%; right: 18%; width: 4px; height: 4px; border-radius: 50%; background: var(--hint-gold); box-shadow: var(--gold-halo); animation: hintFloatY 7.5s var(--ease-out) .6s infinite;"></span>
+              </div>
+            </div>
+
+            <!-- ░ SLIDE 2 · TAROT ROOM ░ -->
+            <div data-car-slide style="flex: 0 0 100%; width: 100%; min-width: 100%; box-sizing: border-box; position: relative; padding: clamp(30px,4vw,52px) clamp(28px,9vw,92px); display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: clamp(22px,4vw,52px); align-items: center;">
+              <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(620px 440px at 82% 30%, rgba(150,96,160,0.16), transparent 60%), radial-gradient(420px 320px at 70% 96%, rgba(241,166,107,0.10), transparent 64%);"></div>
+              <div style="position: relative;">
+                <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hint-rose);">Tarot room</span>
+                <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3.3vw,42px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">A candlelit room that only opens for you.</h2>
+                <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">Step inside a private space where the cards are laid slowly and an unhurried voice reads them with you. No feed, no noise — just the room, listening.</p>
+                <a href="#cta" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; text-decoration: none; font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 16px 32px rgba(241,166,107,0.24); transition: transform .2s var(--ease-out), filter .2s;">Enter Tarot Room<span style="font-size: 16px;">→</span></a>
+              </div>
+              <div style="position: relative; display: grid; place-items: center; min-height: 320px;">
+                <div aria-hidden="true" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(203,166,196,0.20), transparent 64%); filter: blur(14px); animation: hintAura 8s var(--ease-out) infinite;"></div>
+                <div style="position: relative; width: clamp(210px,46vw,258px); height: clamp(260px,52vw,322px); border-radius: 142px 142px 26px 26px; overflow: hidden; border: 1px solid var(--gold-edge); box-shadow: inset 0 0 70px rgba(0,0,0,0.55), var(--shadow-elevated), 0 0 50px rgba(203,166,196,0.22); animation: hintFloatY 7.5s var(--ease-out) infinite;">
+                  <img src="assets/tarot/02-TheHighPriestess.jpg" alt="Inside the Tarot Room" draggable="false" style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0.92;">
+                  <div aria-hidden="true" style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(8,11,20,0.10) 0%, rgba(8,11,20,0.0) 40%, rgba(241,166,107,0.16) 100%);"></div>
+                  <div aria-hidden="true" style="position: absolute; left: 50%; bottom: -8%; transform: translateX(-50%); width: 60%; height: 120px; background: radial-gradient(circle at 50% 100%, rgba(246,194,143,0.5), transparent 70%); filter: blur(8px);"></div>
+                  <div aria-hidden="true" style="position: absolute; top: 14px; left: 50%; transform: translateX(-50%); width: 54%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold-line), transparent);"></div>
+                </div>
+                <span aria-hidden="true" style="position: absolute; bottom: 16%; left: 20%; width: 4px; height: 4px; border-radius: 50%; background: var(--hint-ember); box-shadow: 0 0 10px var(--hint-ember); animation: hintFloatY2 8s var(--ease-out) infinite;"></span>
+                <span aria-hidden="true" style="position: absolute; top: 20%; right: 18%; width: 4px; height: 4px; border-radius: 50%; background: var(--hint-gold); box-shadow: var(--gold-halo); animation: hintFloatY 6.5s var(--ease-out) .8s infinite;"></span>
+              </div>
+            </div>
+
+            <!-- ░ SLIDE 3 · DAILY ENERGY SCORE ░ -->
+            <div data-car-slide style="flex: 0 0 100%; width: 100%; min-width: 100%; box-sizing: border-box; position: relative; padding: clamp(30px,4vw,52px) clamp(28px,9vw,92px); display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: clamp(22px,4vw,52px); align-items: center;">
+              <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px 420px at 82% 26%, rgba(206,178,110,0.13), transparent 60%);"></div>
+              <div style="position: relative;">
+                <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold);">Daily energy score</span>
+                <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3.3vw,42px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">Read where the day left your energy.</h2>
+                <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">Hint scores five currents — love, career, emotion, luck and energy — from tonight's sky and your chart. A gentle read, never a grade.</p>
+                <a href="#score" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; text-decoration: none; font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 16px 32px rgba(241,166,107,0.24); transition: transform .2s var(--ease-out), filter .2s;">View Daily Score<span style="font-size: 16px;">→</span></a>
+              </div>
+              <div style="position: relative; display: flex; flex-wrap: wrap; justify-content: center; gap: 16px 18px;">
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                  <div style="--ring-deg: 295deg; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-love) var(--car-d), color-mix(in srgb, var(--border) 60%, transparent) 0deg); animation: ringFill 1.3s var(--ease-out) both;"><div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface-strong); display: grid; place-items: center;"><span style="font-family: var(--font-serif); font-size: 20px; color: var(--score-love); font-variant-numeric: tabular-nums;">82</span></div></div>
+                  <span style="font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint);">Love</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                  <div style="--ring-deg: 277deg; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-career) var(--car-d), color-mix(in srgb, var(--border) 60%, transparent) 0deg); animation: ringFill 1.3s var(--ease-out) .08s both;"><div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface-strong); display: grid; place-items: center;"><span style="font-family: var(--font-serif); font-size: 20px; color: var(--score-career); font-variant-numeric: tabular-nums;">77</span></div></div>
+                  <span style="font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint);">Career</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                  <div style="--ring-deg: 245deg; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-people) var(--car-d), color-mix(in srgb, var(--border) 60%, transparent) 0deg); animation: ringFill 1.3s var(--ease-out) .16s both;"><div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface-strong); display: grid; place-items: center;"><span style="font-family: var(--font-serif); font-size: 20px; color: var(--score-people); font-variant-numeric: tabular-nums;">68</span></div></div>
+                  <span style="font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint);">Emotion</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                  <div style="--ring-deg: 324deg; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-wealth) var(--car-d), color-mix(in srgb, var(--border) 60%, transparent) 0deg); animation: ringFill 1.3s var(--ease-out) .24s both;"><div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface-strong); display: grid; place-items: center;"><span style="font-family: var(--font-serif); font-size: 20px; color: var(--score-wealth); font-variant-numeric: tabular-nums;">90</span></div></div>
+                  <span style="font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint);">Luck</span>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: center; gap: 9px;">
+                  <div style="--ring-deg: 266deg; width: 76px; height: 76px; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-study) var(--car-d), color-mix(in srgb, var(--border) 60%, transparent) 0deg); animation: ringFill 1.3s var(--ease-out) .32s both;"><div style="width: 60px; height: 60px; border-radius: 50%; background: var(--surface-strong); display: grid; place-items: center;"><span style="font-family: var(--font-serif); font-size: 20px; color: var(--score-study); font-variant-numeric: tabular-nums;">74</span></div></div>
+                  <span style="font-size: 11px; letter-spacing: 0.04em; color: var(--text-faint);">Energy</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ░ SLIDE 4 · DAILY TAROT ░ -->
+            <div data-car-slide style="flex: 0 0 100%; width: 100%; min-width: 100%; box-sizing: border-box; position: relative; padding: clamp(30px,4vw,52px) clamp(28px,9vw,92px); display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: clamp(22px,4vw,52px); align-items: center;">
+              <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px 420px at 80% 24%, rgba(230,203,142,0.14), transparent 60%);"></div>
+              <div style="position: relative;">
+                <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold);">Daily tarot</span>
+                <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3.3vw,42px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">One card, turned fresh for tonight.</h2>
+                <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">Each evening a single card surfaces from the day's sky, with a short read to carry to sleep. Your whole reading waits a scroll away.</p>
+                <a href="#score" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; text-decoration: none; font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 16px 32px rgba(241,166,107,0.24); transition: transform .2s var(--ease-out), filter .2s;">See Today's Reading<span style="font-size: 16px;">→</span></a>
+              </div>
+              <div style="position: relative; display: grid; place-items: center; min-height: 320px;">
+                <div aria-hidden="true" style="position: absolute; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(230,203,142,0.18), transparent 62%); filter: blur(13px); animation: hintAura 7.5s var(--ease-out) infinite;"></div>
+                <div aria-hidden="true" style="position: absolute; width: clamp(150px,34vw,182px); aspect-ratio: 46/71; border-radius: 14px; border: 1px solid var(--gold-edge); background: var(--grad-deck); transform: translateX(-46%) rotate(-15deg); box-shadow: var(--shadow-card); display: grid; place-items: center;"><svg width="46%" height="46%" viewBox="-24 -36 48 72" fill="none" stroke="var(--gold-line)" stroke-width="1.4"><path d="M 0 -28 L 18 0 L 0 28 L -18 0 Z"></path><path d="M 0 -15 L 10 0 L 0 15 L -10 0 Z"></path><circle cx="0" cy="0" r="2.4" fill="var(--gold-line)"></circle></svg></div>
+                <div aria-hidden="true" style="position: absolute; width: clamp(150px,34vw,182px); aspect-ratio: 46/71; border-radius: 14px; border: 1px solid var(--gold-edge); background: var(--grad-deck); transform: translateX(46%) rotate(15deg); box-shadow: var(--shadow-card); display: grid; place-items: center;"><svg width="46%" height="46%" viewBox="-24 -36 48 72" fill="none" stroke="var(--gold-line)" stroke-width="1.4"><path d="M 0 -28 L 18 0 L 0 28 L -18 0 Z"></path><path d="M 0 -15 L 10 0 L 0 15 L -10 0 Z"></path><circle cx="0" cy="0" r="2.4" fill="var(--gold-line)"></circle></svg></div>
+                <div style="position: relative; width: clamp(168px,38vw,200px); aspect-ratio: 46/71; border-radius: 16px; overflow: hidden; border: 1px solid var(--gold-edge); box-shadow: var(--shadow-elevated), 0 0 40px rgba(230,203,142,0.3); animation: hintFloatY 6.5s var(--ease-out) infinite;">
+                  <img src="assets/tarot/21-TheWorld.jpg" alt="Today's card — The World" draggable="false" style="width: 100%; height: 100%; object-fit: cover;">
+                  <span style="position: absolute; bottom: 11px; left: 50%; transform: translateX(-50%); display: inline-flex; align-items: center; height: 22px; padding: 0 11px; border-radius: 999px; font-family: var(--font-sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #231D2A; background: var(--grad-gold); white-space: nowrap; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">Today</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- ░ SLIDE 5 · ENERGY TASK ░ -->
+            <div data-car-slide style="flex: 0 0 100%; width: 100%; min-width: 100%; box-sizing: border-box; position: relative; padding: clamp(30px,4vw,52px) clamp(28px,9vw,92px); display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: clamp(22px,4vw,52px); align-items: center;">
+              <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(600px 420px at 82% 28%, rgba(110,180,160,0.14), transparent 60%);"></div>
+              <div style="position: relative;">
+                <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-aqua);">Energy task</span>
+                <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3.3vw,42px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">One small ritual to settle the night.</h2>
+                <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">A gentle thing to try, matched to your reading. Finish it and the night gives a little back — a fragment of XP, a step on your streak.</p>
+                <a href="#cta" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; text-decoration: none; font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-ember); box-shadow: 0 16px 32px rgba(241,166,107,0.24); transition: transform .2s var(--ease-out), filter .2s;">Start Energy Task<span style="font-size: 16px;">→</span></a>
+              </div>
+              <div style="position: relative; display: grid; place-items: center;">
+                <div aria-hidden="true" style="position: absolute; width: 260px; height: 260px; border-radius: 50%; background: radial-gradient(circle, rgba(134,214,199,0.16), transparent 64%); filter: blur(14px);"></div>
+                <div style="position: relative; width: min(330px, 100%); border-radius: 22px; border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card); padding: 22px; animation: hintFloatY 8s var(--ease-out) infinite;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;">
+                    <span style="font-family: var(--font-serif); font-size: 16px; color: var(--text-strong);">Tonight's ritual</span>
+                    <span style="display: grid; place-items: center; width: 28px; height: 28px; border-radius: 50%; background: rgba(206,178,110,0.10); border: 1px solid rgba(206,178,110,0.26); color: var(--accent-gold);"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"></path></svg></span>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 11px;">
+                    <div style="display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 13px; background: rgba(134,214,199,0.08); border: 1px solid rgba(134,214,199,0.26);">
+                      <span style="flex: none; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; background: var(--grad-aqua-portal); color: #08221F; font-size: 12px;">✓</span>
+                      <span style="font-size: 13px; color: var(--text); text-decoration: line-through; text-decoration-color: var(--text-faint);">Drink a glass of water slowly</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 13px; border: 1px solid var(--border);">
+                      <span style="flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border-strong);"></span>
+                      <span style="font-size: 13px; color: var(--text-muted);">Reply to one message you've avoided</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 11px; padding: 11px 13px; border-radius: 13px; border: 1px solid var(--border);">
+                      <span style="flex: none; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid var(--border-strong);"></span>
+                      <span style="font-size: 13px; color: var(--text-muted);">Step outside for three slow breaths</span>
+                    </div>
+                  </div>
+                  <div style="display: flex; align-items: center; gap: 11px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                    <span style="flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 11px; background: #F3ECDD; box-shadow: var(--shadow-card); overflow: hidden;"><img src="assets/lucky/lavender.png" alt="" draggable="false" style="width: 30px; height: 30px; object-fit: contain;"></span>
+                    <div><p style="margin: 0; font-size: 12.5px; color: var(--text);">Finish to earn</p><p style="margin: 2px 0 0; font-family: var(--font-serif); font-size: 14px; color: var(--accent-gold);">+20 XP · New moon badge</p></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- arrows -->
+        <button type="button" data-car-arrow onClick="{{ carPrev }}" aria-label="Previous" style="position: absolute; z-index: 4; top: 50%; left: clamp(8px,1.4vw,16px); transform: translateY(-50%); width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--text); cursor: pointer; box-shadow: var(--shadow-card); transition: transform .2s var(--ease-out), background .2s;" onMouseEnter="{{ liftHover }}" onMouseLeave="{{ liftLeave }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"></path></svg></button>
+        <button type="button" data-car-arrow onClick="{{ carNext }}" aria-label="Next" style="position: absolute; z-index: 4; top: 50%; right: clamp(8px,1.4vw,16px); transform: translateY(-50%); width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--border-strong); background: var(--surface); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); color: var(--text); cursor: pointer; box-shadow: var(--shadow-card); transition: transform .2s var(--ease-out), background .2s;" onMouseEnter="{{ liftHover }}" onMouseLeave="{{ liftLeave }}"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"></path></svg></button>
+      </div>
+    </section>
+
+    <!-- scroll cue -->
+    <div style="display: flex; justify-content: center; margin-top: -28px; margin-bottom: 8px;">
+      <div style="width: 24px; height: 38px; border-radius: 999px; border: 1px solid var(--border-strong); display: flex; justify-content: center; padding-top: 7px;">
+        <span style="width: 4px; height: 8px; border-radius: 999px; background: var(--accent-gold); animation: hintScrollDot 1.8s var(--ease-out) infinite;"></span>
+      </div>
+    </div>
+
+    <!-- ═══ HOW HINT WORKS ═══ -->
+    <section id="how" data-reveal style="position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(56px,9vw,118px) clamp(20px,5vw,40px) clamp(40px,6vw,72px);">
+      <div style="max-width: 640px;">
+        <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-gold);">How Hint works</span>
+        <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(32px,4.4vw,54px); line-height: 1.06; letter-spacing: -0.018em; color: var(--text-strong); margin: 16px 0 0; text-wrap: balance;">Four quiet steps,<br>once a night.</h2>
+        <p style="font-size: 17px; line-height: 1.6; color: var(--text-muted); margin: 20px 0 0; max-width: 30rem;">No dashboards to learn. You arrive with something unspoken — Hint gives it a room to sit in.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(232px, 1fr)); gap: 18px; margin-top: clamp(36px,5vw,56px);">
+        <div style="position: relative; overflow: hidden; padding: 26px 22px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <span style="font-family: var(--font-serif); font-size: 15px; color: var(--accent-gold); letter-spacing: 0.2em;">01</span>
+          <h3 style="font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.18; color: var(--text-strong); margin: 16px 0 10px;">Tell Hint your sky</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--text-faint); margin: 0;">A date, a place, a time. The sky has been keeping notes on you ever since.</p>
+        </div>
+        <div style="position: relative; overflow: hidden; padding: 26px 22px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <span style="font-family: var(--font-serif); font-size: 15px; color: var(--accent-gold); letter-spacing: 0.2em;">02</span>
+          <h3 style="font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.18; color: var(--text-strong); margin: 16px 0 10px;">It reads tonight</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--text-faint); margin: 0;">Today's transits, your chart, the day you just had — folded into a single card.</p>
+        </div>
+        <div style="position: relative; overflow: hidden; padding: 26px 22px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <span style="font-family: var(--font-serif); font-size: 15px; color: var(--accent-gold); letter-spacing: 0.2em;">03</span>
+          <h3 style="font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.18; color: var(--text-strong); margin: 16px 0 10px;">Draw &amp; be scored</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--text-faint); margin: 0;">One card, already turned. Five life areas, scored gently — never graded.</p>
+        </div>
+        <div style="position: relative; overflow: hidden; padding: 26px 22px 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <span style="font-family: var(--font-serif); font-size: 15px; color: var(--accent-gold); letter-spacing: 0.2em;">04</span>
+          <h3 style="font-family: var(--font-serif); font-weight: 400; font-size: 22px; line-height: 1.18; color: var(--text-strong); margin: 16px 0 10px;">Sit with the hint</h3>
+          <p style="font-size: 13.5px; line-height: 1.55; color: var(--text-faint); margin: 0;">A small thing to try. A question to carry. No answers — just a hint to hold.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ AI TAROT READING — ASK ═══ -->
+    <section id="reading" data-reveal style="position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(48px,7vw,96px) clamp(20px,5vw,40px); display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(36px,6vw,80px); align-items: center;">
+      <div>
+        <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-aqua);">Ask Hint</span>
+        <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(30px,4vw,50px); line-height: 1.08; letter-spacing: -0.018em; color: var(--text-strong); margin: 16px 0 0; text-wrap: balance;">A room that listens, in your own words.</h2>
+        <p style="font-size: 16.5px; line-height: 1.62; color: var(--text-muted); margin: 20px 0 28px; max-width: 28rem;">Type a worry, a name, a half-formed thought. Ask Hint reads it against your cards and the night — and answers like a calm friend at midnight, never a chatbot.</p>
+        <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 14px;">
+          <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: var(--text-muted);"><span style="flex: none; margin-top: 2px; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--accent-aqua); display: grid; place-items: center; color: var(--accent-aqua); font-size: 11px;">✓</span>Grounded in your real chart &amp; today's transits</li>
+          <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: var(--text-muted);"><span style="flex: none; margin-top: 2px; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--accent-aqua); display: grid; place-items: center; color: var(--accent-aqua); font-size: 11px;">✓</span>Remembers what you said earlier this week</li>
+          <li style="display: flex; gap: 12px; align-items: flex-start; font-size: 14.5px; line-height: 1.5; color: var(--text-muted);"><span style="flex: none; margin-top: 2px; width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--accent-aqua); display: grid; place-items: center; color: var(--accent-aqua); font-size: 11px;">✓</span>Private by design — the parts of you that don't post</li>
+        </ul>
+      </div>
+      <div style="position: relative; display: flex; justify-content: center;">
+        <div aria-hidden="true" style="position: absolute; top: -10%; width: 280px; height: 280px; border-radius: 50%; background: var(--grad-aqua-portal); filter: blur(60px); opacity: .42;"></div>
+        <div style="position: relative; width: min(360px, 100%); border-radius: 30px; border: 1px solid var(--border-strong); background: var(--surface-strong); box-shadow: var(--shadow-elevated); padding: 22px 18px 18px; backdrop-filter: blur(24px) saturate(1.22); -webkit-backdrop-filter: blur(24px) saturate(1.22);">
+          <div style="display: flex; align-items: center; gap: 10px; padding: 0 4px 16px; border-bottom: 1px solid var(--border);">
+            <span style="width: 30px; height: 30px; border-radius: 50%; background: var(--grad-aqua-portal); box-shadow: 0 0 18px rgba(64,224,208,0.5);"></span>
+            <div><p style="margin: 0; font-family: var(--font-serif); font-size: 16px; color: var(--text-strong);">Ask Hint</p><p style="margin: 1px 0 0; font-size: 11px; color: var(--accent-aqua);">listening · just now</p></div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 18px; padding: 20px 4px 16px;">
+            <x-import component-from-global-scope="HintDesignSystem_0d1931.ChatBubble" role="user" hint-size="100%,auto">I keep avoiding a message I should send. Why?</x-import>
+            <x-import component-from-global-scope="HintDesignSystem_0d1931.ChatBubble" role="hint" hint-size="100%,auto">Something you said earlier this week is still standing in the room. The Moon turned up for you tonight — you already know the shape of it, you just haven't named it out loud.</x-import>
+            <x-import component-from-global-scope="HintDesignSystem_0d1931.ChatBubble" role="hint" hint-size="100%,auto">Reply to one message you've been avoiding. Not all of it. One line is enough to let the air move again.</x-import>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px; margin-top: 6px; padding: 10px 8px 10px 16px; border-radius: 999px; border: 1px solid var(--border); background: var(--input-bg);">
+            <span style="flex: 1; font-size: 13px; color: var(--text-faint);">Say it, or just sit with it…</span>
+            <span style="width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--grad-aqua-portal); color: #08221F; font-size: 16px; box-shadow: 0 0 16px rgba(64,224,208,0.45);">↑</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ DAILY CARD & DAILY SCORE ═══ -->
+    <section id="score" data-reveal style="position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(56px,8vw,110px) clamp(20px,5vw,40px);">
+      <div style="max-width: 640px; margin-bottom: clamp(34px,5vw,52px);">
+        <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-gold);">Daily card &amp; score</span>
+        <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(30px,4.2vw,52px); line-height: 1.07; letter-spacing: -0.018em; color: var(--text-strong); margin: 16px 0 0; text-wrap: balance;">One card. Five ways<br>the day landed.</h2>
+        <p style="font-size: 16.5px; line-height: 1.6; color: var(--text-muted); margin: 18px 0 0; max-width: 30rem;">Hint scores Love, Wealth, Career, Study and People from tonight's sky and your chart. Not a grade — a gentle read on where the day left you.</p>
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(24px,4vw,44px); align-items: stretch;">
+        <!-- Daily card -->
+        <div style="position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px; padding: clamp(28px,4vw,44px); border-radius: var(--radius-2xl); border: 1px solid var(--border); background: var(--surface-strong); box-shadow: var(--shadow-elevated);">
+          <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(420px 320px at 30% 12%, rgba(134,214,199,0.12), transparent 66%), radial-gradient(360px 300px at 88% 96%, rgba(203,166,196,0.12), transparent 66%);"></div>
+          <span style="position: relative; font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold);">Tonight's pull</span>
+          <div style="position: relative; animation: hintFloatY 7s var(--ease-out) infinite;">
+            <x-import component-from-global-scope="HintDesignSystem_0d1931.TarotCard" name="The Star" image="assets/tarot/17-TheStar.jpg" back="deck" width="{{ dailyCardWidth }}" flipped="{{ dailyFlipped }}" on-flip="{{ flipDaily }}" hint-size="220px,340px"></x-import>
+          </div>
+          <div style="position: relative; text-align: center; max-width: 18rem;">
+            <p style="font-family: var(--font-serif); font-size: 21px; color: var(--text-strong); margin: 0 0 6px;">The Star</p>
+            <p style="font-family: var(--font-serif); font-style: italic; font-size: 15px; line-height: 1.5; color: var(--text-muted); margin: 0;">"Something you've been quietly tending is closer to water than you think. Keep pouring."</p>
+          </div>
+        </div>
+        <!-- Score chamber -->
+        <div style="position: relative; overflow: hidden; display: flex; flex-direction: column; padding: clamp(26px,4vw,40px); border-radius: var(--radius-2xl); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <div style="display: flex; align-items: center; gap: 22px; padding-bottom: 26px; border-bottom: 1px solid var(--border);">
+            <div style="position: relative; width: 112px; height: 112px; flex: none; border-radius: 50%; display: grid; place-items: center; background: conic-gradient(var(--score-ink) {{ overallDeg }}, color-mix(in srgb, var(--border) 70%, transparent) 0deg); transition: background 1.1s var(--ease-out);">
+              <div style="width: 90px; height: 90px; border-radius: 50%; display: grid; place-items: center; background: var(--bg-solid); box-shadow: inset 0 0 18px rgba(0,0,0,0.4);">
+                <span style="font-family: var(--font-serif); font-size: 40px; line-height: 1; font-variant-numeric: tabular-nums; color: var(--score-ink); text-shadow: var(--score-shadow); opacity: {{ overallOpacity }}; transition: opacity .6s;">{{ overall }}</span>
+              </div>
+            </div>
+            <div>
+              <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--text-faint);">Overall tonight</span>
+              <p style="font-family: var(--font-serif); font-size: 22px; line-height: 1.2; color: var(--text-strong); margin: 8px 0 0;">A steady, open night</p>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 16px; padding: 26px 0;">
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px;"><span style="font-size: 12.5px; font-weight: 600; color: var(--text);">Love</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--score-love); font-variant-numeric: tabular-nums;">{{ loveN }}</span></div>
+              <div style="height: 6px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent);"><div style="height: 100%; width: {{ loveW }}; border-radius: 999px; background: linear-gradient(90deg, var(--score-love), color-mix(in srgb, var(--score-love) 28%, transparent)); transition: width 1.1s var(--ease-out);"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px;"><span style="font-size: 12.5px; font-weight: 600; color: var(--text);">Wealth</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--score-wealth); font-variant-numeric: tabular-nums;">{{ wealthN }}</span></div>
+              <div style="height: 6px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent);"><div style="height: 100%; width: {{ wealthW }}; border-radius: 999px; background: linear-gradient(90deg, var(--score-wealth), color-mix(in srgb, var(--score-wealth) 28%, transparent)); transition: width 1.1s var(--ease-out) .08s;"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px;"><span style="font-size: 12.5px; font-weight: 600; color: var(--text);">Career</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--score-career); font-variant-numeric: tabular-nums;">{{ careerN }}</span></div>
+              <div style="height: 6px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent);"><div style="height: 100%; width: {{ careerW }}; border-radius: 999px; background: linear-gradient(90deg, var(--score-career), color-mix(in srgb, var(--score-career) 28%, transparent)); transition: width 1.1s var(--ease-out) .16s;"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px;"><span style="font-size: 12.5px; font-weight: 600; color: var(--text);">Study</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--score-study); font-variant-numeric: tabular-nums;">{{ studyN }}</span></div>
+              <div style="height: 6px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent);"><div style="height: 100%; width: {{ studyW }}; border-radius: 999px; background: linear-gradient(90deg, var(--score-study), color-mix(in srgb, var(--score-study) 28%, transparent)); transition: width 1.1s var(--ease-out) .24s;"></div></div>
+            </div>
+            <div>
+              <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 7px;"><span style="font-size: 12.5px; font-weight: 600; color: var(--text);">People</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--score-people); font-variant-numeric: tabular-nums;">{{ peopleN }}</span></div>
+              <div style="height: 6px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent);"><div style="height: 100%; width: {{ peopleW }}; border-radius: 999px; background: linear-gradient(90deg, var(--score-people), color-mix(in srgb, var(--score-people) 28%, transparent)); transition: width 1.1s var(--ease-out) .32s;"></div></div>
+            </div>
+          </div>
+          <button type="button" onClick="{{ drawScore }}" style="margin-top: auto; height: 50px; border-radius: 999px; border: none; cursor: pointer; font-family: var(--font-sans); font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-gold); box-shadow: 0 16px 30px rgba(219,142,85,0.20); transition: transform .2s var(--ease-out), filter .2s;" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}">{{ drawLabel }}</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ PERSONALIZED INSIGHTS ═══ -->
+    <section id="insights" data-reveal style="position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(56px,8vw,110px) clamp(20px,5vw,40px);">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: clamp(28px,4vw,52px); align-items: start;">
+        <div style="position: sticky; top: 100px;">
+          <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-gold);">Personalized insights</span>
+          <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(30px,4.2vw,52px); line-height: 1.07; letter-spacing: -0.018em; color: var(--text-strong); margin: 16px 0 0; text-wrap: balance;">Small guidance,<br>shaped to your night.</h2>
+          <p style="font-size: 16.5px; line-height: 1.62; color: var(--text-muted); margin: 18px 0 28px; max-width: 28rem;">Every read ends with something to hold — a question, one gentle thing to try, and six small charms the night leans toward. Never a to-do list. Just a hint.</p>
+          <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+            <span style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--accent-gold); background: rgba(203,168,102,0.10); border: 1px solid var(--gold-edge);">Tonight's hint</span>
+            <span style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--hint-rose); background: rgba(203,166,196,0.10); border: 1px solid rgba(203,166,196,0.34);">A question to carry</span>
+            <span style="display: inline-flex; align-items: center; height: 30px; padding: 0 13px; border-radius: 999px; font-size: 12px; font-weight: 600; color: var(--accent-aqua); background: rgba(134,214,199,0.10); border: 1px solid rgba(134,214,199,0.34);">Lucky six</span>
+          </div>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 18px;">
+          <!-- whisper / try this -->
+          <div style="position: relative; overflow: hidden; padding: 28px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--surface-strong); box-shadow: var(--shadow-card);">
+            <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(300px 200px at 86% 0%, rgba(241,166,107,0.12), transparent 70%);"></div>
+            <span style="position: relative; font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold);">One small thing to try</span>
+            <p style="position: relative; font-family: var(--font-serif); font-size: clamp(20px,2.4vw,26px); line-height: 1.4; color: var(--text-strong); margin: 14px 0 8px; text-wrap: pretty;">Drink a glass of water slowly, before you reach for your phone.</p>
+            <p style="position: relative; font-size: 13.5px; line-height: 1.55; color: var(--text-faint); margin: 0;">Mercury is loud tonight — small, bodily things will steady you faster than answers.</p>
+          </div>
+          <!-- question -->
+          <div style="position: relative; overflow: hidden; padding: 28px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+            <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--hint-rose);">A question to carry</span>
+            <p style="font-family: var(--font-serif); font-style: italic; font-size: clamp(19px,2.3vw,24px); line-height: 1.45; color: var(--text); margin: 14px 0 0;">"What did today take from me that I didn't notice?"</p>
+          </div>
+          <!-- lucky six -->
+          <div style="position: relative; overflow: hidden; padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+            <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-aqua); display: block; margin-bottom: 18px;">Tonight's lucky six</span>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(92px, 1fr)); gap: 12px;">
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/moonstone.png" value="Moonstone" label="Stone" hint-size="100%,132px"></x-import>
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/lavender.png" value="Lavender" label="Flower" hint-size="100%,132px"></x-import>
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/matcha.png" value="Matcha" label="Sip" hint-size="100%,132px"></x-import>
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/rose-quartz.png" value="Rose quartz" label="Charm" hint-size="100%,132px"></x-import>
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/bubble-tea.png" value="Pearl tea" label="Treat" hint-size="100%,132px"></x-import>
+              <x-import component-from-global-scope="HintDesignSystem_0d1931.LuckyTile" image="assets/lucky/crystal-charm.png" value="Clear quartz" label="Carry" hint-size="100%,132px"></x-import>
+            </div>
+          </div>
+          <!-- guidance modules -->
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px;">
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; min-height: 124px; border-radius: var(--radius-md); background: var(--grad-tile); border: 1px solid var(--border); box-shadow: var(--shadow-card);">
+              <span style="width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: var(--accent-gold); background: rgba(206,178,110,0.10); border: 1px solid rgba(206,178,110,0.24);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14M9 21h6M4 4h7a3 3 0 0 1 3 3 3 3 0 0 1 3-3h3"/></svg></span>
+              <div style="margin-top: auto;"><p style="font-family: var(--font-serif); font-size: 17px; color: var(--text); margin: 0;">Journal</p><p style="font-size: 11.5px; color: var(--text-faint); margin: 5px 0 0;">Write the night down</p></div>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 12px; padding: 16px; min-height: 124px; border-radius: var(--radius-md); background: var(--grad-tile); border: 1px solid var(--border); box-shadow: var(--shadow-card);">
+              <span style="width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: var(--accent-gold); background: rgba(206,178,110,0.10); border: 1px solid rgba(206,178,110,0.24);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 3a14 14 0 0 0 0 18M12 3a14 14 0 0 1 0 18M3 12h18"/></svg></span>
+              <div style="margin-top: auto;"><p style="font-family: var(--font-serif); font-size: 17px; color: var(--text); margin: 0;">Astrology</p><p style="font-size: 11.5px; color: var(--text-faint); margin: 5px 0 0;">Your chart, read aloud</p></div>
+            </div>
+            <div style="position: relative; display: flex; flex-direction: column; gap: 12px; padding: 16px; min-height: 124px; border-radius: var(--radius-md); background: var(--grad-tile); border: 1px solid var(--border); box-shadow: var(--shadow-card); opacity: .62;">
+              <span style="position: absolute; top: 13px; right: 13px; font-size: 9.5px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-faint); border: 1px solid var(--border); border-radius: 999px; padding: 3px 8px;">Soon</span>
+              <span style="width: 38px; height: 38px; border-radius: 11px; display: grid; place-items: center; color: var(--accent-gold); background: rgba(206,178,110,0.10); border: 1px solid rgba(206,178,110,0.24);"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-7 4 14 2-7h6"/></svg></span>
+              <div style="margin-top: auto;"><p style="font-family: var(--font-serif); font-size: 17px; color: var(--text); margin: 0;">Breath</p><p style="font-size: 11.5px; color: var(--text-faint); margin: 5px 0 0;">Settle in four counts</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══ GAMIFICATION ═══ -->
+    <section id="rewards" data-reveal style="position: relative; max-width: 1180px; margin: 0 auto; padding: clamp(56px,8vw,110px) clamp(20px,5vw,40px);">
+      <div style="max-width: 640px; margin-bottom: clamp(32px,5vw,52px);">
+        <span style="font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--accent-gold);">Streaks · XP · rewards</span>
+        <h2 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(30px,4.2vw,52px); line-height: 1.07; letter-spacing: -0.018em; color: var(--text-strong); margin: 16px 0 0; text-wrap: balance;">Showing up is<br>the ritual.</h2>
+        <p style="font-size: 16.5px; line-height: 1.6; color: var(--text-muted); margin: 18px 0 0; max-width: 30rem;">Return each night and the deck remembers. Streaks deepen, levels turn, and rarer cards begin to surface — quietly, never with confetti cannons.</p>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 18px;">
+        <!-- Streak -->
+        <div style="position: relative; overflow: hidden; padding: 26px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="display: grid; place-items: center; width: 44px; height: 44px; border-radius: 13px; background: rgba(241,166,107,0.12); border: 1px solid rgba(241,166,107,0.3); color: var(--hint-ember); animation: hintFlame 2.4s var(--ease-out) infinite;"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1 3-2 4-2 7a2 2 0 0 0 4 0c2 2 3 4 3 6a5 5 0 0 1-10 0c0-4 3-6 5-13z"/></svg></span>
+            <div><span style="font-family: var(--font-serif); font-size: 34px; line-height: 1; color: var(--text-strong);">12</span><span style="font-family: var(--font-serif); font-size: 18px; color: var(--hint-ember);"> nights</span></div>
+          </div>
+          <p style="font-size: 13px; color: var(--text-faint); margin: 16px 0 14px;">In a row. Your longest yet — one more lights the new moon badge.</p>
+          <div style="display: flex; gap: 7px;">
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: var(--grad-ember);"></span>
+            <span style="flex: 1; height: 8px; border-radius: 999px; background: rgba(241,166,107,0.22); animation: hintGlowPulse 2.6s ease-in-out infinite;"></span>
+          </div>
+        </div>
+        <!-- Level / XP -->
+        <div style="position: relative; overflow: hidden; padding: 26px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <div><span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint);">Level 7</span><p style="font-family: var(--font-serif); font-size: 26px; line-height: 1.1; color: var(--text-strong); margin: 8px 0 0;">Seer</p></div>
+            <span style="font-family: var(--font-serif); font-size: 14px; color: var(--accent-gold);">320 / 500</span>
+          </div>
+          <div style="height: 9px; border-radius: 999px; overflow: hidden; background: color-mix(in srgb, var(--border) 62%, transparent); margin: 20px 0 12px;"><div style="height: 100%; width: 64%; border-radius: 999px; transform-origin: left; background: var(--grad-gold); animation: hintGrow 1.2s var(--ease-out) both; animation-timeline: view(); animation-range: entry 8% cover 42%;"></div></div>
+          <p style="font-size: 13px; color: var(--text-faint); margin: 0;">180 XP until <span style="color: var(--text);">Oracle</span> — and the rose card-back.</p>
+        </div>
+        <!-- Collection -->
+        <div style="position: relative; overflow: hidden; padding: 26px; border-radius: var(--radius-lg); border: 1px solid var(--border); background: var(--card-surface); box-shadow: var(--shadow-card);">
+          <div style="display: flex; align-items: baseline; justify-content: space-between;">
+            <div><span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--text-faint);">Collection</span><p style="font-family: var(--font-serif); font-size: 26px; line-height: 1.1; color: var(--text-strong); margin: 8px 0 0;">24 <span style="color: var(--text-faint); font-size: 18px;">/ 78</span></p></div>
+            <span style="display: inline-flex; align-items: center; height: 24px; padding: 0 10px; border-radius: 999px; font-size: 11px; font-weight: 600; color: var(--accent-aqua); background: rgba(134,214,199,0.10); border: 1px solid rgba(134,214,199,0.34);">2 rare</span>
+          </div>
+          <div style="display: flex; gap: 6px; margin-top: 20px;">
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: var(--grad-deck); border: 1px solid var(--gold-edge);"></span>
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: var(--grad-deck); border: 1px solid var(--gold-edge);"></span>
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: var(--grad-deck); border: 1px solid var(--gold-edge);"></span>
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: var(--grad-deck); border: 1px solid var(--gold-edge);"></span>
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: rgba(255,255,255,0.04); border: 1px dashed var(--border);"></span>
+            <span style="width: 26px; height: 40px; border-radius: 5px; background: rgba(255,255,255,0.04); border: 1px dashed var(--border);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Rare card unlock moment -->
+      <div style="position: relative; overflow: hidden; margin-top: 18px; border-radius: var(--radius-2xl); border: 1px solid var(--gold-edge); background: var(--surface-strong); box-shadow: var(--shadow-elevated); display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: clamp(28px,4vw,48px); align-items: center; padding: clamp(30px,4vw,52px);">
+        <div aria-hidden="true" style="position: absolute; inset: 0; pointer-events: none; background: radial-gradient(440px 320px at 82% 18%, rgba(230,203,142,0.14), transparent 64%);"></div>
+        <div style="position: relative;">
+          <span style="font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent-gold);">Rare card unlock</span>
+          <h3 style="font-family: var(--font-serif); font-weight: 300; font-size: clamp(26px,3vw,38px); line-height: 1.12; color: var(--text-strong); margin: 14px 0 12px; text-wrap: balance;">Some nights, the deck gives back.</h3>
+          <p style="font-size: 15px; line-height: 1.6; color: var(--text-muted); margin: 0 0 26px; max-width: 26rem;">Keep a streak and rarer arcana surface — foil-edged, one of a few. Turn tonight's reward and see what came up for you.</p>
+          <button type="button" onClick="{{ unlockRare }}" style="display: inline-flex; align-items: center; gap: 9px; height: 50px; padding: 0 26px; border-radius: 999px; border: none; cursor: pointer; font-family: var(--font-sans); font-size: 14.5px; font-weight: 600; color: var(--text-on-accent); background: var(--grad-gold); box-shadow: 0 16px 30px rgba(219,142,85,0.22); transition: transform .2s var(--ease-out), filter .2s;" onMouseEnter="{{ ctaHover }}" onMouseLeave="{{ ctaLeave }}">{{ rareBtnLabel }}</button>
+        </div>
+        <div style="position: relative; display: grid; place-items: center; min-height: 340px;">
+          <div aria-hidden="true" style="position: absolute; width: 230px; height: 230px; border-radius: 50%; background: radial-gradient(circle, rgba(230,203,142,0.26), transparent 62%); filter: blur(14px); opacity: {{ rareFrontO }}; transition: opacity .6s;"></div>
+          <sc-if value="{{ rareUnlocked }}" hint-placeholder-val="{{ false }}">
+            <div aria-hidden="true" style="position: absolute; width: 260px; height: 260px; border-radius: 50%; border: 2px solid var(--hint-gold-bright); animation: hintBurst 1.1s var(--ease-out) forwards;"></div>
+            <div aria-hidden="true" style="position: absolute; width: 200px; height: 200px; border-radius: 50%; border: 1px solid var(--hint-aqua); animation: hintBurst 1.3s var(--ease-out) .12s forwards;"></div>
+          </sc-if>
+          <div style="position: relative; width: 200px; aspect-ratio: 46/71;">
+            <!-- back -->
+            <div style="position: absolute; inset: 0; border-radius: 12px; overflow: hidden; border: 1px solid var(--gold-edge); background: var(--grad-deck); opacity: {{ rareBackO }}; transition: opacity .5s; display: grid; place-items: center;">
+              <svg width="56%" height="56%" viewBox="-24 -36 48 72" fill="none" stroke="var(--gold-line)" stroke-width="1.4"><path d="M 0 -28 L 18 0 L 0 28 L -18 0 Z"/><path d="M 0 -15 L 10 0 L 0 15 L -10 0 Z"/><circle cx="0" cy="0" r="2.4" fill="var(--gold-line)"/></svg>
+            </div>
+            <!-- front (rare) -->
+            <div style="position: absolute; inset: 0; border-radius: 12px; overflow: hidden; border: 2px solid var(--hint-gold-bright); box-shadow: 0 0 28px rgba(230,203,142,0.4); opacity: {{ rareFrontO }}; transform: {{ rareFrontT }}; transition: opacity .6s var(--ease-out), transform .8s var(--ease-flip);">
+              <img src="assets/tarot/19-TheSun.jpg" alt="The Sun" style="width: 100%; height: 100%; object-fit: cover;">
+              <span style="position: absolute; top: 10px; left: 10px; display: inline-flex; align-items: center; height: 22px; padding: 0 9px; border-radius: 999px; font-family: var(--font-sans); font-size: 9.5px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: #231D2A; background: var(--grad-gold); box-shadow: 0 2px 8px rgba(0,0,0,0.3);">Rare</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;defaultTheme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;nocturne&quot;,&quot;daybreak&quot;],&quot;default&quot;:&quot;nocturne&quot;,&quot;tsType&quot;:&quot;'nocturne' | 'daybreak'&quot;}}">
+class Component extends DCLogic {
+  state = { theme: null, heroFlipped: false, dailyFlipped: false, scoreDrawn: false, overall: 0, faqOpen: 0, rareUnlocked: false };
+
+  get theme() { return this.state.theme ?? this.props.defaultTheme ?? 'nocturne'; }
+
+  componentDidMount() {
+    this.buildStars();
+    this.onScroll = () => {
+      const nav = this.refs && this.refs.navRef;
+      if (!nav) return;
+      const small = window.scrollY > 40;
+      nav.style.paddingTop = small ? '10px' : '16px';
+      nav.style.paddingBottom = small ? '10px' : '16px';
+    };
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.setupCarousel();
+  }
+  componentWillUnmount() {
+    window.removeEventListener('scroll', this.onScroll);
+    window.removeEventListener('pointermove', this._carMove);
+    window.removeEventListener('pointerup', this._carUp);
+    window.removeEventListener('resize', this._carResize);
+    if (this.car && this.car.timer) clearInterval(this.car.timer);
+    if (this.car && this.car.tw) cancelAnimationFrame(this.car.tw);
+    clearTimeout(this._t);
+  }
+
+  setupCarousel() {
+    const root = this.refs && this.refs.carRef;
+    if (!root || this.car) return;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const labels = ['01 · Animal Tarot', '02 · Tarot Room', '03 · Daily Energy Score', '04 · Daily Tarot', '05 · Energy Task'];
+    const car = this.car = { index: 0, progress: 0, paused: false, dragging: false, startX: 0, dx: 0, n: 5, DUR: 5200, labels, curX: 0, tw: 0 };
+    car.track = root.querySelector('[data-car-track]');
+    car.fills = Array.prototype.slice.call(root.querySelectorAll('[data-car-fill]'));
+    car.count = root.querySelector('[data-car-count]');
+    const vp = root.querySelector('[data-car-vp]');
+    car.vp = vp;
+    car.arrows = Array.prototype.slice.call(root.querySelectorAll('[data-car-arrow]'));
+    root.querySelectorAll('[data-car-dot]').forEach((d) => d.addEventListener('click', () => this.carGo(parseInt(d.dataset.carDot, 10))));
+    const onDown = (e) => { car.dragging = true; car.paused = true; car.startX = e.clientX; car.dx = 0; if (car.track) car.track.style.transition = 'none'; vp.style.cursor = 'grabbing'; };
+    const onMove = (e) => { if (!car.dragging) return; car.dx = e.clientX - car.startX; this.carRender(false); };
+    const onUp = () => { if (!car.dragging) return; car.dragging = false; vp.style.cursor = 'grab'; const t = 56; if (car.dx <= -t) this.carGo((car.index + 1) % car.n); else if (car.dx >= t) this.carGo((car.index - 1 + car.n) % car.n); else { car.dx = 0; this.carRender(true); } car.dx = 0; car.paused = false; };
+    vp.addEventListener('pointerdown', onDown);
+    window.addEventListener('pointermove', onMove);
+    window.addEventListener('pointerup', onUp);
+    this._carMove = onMove; this._carUp = onUp;
+    this._carResize = () => { this.carRender(false); this.updateArrows(); };
+    window.addEventListener('resize', this._carResize);
+    this.carRender(false); this.carFills(); this.updateArrows();
+    if (car.count) car.count.textContent = labels[0];
+    if (!reduce) car.timer = setInterval(() => this.carTick(), 50);
+  }
+  carTick() { const c = this.car; if (!c || c.paused || c.dragging) return; c.progress += 50 / c.DUR; if (c.progress >= 1) this.carGo((c.index + 1) % c.n); else this.carFills(); }
+  carGo(i) { const c = this.car; if (!c) return; c.index = i; c.progress = 0; c.dx = 0; this.carRender(true); this.carFills(); if (c.count) c.count.textContent = c.labels[i]; }
+  carApply() { const c = this.car; if (c && c.track) { c.track.style.transition = 'none'; c.track.style.transform = 'translateX(' + c.curX + 'px)'; } }
+  carTweenTo(target) { const c = this.car; if (!c) return; cancelAnimationFrame(c.tw); const start = c.curX, t0 = performance.now(), dur = 600; const step = (now) => { const p = Math.min(1, (now - t0) / dur); const e = 1 - Math.pow(1 - p, 3); c.curX = start + (target - start) * e; this.carApply(); if (p < 1) c.tw = requestAnimationFrame(step); else { c.curX = target; this.carApply(); } }; c.tw = requestAnimationFrame(step); }
+  carRender(anim) { const c = this.car; if (!c || !c.track) return; const w = c.vp ? c.vp.clientWidth : (c.track.parentElement ? c.track.parentElement.clientWidth : 0); const target = -c.index * w + c.dx; if (anim) this.carTweenTo(target); else { cancelAnimationFrame(c.tw); c.curX = target; this.carApply(); } }
+  carFills() { const c = this.car; if (!c) return; c.fills.forEach((f, j) => { const v = j < c.index ? 1 : (j > c.index ? 0 : c.progress); f.style.transform = 'scaleX(' + v + ')'; }); }
+  carPrev = () => { const c = this.car; if (c) this.carGo((c.index - 1 + c.n) % c.n); };
+  carNext = () => { const c = this.car; if (c) this.carGo((c.index + 1) % c.n); };
+  updateArrows() { const c = this.car; if (!c || !c.arrows) return; const small = (c.vp ? c.vp.clientWidth : 700) < 560; c.arrows.forEach((a) => { a.style.display = small ? 'none' : 'grid'; }); }
+  carPause = () => { if (this.car) this.car.paused = true; };
+  carResume = () => { if (this.car) this.car.paused = false; };
+
+  buildStars() {
+    const host = this.refs && this.refs.starRef;
+    if (!host || host.childElementCount) return;
+    const frag = document.createDocumentFragment();
+    for (let i = 0; i < 90; i++) {
+      const s = document.createElement('span');
+      const sz = Math.random() < 0.85 ? 1.5 : 2.5;
+      s.style.cssText = `position:absolute;top:${Math.random()*100}%;left:${Math.random()*100}%;width:${sz}px;height:${sz}px;border-radius:50%;background:${Math.random()<0.3?'#86D6C7':'#F2ECDE'};opacity:${0.2+Math.random()*0.5};box-shadow:0 0 ${sz*2}px currentColor;color:inherit;animation:hintTwinkle ${2.4+Math.random()*4}s ease-in-out ${Math.random()*4}s infinite;`;
+      frag.appendChild(s);
+    }
+    host.appendChild(frag);
+  }
+
+  toggleTheme = () => {
+    this.setState({ theme: this.theme === 'nocturne' ? 'daybreak' : 'nocturne' });
+  };
+  flipHero = (v) => this.setState({ heroFlipped: v });
+  flipDaily = (v) => this.setState({ dailyFlipped: v });
+
+  drawScore = () => {
+    if (this.state.scoreDrawn) return;
+    this.setState({ scoreDrawn: true, dailyFlipped: true });
+    const target = 78, t0 = performance.now(), dur = 1150;
+    const tick = (now) => {
+      const p = Math.min(1, (now - t0) / dur);
+      const eased = 1 - Math.pow(1 - p, 3);
+      this.setState({ overall: Math.round(eased * target) });
+      if (p < 1) this._raf = requestAnimationFrame(tick);
+    };
+    this._raf = requestAnimationFrame(tick);
+  };
+
+  toggleFaq = (i) => this.setState((s) => ({ faqOpen: s.faqOpen === i ? -1 : i }));
+  unlockRare = () => {
+    this.setState({ rareUnlocked: true });
+    clearTimeout(this._rare);
+    this._rare = setTimeout(() => this.setState({ rareUnlocked: false }), 4200);
+  };
+  scrollToCard = () => {
+    const el = document.getElementById('score');
+    if (el) el.scrollTo ? window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: 'smooth' }) : null;
+  };
+
+  navHover = (e) => { e.currentTarget.style.color = 'var(--text)'; e.currentTarget.style.background = 'var(--surface-soft)'; };
+  navLeave = (e) => { e.currentTarget.style.color = 'var(--text-muted)'; e.currentTarget.style.background = 'transparent'; };
+  ctaHover = (e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.filter = 'brightness(1.05)'; };
+  ctaLeave = (e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.filter = 'none'; };
+  liftHover = (e) => { e.currentTarget.style.transform = 'translateY(-2px)'; };
+  liftLeave = (e) => { e.currentTarget.style.transform = 'translateY(0)'; };
+
+  renderVals() {
+    const night = this.theme === 'nocturne';
+    const drawn = this.state.scoreDrawn;
+    const areas = [
+      { key: 'love', label: 'Love', val: 82 },
+      { key: 'wealth', label: 'Wealth', val: 64 },
+      { key: 'career', label: 'Career', val: 77 },
+      { key: 'study', label: 'Study', val: 58 },
+      { key: 'people', label: 'People', val: 90 },
+    ];
+    const meterVals = {};
+    areas.forEach(a => {
+      meterVals[a.key + 'W'] = drawn ? a.val + '%' : '0%';
+      meterVals[a.key + 'N'] = drawn ? String(a.val) : '\u2014';
+    });
+    const ov = this.state.overall;
+    return {
+      theme: this.theme,
+      carRef: (el) => { this.refs = this.refs || {}; this.refs.carRef = el; },
+      carPrev: this.carPrev, carNext: this.carNext,
+      carPause: this.carPause, carResume: this.carResume,
+      ...meterVals,
+      dailyFlipped: this.state.dailyFlipped,
+      flipDaily: this.flipDaily,
+      drawScore: this.drawScore,
+      scoreDrawn: drawn,
+      drawLabel: drawn ? 'Tonight\u2019s score is in' : 'Draw tonight\u2019s score',
+      overall: drawn ? ov : '\u2013',
+      overallDeg: (drawn ? ov : 0) / 100 * 360 + 'deg',
+      overallOpacity: drawn ? 1 : 0.32,
+      toggleFaq: this.toggleFaq,
+      faqOpen: this.state.faqOpen,
+      unlockRare: this.unlockRare,
+      rareUnlocked: this.state.rareUnlocked,
+      rareBackO: this.state.rareUnlocked ? '0' : '1',
+      rareFrontO: this.state.rareUnlocked ? '1' : '0',
+      rareFrontT: this.state.rareUnlocked ? 'scale(1) rotate(0deg)' : 'scale(0.9) rotate(-4deg)',
+      rareBtnLabel: this.state.rareUnlocked ? 'The Sun \u00b7 added to your deck' : 'Open tonight\u2019s reward',
+      dailyCardWidth: 220,
+      heroFlipped: this.state.heroFlipped,
+      heroCardWidth: 272,
+      heroCardHint: this.state.heroFlipped ? 'The Moon · trust what you can\u2019t yet name' : 'Tap to turn tonight\u2019s card',
+      toggleTheme: this.toggleTheme,
+      flipHero: this.flipHero,
+      scrollToCard: this.scrollToCard,
+      navHover: this.navHover, navLeave: this.navLeave,
+      ctaHover: this.ctaHover, ctaLeave: this.ctaLeave,
+      liftHover: this.liftHover, liftLeave: this.liftLeave,
+      starRef: (el) => { this.refs = this.refs || {}; this.refs.starRef = el; if (el) this.buildStars(); },
+      navRef: (el) => { this.refs = this.refs || {}; this.refs.navRef = el; },
+      sunBg: night ? 'transparent' : 'var(--grad-ember)',
+      sunInk: night ? 'var(--text-faint)' : 'var(--text-on-accent)',
+      moonBg: night ? 'var(--grad-gold)' : 'transparent',
+      moonInk: night ? '#231D2A' : 'var(--text-faint)',
+    };
+  }
+}
+</script>
+</body>
+</html>

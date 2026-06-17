@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Living Sky — day &amp; night</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body { font-family: system-ui, sans-serif; transition: color 1.1s ease; }
+  body[data-mode="night"] { color: #F4EEE0; }
+  body[data-mode="day"]   { color: #5A4A34; }
+
+  /* ── fixed living sky behind everything ──────────────────────────────── */
+  .scene { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+
+  /* two ground layers stacked; JS fades the day one in over the night one
+     (opacity is driven from JS — CSS opacity transitions are unreliable here) */
+  .ground { position: absolute; inset: 0; }
+  .ground.night { background: radial-gradient(120% 90% at 50% -10%, #0b1020 0%, #070b14 52%, #04060d 100%); }
+  .ground.day   { background: radial-gradient(120% 90% at 50% -10%, #FBF4E6 0%, #F4E8D3 46%, #EBDCC2 100%); opacity: 0; }
+
+  #sky { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* colored washes — one set per mood, JS cross-fades */
+  .aurora { position: absolute; inset: -20% -10% 0 -10%; filter: blur(9px); will-change: transform, opacity; }
+  .aurora.night {
+    background:
+      radial-gradient(46% 40% at 78% 8%, rgba(28,64,92,0.5), transparent 60%),
+      radial-gradient(50% 46% at 12% 86%, rgba(40,28,66,0.5), transparent 60%),
+      radial-gradient(40% 34% at 60% 60%, rgba(20,52,58,0.36), transparent 62%);
+  }
+  .aurora.day {
+    opacity: 0;
+    background:
+      radial-gradient(48% 42% at 80% 6%, rgba(248,206,158,0.55), transparent 62%),
+      radial-gradient(52% 48% at 10% 88%, rgba(206,190,232,0.45), transparent 62%),
+      radial-gradient(42% 36% at 58% 64%, rgba(244,224,176,0.40), transparent 64%);
+  }
+
+  /* ── celestial bodies — moon sets, sun rises (transform + opacity from JS) ── */
+  .body { position: absolute; top: 7vh; right: 9vw; width: 230px; height: 230px; border-radius: 50%; will-change: transform, opacity; }
+  .moon {
+    background: radial-gradient(circle at 38% 36%, #efe6cf 0%, #b9ac8a 40%, #574f3d 74%, #211f1b 100%);
+    box-shadow: 0 0 70px 16px rgba(214,180,104,0.16), inset -22px -18px 48px rgba(0,0,0,0.55);
+    opacity: 0.85;
+  }
+  .moon::after {
+    content: ""; position: absolute; inset: 0; border-radius: 50%;
+    background:
+      radial-gradient(7px 7px at 60% 40%, rgba(0,0,0,0.16), transparent 70%),
+      radial-gradient(11px 11px at 44% 62%, rgba(0,0,0,0.14), transparent 70%),
+      radial-gradient(5px 5px at 70% 66%, rgba(0,0,0,0.12), transparent 70%);
+  }
+  .sun {
+    background: radial-gradient(circle at 42% 40%, #FFFBF0 0%, #FCE7BE 34%, #F6C98A 60%, #EBB078 80%, rgba(235,176,120,0) 100%);
+    box-shadow: 0 0 120px 40px rgba(246,201,138,0.40), 0 0 60px 12px rgba(255,244,214,0.55);
+    opacity: 0;
+  }
+  .sun::after { content: ""; position: absolute; inset: 22%; border-radius: 50%; background: radial-gradient(circle at 44% 40%, rgba(255,253,244,0.9), rgba(252,231,190,0) 70%); }
+
+  /* soft daytime clouds */
+  .cloud { position: absolute; border-radius: 50%; background: radial-gradient(60% 80% at 50% 50%, rgba(255,250,240,0.7), rgba(255,250,240,0) 72%); filter: blur(6px); will-change: transform, opacity; opacity: 0; }
+  .cloud.a { top: 26vh; left: 12vw; width: 360px; height: 130px; }
+  .cloud.b { top: 58vh; right: 16vw; width: 300px; height: 110px; }
+
+  .grain { position: absolute; inset: 0; opacity: 0.05; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>"); }
+
+  /* vignette — JS sets box-shadow via the two stacked layers below */
+  .vignette { position: absolute; inset: 0; will-change: opacity; }
+  .vignette.night { box-shadow: inset 0 0 280px rgba(0,0,0,0.7), inset 0 0 90px rgba(0,0,0,0.4); }
+  .vignette.day   { box-shadow: inset 0 0 240px rgba(255,238,206,0.55), inset 0 0 90px rgba(214,178,120,0.18); opacity: 0; }
+
+  /* ── content above the sky ───────────────────────────────────────────── */
+  .content { position: relative; z-index: 1; min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 24px; gap: 30px; }
+  .content h1 { font-size: clamp(38px, 8vw, 92px); font-weight: 400; letter-spacing: -0.02em; margin: 0; transition: opacity 0.45s ease; }
+
+  /* day/night toggle pill */
+  .toggle { display: inline-flex; align-items: center; gap: 4px; padding: 5px; border-radius: 999px;
+    border: 1px solid rgba(214,180,104,0.34); background: rgba(255,255,255,0.06); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); transition: background 1s ease, border-color 1s ease; }
+  .toggle button { width: 38px; height: 38px; border: none; border-radius: 999px; background: transparent; cursor: pointer; display: grid; place-items: center; color: inherit; opacity: 0.45; transition: background .5s ease, color .5s ease; }
+  .toggle button svg { width: 18px; height: 18px; }
+</style>
+</head>
+<body data-mode="night">
+  <!-- The background. Drop this block into any page; call setSkyMode('day'|'night'). -->
+  <div class="scene">
+    <div class="ground night"></div>
+    <div class="ground day" id="groundDay"></div>
+    <canvas id="sky"></canvas>
+    <div class="aurora night" id="auroraNight"></div>
+    <div class="aurora day" id="auroraDay"></div>
+    <div class="body moon" id="moon"></div>
+    <div class="body sun" id="sun"></div>
+    <div class="cloud a" id="cloudA"></div>
+    <div class="cloud b" id="cloudB"></div>
+    <div class="grain"></div>
+    <div class="vignette night" id="vigNight"></div>
+    <div class="vignette day" id="vigDay"></div>
+  </div>
+
+  <main class="content">
+    <h1 id="line">The night already knows.</h1>
+    <div class="toggle" role="group" aria-label="Day and night">
+      <button class="n" id="toNight" aria-label="Night">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <button class="d" id="toDay" aria-label="Day">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      </button>
+    </div>
+  </main>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var body = document.body;
+
+  /* ── particles: stars at night, warm motes by day (one field, retinted) ── */
+  var canvas = document.getElementById("sky"), ctx = canvas.getContext("2d");
+  var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2), pts = [];
+  var mix = 0, mixTarget = 0;                       // 0 = night, 1 = day (eased)
+
+  function resize() {
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var count = Math.round((W * H) / 6000); pts = [];
+    for (var i = 0; i < count; i++) {
+      var d = Math.random(), hue = Math.random();
+      pts.push({
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.4 + d * 1.7, depth: 0.2 + d * 0.8,
+        base: 0.22 + Math.random() * 0.5,
+        tw: Math.random() * Math.PI * 2, sp: 0.5 + Math.random() * 1.2,
+        rise: 4 + Math.random() * 9, sway: 5 + Math.random() * 12,
+        gold: hue < 0.18, lav: hue > 0.86
+      });
+    }
+  }
+  window.addEventListener("resize", resize); resize();
+
+  function colorFor(s, a) {
+    var nr = 245, ng = 240, nb = 228;
+    if (s.gold) { nr = 230; ng = 200; nb = 140; }
+    var dr = 255, dg = 250, db = 236;
+    if (s.gold) { dr = 232; dg = 196; db = 124; }
+    if (s.lav)  { dr = 200; dg = 184; db = 226; }
+    var r = Math.round(nr + (dr - nr) * mix);
+    var g = Math.round(ng + (dg - ng) * mix);
+    var b = Math.round(nb + (db - nb) * mix);
+    return "rgba(" + r + "," + g + "," + b + "," + a + ")";
+  }
+
+  var pt = { x: 0.5, y: 0.5 }, cur = { x: 0.5, y: 0.5 };
+  window.addEventListener("pointermove", function (e) { pt.x = e.clientX / innerWidth; pt.y = e.clientY / innerHeight; });
+
+  var groundDay = document.getElementById("groundDay");
+  var aN = document.getElementById("auroraNight"), aD = document.getElementById("auroraDay");
+  var moon = document.getElementById("moon"), sun = document.getElementById("sun");
+  var cloudA = document.getElementById("cloudA"), cloudB = document.getElementById("cloudB");
+  var vigDay = document.getElementById("vigDay");
+  var t0 = performance.now(), scrollY = 0;
+  window.addEventListener("scroll", function () { scrollY = window.scrollY || pageYOffset; }, { passive: true });
+
+  function frame(now) {
+    var t = (now - t0) / 1000;
+    mix += (mixTarget - mix) * 0.045;                                // ease day/night blend
+    if (Math.abs(mixTarget - mix) < 0.001) mix = mixTarget;
+    cur.x += (pt.x - cur.x) * 0.06; cur.y += (pt.y - cur.y) * 0.06;
+    var dx = cur.x - 0.5, dy = cur.y - 0.5;
+    var m = mix, inv = 1 - mix;
+
+    /* particles */
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < pts.length; i++) {
+      var s = pts[i];
+      var tw = reduce ? s.base : s.base * (0.55 + 0.45 * Math.sin(s.tw + t * s.sp));
+      var px = s.x - dx * 58 * s.depth + (reduce ? 0 : Math.sin(t * 0.3 + s.depth * 5) * s.sway * m);
+      var py = s.y - dy * 58 * s.depth - (scrollY * 0.02 * s.depth)
+             + (reduce ? 0 : Math.sin(t * 0.15 + s.depth * 6) * 2 * inv)
+             - (reduce ? 0 : (t * s.rise) * m);
+      px = ((px % W) + W) % W; py = ((py % H) + H) % H;
+      ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = colorFor(s, tw); ctx.fill();
+    }
+
+    /* cross-fades — opacity driven straight from mix */
+    groundDay.style.opacity = m;
+    aD.style.opacity = m;
+    aN.style.opacity = inv;
+    vigDay.style.opacity = m;
+    cloudA.style.opacity = (m * 0.7).toFixed(3);
+    cloudB.style.opacity = (m * 0.55).toFixed(3);
+    moon.style.opacity = (inv * 0.85).toFixed(3);
+    sun.style.opacity = (m * 0.9).toFixed(3);
+
+    /* aurora parallax */
+    var driftN = reduce ? 0 : Math.sin(t * 0.2) * 6;
+    aN.style.transform = "translate(" + (-dx * 26) + "px," + (-dy * 20 - scrollY * 0.05 + driftN) + "px)";
+    aD.style.transform = "translate(" + (-dx * 24) + "px," + (-dy * 18 - scrollY * 0.05 + driftN) + "px)";
+
+    /* moon sets up & out as day arrives; sun rises from below into place */
+    var pNX = -dx * 40, pSX = -dx * 36;
+    var moonY = (-dy * 30 + scrollY * 0.08 - (reduce ? 0 : Math.sin(t * 0.25) * 8)) - m * 90;
+    var sunY  = (-dy * 26 + scrollY * 0.07 - (reduce ? 0 : Math.sin(t * 0.22) * 7)) + inv * 70;
+    moon.style.transform = "translate(" + pNX + "px," + moonY + "px) scale(" + (1 - m * 0.1).toFixed(3) + ")";
+    sun.style.transform  = "translate(" + pSX + "px," + sunY + "px) scale(" + (0.92 + m * 0.08).toFixed(3) + ")";
+
+    cloudA.style.transform = "translate(" + (Math.sin(t * 0.06) * 40 - dx * 18) + "px,0)";
+    cloudB.style.transform = "translate(" + (Math.cos(t * 0.05) * 50 - dx * 14) + "px,0)";
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* ── toggle ──────────────────────────────────────────────────────────── */
+  var line = document.getElementById("line");
+  var btnN = document.getElementById("toNight"), btnD = document.getElementById("toDay");
+  var toggle = document.querySelector(".toggle");
+
+  function paintToggle(mode) {
+    var day = mode === "day";
+    btnN.style.opacity = day ? "0.45" : "1";
+    btnD.style.opacity = day ? "1" : "0.45";
+    btnN.style.background = day ? "transparent" : "linear-gradient(135deg,#E6CB8E,#CBA866)";
+    btnN.style.color = day ? "inherit" : "#231D2A";
+    btnD.style.background = day ? "linear-gradient(135deg,#F1A66B,#F6C28F)" : "transparent";
+    btnD.style.color = day ? "#3A2A1A" : "inherit";
+    toggle.style.background = day ? "rgba(255,255,255,0.45)" : "rgba(255,255,255,0.06)";
+    toggle.style.borderColor = day ? "rgba(214,178,120,0.5)" : "rgba(214,180,104,0.34)";
+  }
+
+  function setSkyMode(mode) {
+    body.dataset.mode = mode;
+    mixTarget = mode === "day" ? 1 : 0;
+    paintToggle(mode);
+    line.style.opacity = "0";
+    setTimeout(function () {
+      line.textContent = mode === "day" ? "The morning is listening too." : "The night already knows.";
+      line.style.opacity = "1";
+    }, 300);
+  }
+  window.setSkyMode = setSkyMode;
+  btnN.addEventListener("click", function () { setSkyMode("night"); });
+  btnD.addEventListener("click", function () { setSkyMode("day"); });
+  paintToggle("night");
+})();
+</script>
+</body>
+</html>

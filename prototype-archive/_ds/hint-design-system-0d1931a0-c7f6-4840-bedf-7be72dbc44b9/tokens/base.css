@@ -1,0 +1,44 @@
+/* ─────────────────────────────────────────────────────────────
+   HINT · BASE
+   Minimal element defaults so a bare page picks up the brand
+   ground, ink, and type. Product UI layers on top of this.
+   ───────────────────────────────────────────────────────────── */
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: var(--weight-regular);
+  color: var(--text);
+  background: var(--bg-solid);
+  background-image: var(--bg);
+  background-attachment: fixed;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color var(--dur-theme) var(--ease-out),
+              color var(--dur-theme) var(--ease-out);
+}
+
+/* Serif voice helper */
+.hint-serif { font-family: var(--font-serif); }
+.hint-italic { font-style: italic; }
+
+/* Eyebrow — the brand's signature uppercase tracked label */
+.hint-eyebrow {
+  font-family: var(--font-sans);
+  font-size: var(--type-eyebrow);
+  font-weight: var(--weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: var(--track-eyebrow);
+  color: var(--accent-gold);
+}
+
+::selection {
+  background: rgba(203, 168, 102, 0.28);
+  color: var(--text-strong);
+}

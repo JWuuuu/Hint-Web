@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Living Day Sky — background</title>
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; }
+  body {
+    /* warm parchment daybreak ground — the cream the motes float over */
+    background:
+      radial-gradient(120% 90% at 50% -10%, #FBF4E6 0%, #F4E8D3 46%, #EBDCC2 100%);
+    color: #4A3F30; font-family: system-ui, sans-serif;
+  }
+
+  /* ── fixed living sky behind everything ──────────────────────────────── */
+  .scene { position: fixed; inset: 0; overflow: hidden; z-index: 0; pointer-events: none; }
+
+  /* drifting gold light-motes (drawn on canvas) */
+  #motes { position: absolute; inset: 0; width: 100%; height: 100%; }
+
+  /* soft colored daylight wash — peach, lavender, warm gold */
+  .aurora {
+    position: absolute; inset: -20% -10% 0 -10%;
+    background:
+      radial-gradient(48% 42% at 80% 6%, rgba(248,206,158,0.55), transparent 62%),
+      radial-gradient(52% 48% at 10% 88%, rgba(206,190,232,0.45), transparent 62%),
+      radial-gradient(42% 36% at 58% 64%, rgba(244,224,176,0.40), transparent 64%);
+    filter: blur(10px); will-change: transform;
+  }
+
+  /* the sun — a soft warm disc with a wide bloom */
+  .sun {
+    position: absolute; top: 8vh; right: 10vw; width: 230px; height: 230px; border-radius: 50%;
+    background: radial-gradient(circle at 42% 40%, #FFFBF0 0%, #FCE7BE 34%, #F6C98A 60%, #EBB078 80%, rgba(235,176,120,0) 100%);
+    box-shadow: 0 0 120px 40px rgba(246,201,138,0.40), 0 0 60px 12px rgba(255,244,214,0.55);
+    opacity: 0.85; will-change: transform;
+  }
+  .sun::after {
+    /* gentle inner core glow */
+    content: ""; position: absolute; inset: 22%; border-radius: 50%;
+    background: radial-gradient(circle at 44% 40%, rgba(255,253,244,0.9), rgba(252,231,190,0) 70%);
+  }
+
+  /* a couple of soft passing clouds */
+  .cloud {
+    position: absolute; border-radius: 50%;
+    background: radial-gradient(60% 80% at 50% 50%, rgba(255,250,240,0.7), rgba(255,250,240,0) 72%);
+    filter: blur(6px); will-change: transform;
+  }
+  .cloud.a { top: 26vh; left: 12vw; width: 360px; height: 130px; opacity: 0.7; }
+  .cloud.b { top: 58vh; right: 16vw; width: 300px; height: 110px; opacity: 0.55; }
+
+  /* fine film grain — lighter than night */
+  .grain {
+    position: absolute; inset: 0; opacity: 0.035; mix-blend-mode: soft-light;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* soft warm edge — a daylight vignette brightens, doesn't darken */
+  .vignette { position: absolute; inset: 0; box-shadow: inset 0 0 240px rgba(255,238,206,0.55), inset 0 0 90px rgba(214,178,120,0.18); }
+
+  /* ── your content sits above the sky ─────────────────────────────────── */
+  .content { position: relative; z-index: 1; min-height: 100vh; display: grid; place-items: center; text-align: center; padding: 24px; }
+  .content h1 { font-size: clamp(40px, 8vw, 96px); font-weight: 400; letter-spacing: -0.02em; margin: 0; color: #5A4A34; }
+</style>
+</head>
+<body>
+  <!-- The background. Drop this block into any page. -->
+  <div class="scene">
+    <canvas id="motes"></canvas>
+    <div class="aurora" id="aurora"></div>
+    <div class="sun" id="sun"></div>
+    <div class="cloud a" id="cloudA"></div>
+    <div class="cloud b" id="cloudB"></div>
+    <div class="grain"></div>
+    <div class="vignette"></div>
+  </div>
+
+  <!-- demo content — replace with your own -->
+  <main class="content">
+    <h1>The morning is listening too.</h1>
+  </main>
+
+<script>
+(function () {
+  "use strict";
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* ── light-motes ───────────────────────────────────────────────────── */
+  var canvas = document.getElementById("motes"), ctx = canvas.getContext("2d");
+  var W = 0, H = 0, DPR = Math.min(window.devicePixelRatio || 1, 2), motes = [];
+
+  function resize() {
+    W = canvas.clientWidth; H = canvas.clientHeight;
+    canvas.width = W * DPR; canvas.height = H * DPR; ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    var count = Math.round((W * H) / 7000); motes = [];          // a little sparser than night
+    for (var i = 0; i < count; i++) {
+      var d = Math.random();                                      // 0..1 depth
+      var hue = Math.random();
+      motes.push({
+        x: Math.random() * W, y: Math.random() * H,
+        r: 0.5 + d * 2.0,            // size scales with depth (motes read larger than stars)
+        depth: 0.2 + d * 0.8,        // parallax strength
+        base: 0.18 + Math.random() * 0.42,  // base brightness (softer than stars)
+        tw: Math.random() * Math.PI * 2,    // shimmer phase
+        sp: 0.4 + Math.random() * 1.0,      // shimmer speed
+        rise: 4 + Math.random() * 10,       // gentle upward drift speed
+        sway: 6 + Math.random() * 14,       // horizontal sway amplitude
+        tone: hue < 0.20 ? "lav" : (hue < 0.62 ? "gold" : "cream")  // warm-leaning mix
+      });
+    }
+  }
+  window.addEventListener("resize", resize); resize();
+
+  function colorFor(tone, a) {
+    if (tone === "gold") return "rgba(232,196,124," + a + ")";
+    if (tone === "lav")  return "rgba(200,184,226," + a + ")";
+    return "rgba(255,250,236," + a + ")";
+  }
+
+  /* draw one static frame immediately (shows even if rAF is throttled) */
+  function drawStatic() {
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < motes.length; i++) {
+      var s = motes[i];
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = colorFor(s.tone, s.base); ctx.fill();
+    }
+  }
+  drawStatic();
+
+  /* ── pointer + scroll state (lerped for smoothness) ─────────────────── */
+  var pt = { x: 0.5, y: 0.5 }, cur = { x: 0.5, y: 0.5 };
+  window.addEventListener("pointermove", function (e) {
+    pt.x = e.clientX / window.innerWidth; pt.y = e.clientY / window.innerHeight;
+  });
+  var aurora = document.getElementById("aurora"), sun = document.getElementById("sun");
+  var cloudA = document.getElementById("cloudA"), cloudB = document.getElementById("cloudB");
+  var t0 = performance.now(), scrollY = 0;
+  window.addEventListener("scroll", function () { scrollY = window.scrollY || window.pageYOffset; }, { passive: true });
+
+  /* ── animation loop ────────────────────────────────────────────────── */
+  function frame(now) {
+    var t = (now - t0) / 1000;
+    cur.x += (pt.x - cur.x) * 0.06; cur.y += (pt.y - cur.y) * 0.06;   // ease toward cursor
+    var dx = cur.x - 0.5, dy = cur.y - 0.5;
+
+    ctx.clearRect(0, 0, W, H);
+    for (var i = 0; i < motes.length; i++) {
+      var s = motes[i];
+      var tw = reduce ? s.base : s.base * (0.55 + 0.45 * Math.sin(s.tw + t * s.sp));  // soft shimmer
+      var px = s.x - dx * 56 * s.depth                                                // cursor parallax X
+             + (reduce ? 0 : Math.sin(t * 0.3 + s.depth * 5) * s.sway);               // lateral sway
+      var py = s.y - dy * 56 * s.depth - (scrollY * 0.02 * s.depth)                   // cursor + scroll parallax Y
+             - (reduce ? 0 : (t * s.rise));                                           // gentle rise
+      px = ((px % W) + W) % W;                                                        // wrap horizontally
+      py = ((py % H) + H) % H;                                                        // wrap vertically
+      ctx.beginPath(); ctx.arc(px, py, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = colorFor(s.tone, tw); ctx.fill();
+    }
+
+    if (aurora) aurora.style.transform = "translate(" + (-dx * 24) + "px," + (-dy * 18 - scrollY * 0.05 + (reduce ? 0 : Math.sin(t * 0.2) * 6)) + "px)";
+    if (sun)    sun.style.transform    = "translate(" + (-dx * 36) + "px," + (-dy * 26 + scrollY * 0.07 - (reduce ? 0 : Math.sin(t * 0.22) * 7)) + "px)";
+    if (cloudA) cloudA.style.transform = "translate(" + (Math.sin(t * 0.06) * 40 - dx * 18) + "px," + (-dy * 10) + "px)";
+    if (cloudB) cloudB.style.transform = "translate(" + (Math.cos(t * 0.05) * 50 - dx * 14) + "px," + (-dy * 8) + "px)";
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
