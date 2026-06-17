@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { LogIn, LogOut, Moon, Settings, Sparkles, Sun, UserPlus, UserRound } from "lucide-react";
+import { Home, LogIn, LogOut, Moon, Settings, Sparkles, Sun, UserPlus, UserRound } from "lucide-react";
 import {
   PointerProvider,
   RoomLight,
@@ -192,24 +192,39 @@ function WebsiteHomeNav({
             : "0 18px 44px rgba(80, 54, 42, 0.12)",
         }}
       >
-        <Link
-          href="/"
-          aria-current={location === "/" ? "page" : undefined}
-          data-active={location === "/" ? "true" : "false"}
-          className="row-start-1 inline-flex w-fit min-w-0 shrink-0 justify-self-start items-center gap-2 rounded-[13px] border py-1 pl-1 pr-2.5 font-serif text-[17px] leading-none xl:gap-3 xl:rounded-full xl:py-1.5 xl:pl-1.5 xl:pr-4 xl:text-[24px]"
-          style={{
-            color: "var(--hint-text)",
-            background: isDark ? "rgba(241,166,107,0.12)" : "rgba(255,255,255,0.88)",
-            borderColor: isDark ? "rgba(241,166,107,0.35)" : "rgba(116,89,58,0.14)",
-            boxShadow: isDark
-              ? "inset 0 0 0 1px rgba(255,250,242,0.08)"
-              : "0 10px 22px rgba(80,54,42,0.08), inset 0 0 0 1px rgba(255,255,255,0.72)",
-          }}
-          aria-label={t("nav.homeAria")}
-        >
-          <HintLogo className="size-7 rounded-[9px] border border-white/25 shadow-[0_10px_24px_rgba(0,0,0,0.2)] xl:size-10 xl:rounded-[13px]" />
-          Hint
-        </Link>
+        <div className="row-start-1 inline-flex min-w-0 shrink-0 justify-self-start items-center gap-1.5">
+          <Link
+            href="/"
+            aria-current={location === "/" ? "page" : undefined}
+            data-active={location === "/" ? "true" : "false"}
+            className="inline-flex w-fit min-w-0 shrink-0 items-center gap-2 rounded-[13px] border py-1 pl-1 pr-2.5 font-serif text-[17px] leading-none xl:gap-3 xl:rounded-full xl:py-1.5 xl:pl-1.5 xl:pr-4 xl:text-[24px]"
+            style={{
+              color: "var(--hint-text)",
+              background: isDark ? "rgba(241,166,107,0.12)" : "rgba(255,255,255,0.88)",
+              borderColor: isDark ? "rgba(241,166,107,0.35)" : "rgba(116,89,58,0.14)",
+              boxShadow: isDark
+                ? "inset 0 0 0 1px rgba(255,250,242,0.08)"
+                : "0 10px 22px rgba(80,54,42,0.08), inset 0 0 0 1px rgba(255,255,255,0.72)",
+            }}
+            aria-label={t("nav.homeAria")}
+          >
+            <HintLogo className="size-7 rounded-[9px] border border-white/25 shadow-[0_10px_24px_rgba(0,0,0,0.2)] xl:size-10 xl:rounded-[13px]" />
+            Hint
+          </Link>
+          <Link
+            href="/"
+            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full border px-2.5 font-sans text-[11px] font-semibold xl:h-10 xl:px-3 xl:text-[12px]"
+            style={{
+              color: "var(--hint-text)",
+              background: "var(--hint-surface-soft)",
+              borderColor: "var(--hint-border)",
+            }}
+            aria-label="Return to landing page"
+          >
+            <Home className="size-3.5 xl:size-4" />
+            <span className="hidden sm:inline">Landing</span>
+          </Link>
+        </div>
 
         <div
           className="hidden min-w-0 rounded-[14px] border p-1 xl:flex xl:w-auto xl:flex-1 xl:justify-center xl:gap-1.5 xl:rounded-full"
