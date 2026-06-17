@@ -1,0 +1,79 @@
+.hint-des {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  align-items: center;
+}
+
+.hint-des__overall {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+.hint-des__overall-num {
+  font-family: var(--font-serif);
+  font-size: 48px;
+  line-height: 1;
+  color: var(--score-ink);
+  text-shadow: 0 0 24px rgba(134, 214, 199, 0.35);
+  font-variant-numeric: tabular-nums;
+}
+.hint-des__overall-label {
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--text-faint);
+}
+
+.hint-des__rings {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 16px 18px;
+}
+
+.hint-des__ring-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+}
+
+/* The ring uses a live, JS-updated --hint-ang from the count-up.
+   (We update inline each frame, so no CSS keyframe is needed here —
+   but the registered @property keeps it crisp / interpolable.) */
+.hint-des__ring {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: conic-gradient(
+    var(--tone) var(--hint-ang, 0deg),
+    color-mix(in srgb, var(--border) 60%, transparent) 0deg
+  );
+}
+
+.hint-des__hole {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: var(--surface-strong);
+  display: grid;
+  place-items: center;
+}
+
+.hint-des__num {
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-variant-numeric: tabular-nums;
+}
+
+.hint-des__label {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  color: var(--text-faint);
+}

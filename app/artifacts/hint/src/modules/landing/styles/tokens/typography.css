@@ -1,0 +1,42 @@
+/* ─────────────────────────────────────────────────────────────
+   HINT · TYPE SYSTEM
+   Fraunces (serif) carries voice — headlines, card names, whispers,
+   numbers/scores. It is often set in italic for "whispers".
+   Hanken Grotesk (sans) carries structure — UI, labels, eyebrows,
+   body copy. Eyebrows are UPPERCASE with wide tracking.
+   ───────────────────────────────────────────────────────────── */
+
+:root {
+  --font-serif: 'Fraunces', Georgia, 'Times New Roman', serif;
+  --font-sans:  'Hanken Grotesk', system-ui, -apple-system, sans-serif;
+
+  /* Display / serif scale (tarot voice) */
+  --type-display:   clamp(40px, 6vw, 72px);   /* hero "Draw your sky card" */
+  --type-title:     clamp(28px, 4vw, 48px);   /* section titles */
+  --type-card-name: 24px;                      /* tarot card name */
+  --type-whisper:   17px;                       /* italic serif line */
+  --type-score:     clamp(36px, 6vw, 82px);    /* big tabular score */
+
+  /* Sans scale (UI) */
+  --type-body:      14px;
+  --type-body-sm:   13px;
+  --type-label:     12px;
+  --type-meta:      11px;
+  --type-eyebrow:   11px;   /* uppercase, tracked */
+
+  /* Weights */
+  --weight-light:    300;
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+
+  /* Tracking */
+  --track-eyebrow: 0.18em;   /* uppercase eyebrows */
+  --track-wide:    0.32em;   /* widest, ritual labels */
+  --track-tight:   -0.01em;
+
+  /* Line heights */
+  --leading-tight:   1.05;
+  --leading-snug:    1.35;
+  --leading-relaxed: 1.6;
+}

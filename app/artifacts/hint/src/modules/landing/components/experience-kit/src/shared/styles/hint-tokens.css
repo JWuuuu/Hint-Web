@@ -1,0 +1,93 @@
+/* ───────────────────────────────────────────────────────────────
+   Hint · token FALLBACKS  (optional safety net)
+
+   Your real app already defines these in src/index.css (Tailwind v4
+   @theme / :root). This file only fills gaps so the ported components
+   render correctly in isolation (Storybook, a fresh route, tests).
+
+   It is wrapped in a cascade @layer so your real tokens ALWAYS win:
+   unlayered declarations and later layers override this one. If your
+   tokens are present you can delete this file.
+   ─────────────────────────────────────────────────────────────── */
+
+@layer hint-fallback {
+  :root {
+    /* ground + surfaces (Nocturne) */
+    --bg-solid:        #080b14;
+    --surface:         rgba(20, 28, 46, 0.55);
+    --surface-strong:  rgba(16, 23, 40, 0.78);
+    --card-surface:    rgba(22, 31, 52, 0.62);
+    --border:          rgba(203, 168, 102, 0.16);
+    --border-strong:   rgba(203, 168, 102, 0.30);
+    --gold-edge:       rgba(203, 168, 102, 0.34);
+    --gold-line:       rgba(230, 203, 142, 0.85);
+
+    /* text */
+    --text:            #e9e2d2;
+    --text-strong:     #f7f1e3;
+    --text-muted:      rgba(233, 226, 210, 0.72);
+    --text-faint:      rgba(233, 226, 210, 0.48);
+    --text-on-accent:  #231d2a;
+
+    /* brand accents */
+    --accent-gold:     #cba866;
+    --accent-aqua:     #86d6c7;
+    --hint-gold:       #e6cb8e;
+    --hint-gold-bright:#f3e2bf;
+    --hint-aqua:       #86d6c7;
+    --hint-rose:       #cba6c4;
+    --hint-ember:      #f1a66b;
+
+    /* five score tones */
+    --score-love:      #e89ab6;
+    --score-wealth:    #e6cb8e;
+    --score-career:    #9fb2e6;
+    --score-study:     #86d6c7;
+    --score-people:    #c2a6df;
+    --score-ink:       #86d6c7;
+
+    /* gradients */
+    --grad-ember:      linear-gradient(135deg, #f1a66b, #f6c28f);
+    --grad-gold:       linear-gradient(135deg, #e6cb8e, #cba866);
+    --grad-aqua-portal:linear-gradient(135deg, #40e0d0, #86d6c7);
+    --grad-deck:       linear-gradient(160deg, #16213b, #0c1426);
+
+    /* radii */
+    --radius-md:  14px;
+    --radius-lg:  18px;
+    --radius-xl:  22px;
+    --radius-2xl: 28px;
+    --radius-pill: 999px;
+
+    /* depth */
+    --shadow-card:     0 18px 40px -24px rgba(0, 0, 0, 0.7);
+    --shadow-elevated: 0 30px 70px -30px rgba(0, 0, 0, 0.78);
+    --gold-halo:       0 0 10px rgba(230, 203, 142, 0.7);
+    --halo-soft:       0 0 28px rgba(230, 203, 142, 0.12);
+
+    /* type families (loaded by your app via Google Fonts) */
+    --font-serif: "Fraunces", Georgia, serif;
+    --font-sans:  "Hanken Grotesk", system-ui, sans-serif;
+
+    /* motion */
+    --ease-out:  cubic-bezier(0.22, 1, 0.36, 1);
+    --ease-flip: cubic-bezier(0.6, 0.05, 0.2, 1);
+  }
+
+  /* Daybreak overrides — only the tokens that change. */
+  [data-hint-theme="daybreak"] {
+    --bg-solid:       #f7efe1;
+    --surface:        rgba(255, 252, 244, 0.7);
+    --surface-strong: rgba(255, 251, 242, 0.86);
+    --card-surface:   rgba(255, 250, 240, 0.8);
+    --border:         rgba(150, 110, 60, 0.18);
+    --border-strong:  rgba(150, 110, 60, 0.30);
+    --text:           #4a3f30;
+    --text-strong:    #3a2f22;
+    --text-muted:     rgba(74, 63, 48, 0.74);
+    --text-faint:     rgba(74, 63, 48, 0.5);
+    --grad-deck:      linear-gradient(160deg, #efe2c9, #e3d2b2);
+    --shadow-card:    0 18px 40px -26px rgba(120, 90, 50, 0.4);
+    --shadow-elevated:0 30px 70px -30px rgba(120, 90, 50, 0.45);
+  }
+}
