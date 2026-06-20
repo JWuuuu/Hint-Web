@@ -1,4 +1,4 @@
-﻿import type { ReactNode, ComponentType } from "react";
+﻿import type { ReactNode, ComponentType, ComponentPropsWithoutRef } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { ACCENT } from "../../modules/hold/atmosphere";
@@ -14,10 +14,11 @@ import { useLanguage } from "../../lib/i18n";
 export function AppScreen({ children }: { children: ReactNode }) {
   return (
     <div
+      data-web-screen
       className="h-full w-full overflow-y-auto overscroll-none flex flex-col items-center pb-16"
-      style={{ background: "transparent" }}
+      style={{ background: "transparent", overflowAnchor: "none" }}
     >
-      <div className="w-full max-w-[44rem] px-4 pt-32 sm:max-w-3xl sm:px-6 md:pt-32 lg:max-w-5xl lg:pt-28">
+      <div className="w-full max-w-[44rem] px-4 pt-32 sm:max-w-3xl sm:px-6 md:pt-32 lg:max-w-6xl lg:pt-28 xl:max-w-7xl">
         {children}
       </div>
     </div>
@@ -119,15 +120,17 @@ export function GlassPanel({
   className = "",
   hero = false,
   padded = true,
+  ...rest
 }: {
   children: ReactNode;
   className?: string;
   /** Use the warm ivory hero fill instead of the neutral panel fill. */
   hero?: boolean;
   padded?: boolean;
-}) {
+} & ComponentPropsWithoutRef<"div">) {
   return (
     <div
+      {...rest}
       className={`relative overflow-hidden rounded-[24px] ${padded ? "p-5" : ""} ${className}`}
       style={{
         background: hero

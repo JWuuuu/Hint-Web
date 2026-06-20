@@ -183,7 +183,7 @@ function Starfield() {
         top: `${Math.random() * 100}%`,
         left: `${Math.random() * 100}%`,
         size: Math.random() < 0.85 ? 1.5 : 2.5,
-        color: Math.random() < 0.3 ? "#86D6C7" : "#F2ECDE",
+        color: Math.random() < 0.3 ? "var(--hint-aqua)" : "var(--hint-ivory)",
         opacity: 0.2 + Math.random() * 0.5,
         duration: 2.4 + Math.random() * 4,
         delay: Math.random() * 4,

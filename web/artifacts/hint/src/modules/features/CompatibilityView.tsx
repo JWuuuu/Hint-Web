@@ -228,7 +228,7 @@ function BirthDetailsForm({
         type="submit"
         disabled={!complete || saving}
         className="mt-5 h-12 w-full rounded-full text-[14px] font-black shadow-[0_14px_30px_rgba(203,168,102,0.2)] transition-[transform,opacity] duration-200 hover:-translate-y-0.5 disabled:opacity-45"
-        style={{ background: "linear-gradient(135deg, var(--hint-gold-bright), var(--hint-gold))", color: "#080B14" }}
+        style={{ background: "linear-gradient(135deg, var(--hint-gold-bright), var(--hint-gold))", color: "var(--hint-special-action-text, #24172a)" }}
       >
         {saving ? "Working..." : submitLabel}
       </button>
@@ -553,7 +553,7 @@ function DefaultCompatibilityView() {
             disabled={!canInvite || isCreating}
             onClick={createInvite}
             className="mt-6 inline-flex h-12 items-center justify-center rounded-full px-6 text-[14px] font-black transition-[transform,opacity] duration-200 hover:-translate-y-0.5 disabled:opacity-45"
-            style={{ background: "linear-gradient(135deg, var(--hint-gold-bright), var(--hint-gold))", color: "#080B14" }}
+            style={{ background: "linear-gradient(135deg, var(--hint-gold-bright), var(--hint-gold))", color: "var(--hint-special-action-text, #24172a)" }}
           >
             {isCreating ? "Creating..." : "Create invite link"}
           </button>

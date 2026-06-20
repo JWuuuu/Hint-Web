@@ -1,112 +1,118 @@
 /* ─────────────────────────────────────────────────────────────
    HINT · COLOR SYSTEM
-   Two moods ship with the brand:
-     :root / [data-hint-theme="nocturne"]  — deep obsidian night (DEFAULT)
-     [data-hint-theme="daybreak"]          — warm parchment day
-   Base tokens are raw brand pigments. Semantic tokens (--surface,
-   --text, --border …) are what product UI should consume so a theme
-   swap re-skins everything.
+   Mirrors the current Hint-main app palette so the public website and
+   preview share the same soft premium rose / lavender / gold language.
+   Landing consumes the semantic tokens below; app routes consume the
+   matching --hint-* variables in src/index.css.
    ───────────────────────────────────────────────────────────── */
 
 :root,
 [data-hint-theme="nocturne"] {
   color-scheme: dark;
 
-  /* ── Base pigments ───────────────────────────────────────── */
-  --hint-obsidian:    #080B14;  /* deepest ground */
-  --hint-navy-0:      #0A0F1C;
-  --hint-navy-1:      #0E1626;
-  --hint-navy-2:      #131D32;  /* raised panel */
+  --hint-obsidian: #130d19;
+  --hint-navy-0: #171123;
+  --hint-navy-1: #20172d;
+  --hint-navy-2: #2a2039;
+  --hint-ivory: #fff8f2;
+  --hint-ivory-dim: rgba(247, 238, 232, 0.74);
+  --hint-ash: rgba(225, 215, 224, 0.54);
+  --hint-gold: #e3c889;
+  --hint-gold-bright: #fff1bf;
+  --hint-gold-foil: #fff2c8;
+  --hint-aqua: #badbd6;
+  --hint-aqua-deep: #749c98;
+  --hint-teal-glow: #badbd6;
+  --hint-rose: #f4afcb;
+  --hint-lavender: #d5c2f2;
+  --hint-plum: #271d38;
+  --hint-ember: #f4afcb;
+  --hint-ember-soft: #d5c2f2;
 
-  --hint-ivory:       #F2ECDE;  /* primary light ink */
-  --hint-ivory-dim:   #C4BCA9;
-  --hint-ash:         #8C92A3;  /* faint metadata grey */
+  --score-love: #f4afcb;
+  --score-wealth: #e3c889;
+  --score-career: #d5c2f2;
+  --score-study: #badbd6;
+  --score-people: #c7a7ff;
 
-  --hint-gold:        #CBA866;  /* the house metal */
-  --hint-gold-bright: #E6CB8E;
-  --hint-gold-foil:   #EFC776;
-
-  --hint-aqua:        #86D6C7;  /* score / signal teal */
-  --hint-aqua-deep:   #649C9E;
-  --hint-teal-glow:   #40E0D0;  /* the Ask portal only */
-
-  --hint-rose:        #CBA6C4;
-  --hint-lavender:    #B298B3;
-
-  --hint-ember:       #F1A66B;  /* warm CTA — "Open app" */
-  --hint-ember-soft:  #F6C28F;
-
-  /* ── Life-area score tones (fixed across themes) ─────────── */
-  --score-love:    #EF84BD;
-  --score-wealth:  #E6BD63;
-  --score-career:  #90A8EF;
-  --score-study:   #60C8DC;
-  --score-people:  #BF7DE8;
-
-  /* ── Semantic surfaces ───────────────────────────────────── */
-  --bg: radial-gradient(600px 360px at 78% 4%, #142a40 0%, transparent 58%),
-        radial-gradient(520px 420px at 12% 96%, #20183a 0%, transparent 55%),
-        linear-gradient(180deg, #0A0F1C 0%, #0B1120 48%, #080B14 100%);
+  --bg:
+    radial-gradient(760px 560px at 12% 6%, rgba(244, 175, 203, 0.26), transparent 62%),
+    radial-gradient(680px 520px at 88% 10%, rgba(213, 194, 242, 0.20), transparent 60%),
+    radial-gradient(620px 440px at 54% 88%, rgba(227, 200, 137, 0.14), transparent 62%),
+    linear-gradient(180deg, #171120 0%, #241b30 48%, #120d19 100%);
   --bg-solid: var(--hint-obsidian);
 
-  --surface:        rgba(14, 22, 38, 0.62);
-  --surface-soft:   rgba(255, 255, 255, 0.045);
-  --surface-strong: linear-gradient(160deg, rgba(14,22,38,0.74), rgba(10,15,28,0.88) 62%, rgba(8,11,20,0.9));
-  --card-surface:   linear-gradient(155deg, rgba(19,29,50,0.84), rgba(10,15,28,0.94) 58%, rgba(8,11,20,0.96));
-  --input-bg:       rgba(10, 15, 28, 0.58);
+  --surface: rgba(255, 255, 255, 0.10);
+  --surface-soft: rgba(255, 255, 255, 0.065);
+  --surface-strong: linear-gradient(145deg, rgba(255,240,248,0.17), rgba(255,246,252,0.10) 48%, rgba(245,238,255,0.088));
+  --card-surface: linear-gradient(145deg, rgba(255,240,248,0.12), rgba(255,246,252,0.072) 44%, rgba(245,238,255,0.062));
+  --input-bg: rgba(255, 255, 255, 0.078);
 
-  /* ── Semantic ink ────────────────────────────────────────── */
-  --text:        var(--hint-ivory);
-  --text-strong: #FCF8EE;
-  --text-muted:  var(--hint-ivory-dim);
-  --text-faint:  var(--hint-ash);
-  --text-on-accent: #231D2A;     /* dark ink for gold/ember buttons */
+  --text: rgba(255, 248, 242, 0.96);
+  --text-strong: #fff8f2;
+  --text-muted: rgba(247, 238, 232, 0.70);
+  --text-faint: rgba(225, 215, 224, 0.48);
+  --text-on-accent: #24172a;
 
-  /* ── Lines & metal accents ───────────────────────────────── */
-  --border:        rgba(255, 255, 255, 0.10);
-  --border-strong: rgba(255, 255, 255, 0.20);
-  --gold-edge:     rgba(218, 182, 122, 0.42);
-  --gold-line:     rgba(228, 198, 138, 0.78);
+  --border: rgba(255, 255, 255, 0.14);
+  --border-strong: rgba(255, 255, 255, 0.22);
+  --gold-edge: rgba(255, 220, 235, 0.22);
+  --gold-line: rgba(255, 242, 200, 0.58);
 
-  --accent-gold: #C4A962;
-  --accent-aqua: #649C9E;
+  --accent-gold: var(--hint-gold);
+  --accent-aqua: var(--hint-aqua);
   --accent-rose: var(--hint-rose);
 
-  /* score ink + halo */
-  --score-ink:    var(--hint-aqua);
-  --score-shadow: 0 0 24px rgba(134, 214, 199, 0.22);
+  --score-ink: #f0c6d8;
+  --score-shadow: 0 0 24px rgba(240, 198, 216, 0.20);
 }
 
 [data-hint-theme="daybreak"] {
   color-scheme: light;
 
-  --hint-ivory:     #1D1922;   /* ink flips dark on light ground */
-  --hint-ivory-dim: #4B4452;
-  --hint-ash:       #6B6478;
+  --hint-ivory: #282030;
+  --hint-ivory-dim: rgba(83, 73, 94, 0.76);
+  --hint-ash: rgba(95, 85, 105, 0.54);
+  --hint-gold: #b4873b;
+  --hint-gold-bright: #e9c980;
+  --hint-gold-foil: #fff4cb;
+  --hint-aqua: #749c98;
+  --hint-aqua-deep: #5f8f8a;
+  --hint-teal-glow: #749c98;
+  --hint-rose: #d8649a;
+  --hint-lavender: #8d70c9;
+  --hint-plum: #34223f;
+  --hint-ember: #ffc5dc;
+  --hint-ember-soft: #d8c9ff;
 
-  --bg: linear-gradient(180deg, #FBF5EA 0%, #F2EDF7 48%, #E8F3F1 100%);
-  --bg-solid: #FBF5EA;
+  --bg:
+    radial-gradient(760px 560px at 10% 8%, rgba(255, 205, 224, 0.58), transparent 64%),
+    radial-gradient(720px 560px at 92% 8%, rgba(226, 212, 252, 0.48), transparent 64%),
+    radial-gradient(700px 520px at 54% 94%, rgba(255, 238, 198, 0.36), transparent 66%),
+    linear-gradient(180deg, #fffdfb 0%, #fbf3f8 46%, #f8fbf7 100%);
+  --bg-solid: #fffdfb;
 
-  --surface:        rgba(255, 252, 246, 0.66);
-  --surface-soft:   rgba(255, 255, 255, 0.42);
-  --surface-strong: linear-gradient(150deg, rgba(255,252,246,0.82), rgba(243,232,245,0.74) 46%, rgba(224,244,240,0.74));
-  --card-surface:   linear-gradient(155deg, rgba(255,252,246,0.9), rgba(239,247,245,0.88) 56%, rgba(245,235,247,0.86));
-  --input-bg:       rgba(255, 255, 255, 0.48);
+  --surface: rgba(255, 255, 255, 0.56);
+  --surface-soft: rgba(255, 255, 255, 0.36);
+  --surface-strong: linear-gradient(145deg, rgba(255,255,255,0.88), rgba(255,244,251,0.70) 48%, rgba(246,240,255,0.66));
+  --card-surface: linear-gradient(145deg, rgba(255,255,255,0.78), rgba(255,246,251,0.62) 44%, rgba(246,240,255,0.54));
+  --input-bg: rgba(255, 255, 255, 0.52);
 
-  --text:        rgba(29, 25, 34, 0.95);
-  --text-strong: rgba(35, 29, 43, 0.96);
-  --text-muted:  rgba(75, 68, 82, 0.72);
-  --text-faint:  rgba(75, 68, 82, 0.52);
-  --text-on-accent: #241D18;
+  --text: rgba(40, 32, 48, 0.96);
+  --text-strong: rgba(40, 32, 48, 0.98);
+  --text-muted: rgba(83, 73, 94, 0.76);
+  --text-faint: rgba(95, 85, 105, 0.54);
+  --text-on-accent: #2a1c2f;
 
-  --border:        rgba(54, 42, 61, 0.14);
-  --border-strong: rgba(54, 42, 61, 0.22);
-  --gold-edge:     rgba(174, 124, 54, 0.34);
-  --gold-line:     rgba(151, 103, 56, 0.62);
+  --border: rgba(89, 68, 101, 0.14);
+  --border-strong: rgba(89, 68, 101, 0.24);
+  --gold-edge: rgba(180, 135, 59, 0.34);
+  --gold-line: rgba(180, 135, 59, 0.62);
 
-  --accent-gold: #AE7C36;
-  --accent-aqua: #2F7478;
+  --accent-gold: var(--hint-gold);
+  --accent-aqua: var(--hint-aqua);
+  --accent-rose: var(--hint-rose);
 
-  --score-ink:    #2F7478;
-  --score-shadow: 0 1px 0 rgba(255,255,255,0.46), 0 0 26px rgba(47,116,120,0.18);
+  --score-ink: #7c5f76;
+  --score-shadow: 0 1px 0 rgba(255, 255, 255, 0.48), 0 0 22px rgba(214, 109, 155, 0.14);
 }

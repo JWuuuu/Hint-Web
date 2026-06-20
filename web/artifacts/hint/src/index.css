@@ -47,26 +47,29 @@
 
 [data-hint-theme="dark"] {
   color-scheme: dark;
-  --hint-obsidian: #080B14;
-  --hint-navy-0: #0A0F1C;
-  --hint-navy-1: #0E1626;
-  --hint-navy-2: #131D32;
-  --hint-ivory: #F2ECDE;
-  --hint-ivory-dim: #C4BCA9;
-  --hint-muted-token: #8C92A3;
-  --hint-gold: #CBA866;
-  --hint-gold-bright: #E6CB8E;
-  --hint-aqua: #86D6C7;
-  --hint-rose: #CBA6C4;
+  --hint-obsidian: #130d19;
+  --hint-navy-0: #171123;
+  --hint-navy-1: #20172d;
+  --hint-navy-2: #2a2039;
+  --hint-ivory: #fff8f2;
+  --hint-ivory-dim: rgba(247, 238, 232, 0.74);
+  --hint-muted-token: rgba(225, 215, 224, 0.54);
+  --hint-gold: #e3c889;
+  --hint-gold-bright: #fff1bf;
+  --hint-aqua: #badbd6;
+  --hint-rose: #f4afcb;
+  --hint-lavender: #d5c2f2;
+  --hint-plum: #271d38;
   --hint-glass: rgba(255,255,255,0.045);
   --hint-glass-line: rgba(255,255,255,0.10);
   --hint-page-bg:
-    radial-gradient(600px 360px at 78% 4%, #142a40 0%, transparent 58%),
-    radial-gradient(520px 420px at 12% 96%, #20183a 0%, transparent 55%),
-    linear-gradient(180deg, #0A0F1C 0%, #0B1120 48%, #080B14 100%);
-  --hint-bg-glow-a: rgba(20, 42, 64, 0.42);
-  --hint-bg-glow-b: rgba(10, 44, 56, 0.22);
-  --hint-bg-glow-c: rgba(203, 168, 102, 0.11);
+    radial-gradient(760px 560px at 12% 6%, rgba(244, 175, 203, 0.26), transparent 62%),
+    radial-gradient(680px 520px at 88% 10%, rgba(213, 194, 242, 0.20), transparent 60%),
+    radial-gradient(620px 440px at 54% 88%, rgba(227, 200, 137, 0.14), transparent 62%),
+    linear-gradient(180deg, #171120 0%, #241b30 48%, #120d19 100%);
+  --hint-bg-glow-a: rgba(244, 175, 203, 0.34);
+  --hint-bg-glow-b: rgba(213, 194, 242, 0.22);
+  --hint-bg-glow-c: rgba(227, 200, 137, 0.12);
   --hint-star-ink: rgba(255, 251, 236, 0.72);
   --hint-star-soft: rgba(148, 226, 219, 0.48);
   --hint-star-opacity: 0.82;
@@ -84,8 +87,8 @@
   --hint-text: var(--hint-ivory);
   --hint-muted: var(--hint-ivory-dim);
   --hint-faint: var(--hint-muted-token);
-  --hint-score-ink: var(--hint-aqua);
-  --hint-score-shadow: 0 0 24px rgba(134, 214, 199, 0.22);
+  --hint-score-ink: #f0c6d8;
+  --hint-score-shadow: 0 0 24px rgba(240, 198, 216, 0.20);
   --hint-ritual-primary: rgba(252, 248, 238, 0.98);
   --hint-ritual-strong: rgba(250, 246, 236, 0.93);
   --hint-ritual-body: rgba(248, 244, 234, 0.86);
@@ -97,10 +100,10 @@
   --hint-logo-text: #f9f6f0;
   --hint-border: var(--hint-glass-line);
   --hint-border-strong: rgba(255, 255, 255, 0.2);
-  --hint-surface: rgba(14, 22, 38, 0.62);
-  --hint-surface-soft: var(--hint-glass);
-  --hint-surface-strong: linear-gradient(160deg, rgba(14, 22, 38, 0.74), rgba(10, 15, 28, 0.88) 62%, rgba(8, 11, 20, 0.9));
-  --hint-card-surface: linear-gradient(155deg, rgba(19, 29, 50, 0.84), rgba(10, 15, 28, 0.94) 58%, rgba(8, 11, 20, 0.96));
+  --hint-surface: rgba(255, 255, 255, 0.10);
+  --hint-surface-soft: rgba(255, 255, 255, 0.065);
+  --hint-surface-strong: var(--hint-liquid-panel-strong, linear-gradient(145deg, rgba(255,240,248,0.17), rgba(255,246,252,0.10) 48%, rgba(245,238,255,0.088)));
+  --hint-card-surface: var(--hint-liquid-panel, linear-gradient(145deg, rgba(255,240,248,0.12), rgba(255,246,252,0.072) 44%, rgba(245,238,255,0.062)));
   --hint-card-surface-muted: rgba(255, 255, 255, 0.035);
   --hint-card-inner: rgba(0, 0, 0, 0.18);
   --hint-lucky-stroke: rgba(255, 244, 222, 0.82);
@@ -120,7 +123,7 @@
   --hint-me-plus-border: rgba(196,169,98,0.32);
   --hint-me-plus-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,235,190,0.12);
   --hint-me-plus-check-bg: rgba(196,169,98,0.2);
-  --hint-me-archive-surface: linear-gradient(120deg, #0E1626 0%, #0A0F1A 55%, #060913 100%);
+  --hint-me-archive-surface: linear-gradient(120deg, #20172d 0%, #171123 55%, #130d19 100%);
   --hint-me-archive-shadow: 0 10px 36px rgba(0,0,0,0.45);
   --hint-me-archive-stars: radial-gradient(circle at 88% 18%, rgba(196,169,98,0.16), transparent 45%), radial-gradient(1px 1px at 20% 60%, rgba(255,255,255,0.5), transparent), radial-gradient(1px 1px at 64% 30%, rgba(255,255,255,0.4), transparent), radial-gradient(1px 1px at 40% 80%, rgba(255,255,255,0.35), transparent);
   --hint-hero-surface: linear-gradient(155deg, rgba(14, 22, 38, 0.78), rgba(10, 15, 28, 0.9) 58%, rgba(8, 11, 20, 0.96));
@@ -133,7 +136,7 @@
   --hint-chat-input-shadow-focus: inset 0 1px 0 rgba(255,240,210,0.08), 0 6px 28px rgba(0,0,0,0.45), 0 0 32px rgba(255,240,210,0.06);
   --hint-chat-placeholder: rgba(244, 240, 228, 0.42);
   --hint-stat-bg: rgba(0, 0, 0, 0.2);
-  --hint-deck-card-bg: linear-gradient(160deg, #131D32, #0A0F1C 62%, #080B14);
+  --hint-deck-card-bg: linear-gradient(160deg, #34233f 0%, #241b34 52%, #1a2238 100%);
   --hint-daily-card-face-bg: linear-gradient(160deg, #344247 0%, #25353b 52%, #14262d 100%);
   --hint-deck-label: var(--hint-ivory);
   --hint-nav-bg: rgba(5, 8, 14, 0.78);
@@ -174,7 +177,7 @@
   --astro-wheel-line: rgba(255,255,255,0.20);
   --astro-wheel-axis: rgba(255,255,255,0.28);
   --astro-button: linear-gradient(135deg, var(--astro-gold-bright), var(--astro-gold));
-  --astro-button-text: #080B14;
+  --astro-button-text: var(--hint-special-action-text, #24172a);
   --astro-shadow: 0 24px 72px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08);
   --astro-shadow-soft: 0 16px 42px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06);
   --astro-button-shadow: 0 12px 28px rgba(203,168,102,0.18);
@@ -204,8 +207,8 @@
   --hint-text: rgba(29, 25, 34, 0.95);
   --hint-muted: rgba(75, 68, 82, 0.72);
   --hint-faint: rgba(75, 68, 82, 0.52);
-  --hint-score-ink: #2f7478;
-  --hint-score-shadow: 0 1px 0 rgba(255, 255, 255, 0.46), 0 0 26px rgba(47, 116, 120, 0.18);
+  --hint-score-ink: #7c5f76;
+  --hint-score-shadow: 0 1px 0 rgba(255, 255, 255, 0.48), 0 0 22px rgba(214, 109, 155, 0.14);
   --hint-ritual-primary: rgba(29, 25, 34, 0.96);
   --hint-ritual-strong: rgba(35, 29, 43, 0.92);
   --hint-ritual-body: rgba(51, 44, 61, 0.82);
@@ -298,6 +301,89 @@
   --astro-shadow: 0 24px 64px rgba(93, 73, 105, 0.13), inset 0 1px 0 rgba(255,255,255,0.76);
   --astro-shadow-soft: 0 18px 42px rgba(83, 64, 98, 0.10), inset 0 1px 0 rgba(255,255,255,0.68);
   --astro-button-shadow: 0 12px 24px rgba(154,105,45,0.18);
+}
+
+/* HINT Main app-only visual system
+   Soft premium mobile UI: pearl glass, lavender mist, blush aura, readable contrast. */
+[data-hint-theme="dark"] {
+  --hint-obsidian: #130d19;
+  --hint-navy-0: #171123;
+  --hint-navy-1: #20172d;
+  --hint-navy-2: #2a2039;
+  --hint-ivory: #fff8f2;
+  --hint-ivory-dim: rgba(247, 238, 232, 0.74);
+  --hint-muted-token: rgba(225, 215, 224, 0.54);
+  --hint-gold: #e3c889;
+  --hint-gold-bright: #fff1bf;
+  --hint-aqua: #badbd6;
+  --hint-rose: #f4afcb;
+  --hint-lavender: #d5c2f2;
+  --hint-plum: #271d38;
+  --hint-page-bg:
+    radial-gradient(760px 560px at 12% 6%, rgba(244, 175, 203, 0.26), transparent 62%),
+    radial-gradient(680px 520px at 88% 10%, rgba(213, 194, 242, 0.20), transparent 60%),
+    radial-gradient(620px 440px at 54% 88%, rgba(227, 200, 137, 0.14), transparent 62%),
+    linear-gradient(180deg, #171120 0%, #241b30 48%, #120d19 100%);
+  --hint-bg-glow-a: rgba(244, 175, 203, 0.34);
+  --hint-bg-glow-b: rgba(213, 194, 242, 0.22);
+  --hint-bg-glow-c: rgba(227, 200, 137, 0.12);
+  --hint-text: rgba(255, 248, 242, 0.96);
+  --hint-muted: rgba(247, 238, 232, 0.70);
+  --hint-faint: rgba(225, 215, 224, 0.48);
+  --hint-border: rgba(255, 255, 255, 0.14);
+  --hint-border-strong: rgba(255, 255, 255, 0.22);
+  --hint-glass: rgba(255, 255, 255, 0.072);
+  --hint-glass-line: rgba(255, 255, 255, 0.15);
+  --hint-liquid-panel: linear-gradient(145deg, rgba(255,240,248,0.12), rgba(255,246,252,0.072) 44%, rgba(245,238,255,0.062));
+  --hint-liquid-panel-strong: linear-gradient(145deg, rgba(255,240,248,0.17), rgba(255,246,252,0.10) 48%, rgba(245,238,255,0.088));
+  --hint-liquid-border: rgba(255, 220, 235, 0.22);
+  --hint-liquid-highlight: rgba(255, 255, 255, 0.24);
+  --hint-liquid-shadow: 0 26px 72px rgba(13, 10, 24, 0.42), inset 0 1px 0 rgba(255,255,255,0.15);
+  --hint-special-action-bg: linear-gradient(135deg, #fff2c8 0%, #f4afcb 48%, #d5c2f2 100%);
+  --hint-special-action-text: #24172a;
+  --hint-special-action-border: rgba(255, 242, 200, 0.58);
+  --hint-surface: rgba(255, 255, 255, 0.10);
+  --hint-surface-soft: rgba(255, 255, 255, 0.065);
+  --hint-surface-strong: var(--hint-liquid-panel-strong);
+  --hint-input-bg: rgba(255, 255, 255, 0.078);
+  --hint-card-surface: var(--hint-liquid-panel);
+  --hint-card-inner: rgba(255, 255, 255, 0.08);
+  --hint-score-ink: #f0c6d8;
+  --hint-score-shadow: 0 0 24px rgba(240, 198, 216, 0.20);
+  --hint-deck-card-bg: linear-gradient(160deg, #34233f 0%, #241b34 52%, #1a2238 100%);
+  --hint-daily-card-face-bg: linear-gradient(160deg, #422943 0%, #2b203c 52%, #1b2538 100%);
+  --hint-nav-bg: rgba(37, 28, 52, 0.62);
+  --hint-elevated-shadow: 0 26px 72px rgba(13, 10, 24, 0.36), inset 0 1px 0 rgba(255,255,255,0.12);
+}
+
+[data-hint-theme="bright"] {
+  --hint-page-bg:
+    radial-gradient(760px 560px at 10% 8%, rgba(255, 205, 224, 0.58), transparent 64%),
+    radial-gradient(720px 560px at 92% 8%, rgba(226, 212, 252, 0.48), transparent 64%),
+    radial-gradient(700px 520px at 54% 94%, rgba(255, 238, 198, 0.36), transparent 66%),
+    linear-gradient(180deg, #fffdfb 0%, #fbf3f8 46%, #f8fbf7 100%);
+  --hint-gold: #b4873b;
+  --hint-gold-bright: #e9c980;
+  --hint-aqua: #749c98;
+  --hint-rose: #d8649a;
+  --hint-lavender: #8d70c9;
+  --hint-plum: #34223f;
+  --hint-text: rgba(40, 32, 48, 0.96);
+  --hint-muted: rgba(83, 73, 94, 0.76);
+  --hint-faint: rgba(95, 85, 105, 0.54);
+  --hint-border: rgba(89, 68, 101, 0.14);
+  --hint-border-strong: rgba(89, 68, 101, 0.24);
+  --hint-liquid-panel: linear-gradient(145deg, rgba(255,255,255,0.78), rgba(255,246,251,0.62) 44%, rgba(246,240,255,0.54));
+  --hint-liquid-panel-strong: linear-gradient(145deg, rgba(255,255,255,0.88), rgba(255,244,251,0.70) 48%, rgba(246,240,255,0.66));
+  --hint-liquid-shadow: 0 24px 68px rgba(126, 82, 116, 0.17), inset 0 1px 0 rgba(255,255,255,0.88), inset 0 -1px 0 rgba(89,68,101,0.07);
+  --hint-special-action-bg: linear-gradient(135deg, #fff4cb 0%, #ffc5dc 46%, #d8c9ff 100%);
+  --hint-special-action-text: #2a1c2f;
+  --hint-surface: rgba(255, 255, 255, 0.56);
+  --hint-surface-soft: rgba(255, 255, 255, 0.36);
+  --hint-input-bg: rgba(255, 255, 255, 0.52);
+  --hint-score-ink: #7c5f76;
+  --hint-score-shadow: 0 1px 0 rgba(255, 255, 255, 0.48), 0 0 22px rgba(214, 109, 155, 0.14);
+  --hint-deck-card-bg: linear-gradient(160deg, #342540 0%, #211d32 56%, #18283a 100%);
 }
 
 @layer base {

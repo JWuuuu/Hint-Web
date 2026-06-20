@@ -6,6 +6,7 @@ import { AppScreen, GlassPanel, ScreenHeader, SectionLabel } from "../../compone
 import { getAnonId } from "../../lib/identity";
 import { useLanguage } from "../../lib/i18n";
 import { getDailyReport } from "../home/data/dailyReport";
+import { getTarotCardImage } from "../tarot/logic/cardImageMap";
 
 const tarotImage = (file: string) => `/assets/tarot/${file}`;
 
@@ -68,6 +69,63 @@ function LiteCardImage({ image, name }: { image: string; name: string }) {
     >
       <img src={image} alt={name} className="h-full w-full object-cover" draggable={false} />
     </div>
+  );
+}
+
+function FeaturedDailyCard({
+  image,
+  name,
+  revealed,
+  onReveal,
+}: {
+  image: string;
+  name: string;
+  revealed: boolean;
+  onReveal: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={(event) => {
+        event.currentTarget.blur();
+        onReveal();
+      }}
+      onMouseDown={(event) => event.preventDefault()}
+      className="group relative mx-auto flex w-full max-w-[260px] flex-col items-center text-left outline-none sm:max-w-[300px] md:max-w-[320px] focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--hint-gold)_72%,white)]"
+      aria-label={revealed ? `Daily tarot card: ${name}` : "Tap to reveal today's tarot card"}
+    >
+      <span
+        aria-hidden
+        className="absolute inset-x-[-18%] top-[9%] h-[74%] rounded-full opacity-80 blur-3xl transition duration-700 group-hover:opacity-100"
+        style={{
+          background:
+            "radial-gradient(circle at 50% 35%, color-mix(in srgb, var(--hint-gold) 30%, transparent), color-mix(in srgb, var(--hint-rose) 18%, transparent) 42%, transparent 72%)",
+        }}
+      />
+      <span
+        className="relative block aspect-[46/71] w-full overflow-hidden rounded-[18px] border transition duration-500 group-hover:-translate-y-1 group-hover:scale-[1.015]"
+        style={{
+          borderColor: revealed
+            ? "color-mix(in srgb, var(--hint-gold) 72%, var(--hint-border))"
+            : "color-mix(in srgb, var(--hint-gold) 46%, var(--hint-border))",
+          boxShadow: revealed
+            ? "0 30px 72px rgba(0,0,0,0.42), 0 0 54px color-mix(in srgb, var(--hint-gold) 28%, transparent)"
+            : "0 24px 60px rgba(0,0,0,0.36), 0 0 34px color-mix(in srgb, var(--hint-gold) 14%, transparent)",
+        }}
+      >
+        <img src={image} alt={name} className="h-full w-full object-cover" draggable={false} />
+      </span>
+      <span
+        className="relative mt-4 inline-flex min-h-10 items-center justify-center rounded-full border px-5 text-center font-sans text-[12px] font-semibold"
+        style={{
+          color: revealed ? "var(--hint-special-action-text, #24172a)" : "var(--hint-text)",
+          background: revealed ? "var(--hint-special-action-bg)" : "var(--hint-surface-soft)",
+          borderColor: revealed ? "var(--hint-special-action-border, var(--hint-gold))" : "var(--hint-border-strong)",
+        }}
+      >
+        {revealed ? "Card revealed" : "Tap to reveal today's sample card"}
+      </span>
+    </button>
   );
 }
 
@@ -205,6 +263,22 @@ export function DailyPullLitePage() {
   const { language } = useLanguage();
   const report = useMemo(() => getDailyReport({ anonId: getAnonId(), language }), [language]);
   const [revealed, setRevealed] = useState(false);
+  const dailyCardImage = getTarotCardImage(report.card.cardId) ?? imageForCard(report.card.cardName);
+  function revealDailyCard() {
+    if (revealed) return;
+    const scrollFrame = document.querySelector("[data-web-screen]");
+    const scrollTop = scrollFrame instanceof HTMLElement ? scrollFrame.scrollTop : window.scrollY;
+    setRevealed(true);
+    const restoreScroll = () => {
+      if (scrollFrame instanceof HTMLElement) {
+        scrollFrame.scrollTop = scrollTop;
+      } else {
+        window.scrollTo({ top: scrollTop });
+      }
+    };
+    window.requestAnimationFrame(() => window.requestAnimationFrame(restoreScroll));
+    window.setTimeout(restoreScroll, 80);
+  }
   const scorePreview = [
     { label: "Overall", value: report.overallScore },
     { label: "Love", value: report.scores.find((score) => score.key === "love")?.score ?? 78 },
@@ -222,25 +296,38 @@ export function DailyPullLitePage() {
         subtitle="This web version previews one daily card, a score snapshot, and a short hint. Full explanation, sky evidence, history, and saving stay in the app."
         icon={<CalendarDays className="size-6" />}
       />
-      <GlassPanel className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
-        <button type="button" onClick={() => setRevealed(true)} className="group mx-auto block text-left">
-          <LiteCardImage image={imageForCard(report.card.cardName)} name={report.card.cardName} />
-          <p className="mt-3 text-center font-sans text-[12px] font-semibold" style={{ color: "var(--hint-muted)" }}>
-            {revealed ? "Card revealed" : "Tap to reveal today's sample card"}
-          </p>
-        </button>
-        <div>
+      <GlassPanel
+        data-lite-daily-panel
+        className="grid min-h-[430px] gap-5 p-4 sm:p-5 md:grid-cols-[minmax(250px,0.9fr)_minmax(0,1.1fr)] md:items-stretch lg:min-h-[520px] lg:grid-cols-[minmax(310px,0.92fr)_minmax(0,1.08fr)] lg:gap-7 lg:p-7"
+      >
+        <div
+          className="relative flex min-h-[390px] items-center justify-center overflow-hidden rounded-[22px] border px-4 py-7 md:min-h-0 lg:px-6"
+          style={{
+            background:
+              "radial-gradient(circle at 50% 24%, color-mix(in srgb, var(--hint-gold) 20%, transparent), transparent 42%), linear-gradient(155deg, color-mix(in srgb, var(--hint-plum) 54%, transparent), color-mix(in srgb, var(--hint-surface) 82%, transparent))",
+            borderColor: "color-mix(in srgb, var(--hint-gold) 28%, var(--hint-border))",
+          }}
+        >
+          <FeaturedDailyCard
+            image={dailyCardImage}
+            name={report.card.cardName}
+            revealed={revealed}
+            onReveal={revealDailyCard}
+          />
+        </div>
+
+        <div className="flex min-w-0 flex-col justify-between gap-4">
           {revealed ? (
             <ViewMoreGate
               preview={
-                <div>
+                <div className="rounded-[22px] border p-4 sm:p-5" style={{ borderColor: "var(--hint-border)", background: "var(--hint-surface-soft)" }}>
                   <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--hint-gold)" }}>Today’s card</p>
-                  <h2 className="mt-1 font-serif text-[34px]" style={{ color: "var(--hint-text)" }}>{report.card.cardName}</h2>
-                  <p className="mt-2 font-sans text-[14px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>{report.card.whisper}</p>
-                  <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-3">
+                  <h2 className="mt-1 font-serif text-[38px] leading-none sm:text-[44px]" style={{ color: "var(--hint-text)" }}>{report.card.cardName}</h2>
+                  <p className="mt-3 font-sans text-[15px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>{report.card.whisper}</p>
+                  <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-3">
                     {scorePreview.map((score) => (
-                      <div key={score.label} className="rounded-[14px] border p-3" style={{ borderColor: "var(--hint-border)", background: "var(--hint-surface-soft)" }}>
-                        <p className="font-serif text-[28px] leading-none" style={{ color: "var(--hint-score-ink)" }}>{score.value}</p>
+                      <div key={score.label} className="rounded-[16px] border p-3.5" style={{ borderColor: "var(--hint-border)", background: "color-mix(in srgb, var(--hint-input-bg) 74%, transparent)" }}>
+                        <p className="font-serif text-[32px] leading-none" style={{ color: "var(--hint-score-ink)", textShadow: "var(--hint-score-shadow)" }}>{score.value}</p>
                         <p className="mt-1 font-sans text-[11px] font-semibold" style={{ color: "var(--hint-muted)" }}>{score.label}</p>
                       </div>
                     ))}
@@ -252,9 +339,25 @@ export function DailyPullLitePage() {
               appPath="/daily"
             />
           ) : (
-            <PreviewTextBlock eyebrow="Preview rule" title="One real web draw">
-              Tap the sample card to reveal the web preview. The website does not save this as your real daily receipt.
-            </PreviewTextBlock>
+            <>
+              <div className="rounded-[22px] border p-4 sm:p-5" style={{ borderColor: "var(--hint-border)", background: "var(--hint-surface-soft)" }}>
+                <p className="font-sans text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--hint-gold)" }}>Website demo</p>
+                <h2 className="mt-1 font-serif text-[34px] leading-tight sm:text-[40px]" style={{ color: "var(--hint-text)" }}>
+                  One draw opens the day.
+                </h2>
+                <p className="mt-3 font-sans text-[15px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>
+                  Tap the tarot card to reveal today’s web preview, then the score snapshot appears here beside the card.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
+                {scorePreview.map((score) => (
+                  <div key={score.label} className="rounded-[16px] border p-3.5 opacity-80" style={{ borderColor: "var(--hint-border)", background: "color-mix(in srgb, var(--hint-input-bg) 60%, transparent)" }}>
+                    <p className="font-serif text-[30px] leading-none" style={{ color: "var(--hint-faint)" }}>--</p>
+                    <p className="mt-1 font-sans text-[11px] font-semibold" style={{ color: "var(--hint-muted)" }}>{score.label}</p>
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </div>
       </GlassPanel>

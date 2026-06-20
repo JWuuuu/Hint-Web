@@ -27,13 +27,13 @@
   --blur-veil:  blur(8px); /* @kind other */
 
   /* CTA gradients */
-  --grad-ember: linear-gradient(135deg, #EFA260, #F6C28F); /* @kind color */
-  --grad-gold:  linear-gradient(135deg, rgba(228,164,82,1), rgba(242,148,111,0.98)); /* @kind color */
-  --grad-aqua-portal: radial-gradient(circle at 50% 32%, rgba(110,240,224,0.95) 0%, rgba(64,224,208,0.9) 45%, rgba(44,158,150,0.92) 100%); /* @kind color */
+  --grad-ember: var(--hint-special-action-bg, linear-gradient(135deg, #fff2c8 0%, #f4afcb 48%, #d5c2f2 100%)); /* @kind color */
+  --grad-gold:  linear-gradient(135deg, var(--hint-gold-bright, #fff1bf), var(--hint-gold, #e3c889)); /* @kind color */
+  --grad-aqua-portal: radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--hint-aqua, #badbd6) 92%, white) 0%, var(--hint-aqua, #badbd6) 48%, var(--hint-plum, #271d38) 100%); /* @kind color */
 
   /* Tile gradient (module tiles, deck cards) */
-  --grad-tile: linear-gradient(155deg, #0F1626 0%, #0A0F1A 55%, #060913 100%); /* @kind color */
-  --grad-deck: linear-gradient(160deg, #131D32, #0A0F1C 62%, #080B14); /* @kind color */
+  --grad-tile: var(--hint-liquid-panel, linear-gradient(145deg, rgba(255,240,248,0.12), rgba(255,246,252,0.072) 44%, rgba(245,238,255,0.062))); /* @kind color */
+  --grad-deck: var(--hint-deck-card-bg, linear-gradient(160deg, #34233f 0%, #241b34 52%, #1a2238 100%)); /* @kind color */
 
   /* Motion — slow, eased, never bouncy */
   --ease-out:  cubic-bezier(0.45, 0, 0.2, 1); /* @kind other */
