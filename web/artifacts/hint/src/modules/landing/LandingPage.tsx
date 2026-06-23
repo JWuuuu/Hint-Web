@@ -6,35 +6,20 @@ import "./components/experience-kit/src/shared/styles/animations.css";
 import "./components/experience-kit/src/shared/styles/hint-tokens.css";
 import "./styles/landing.css";
 import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
-import { AnimalTarot } from "./components/experience-kit/src/product/animal-tarot/AnimalTarot";
 import { DailyEnergyScore } from "./components/experience-kit/src/product/daily/DailyEnergyScore";
 import { DailyTarot } from "./components/experience-kit/src/product/daily/DailyTarot";
-import { EnergyTask } from "./components/experience-kit/src/product/daily/EnergyTask";
-import { RareCardUnlock } from "./components/experience-kit/src/product/collection/RareCardUnlock";
-import { SkyDeckDraw } from "./components/experience-kit/src/product/sky-deck/SkyDeckDraw";
 import { TarotRoom } from "./components/experience-kit/src/product/tarot/TarotRoom";
 import { FeatureCarousel, type FeatureSlide } from "./components/experience-kit/src/site/FeatureCarousel";
 import type {
-  AnimalSpiritData,
-  EnergyTaskItem,
   ScoreArea,
   TarotCardData,
 } from "./components/experience-kit/src/shared/data/tarot";
 import { LanguageToggle } from "../../components/LanguageToggle";
-import { getHintAppUrl } from "../../lib/appUrl";
-
-type Theme = "nocturne" | "daybreak";
-type SpreadOption = {
-  id: string;
-  label: string;
-  question: string;
-  summary: string;
-  positions: string[];
-};
+import { type HintTheme } from "../../components/web/theme";
+import { setHintThemePreference } from "../../lib/preferences";
 
 const tarot = (file: string) => `/assets/tarot/${file}`;
-const lucky = (file: string) => `/assets/lucky/${file}`;
-const WEB_DEMO_URL = "/preview#today";
+const START_HERE_URL = "#birthday-score";
 
 const dailyCard: TarotCardData = {
   id: "the-star",
@@ -45,72 +30,6 @@ const dailyCard: TarotCardData = {
   blurb: "Something you have been quietly tending is closer to water than you think. Keep pouring.",
 };
 
-const rareCard: TarotCardData = {
-  id: "the-sun",
-  name: "The Sun",
-  image: tarot("19-TheSun.jpg"),
-  arcana: "major",
-  rarity: "rare",
-  blurb: "Warmth you did not ask for, arriving anyway.",
-};
-
-const animalSpirit: AnimalSpiritData = {
-  id: "the-wolf",
-  name: "The Moon",
-  spirit: "The Wolf",
-  image: tarot("18-TheMoon.jpg"),
-  arcana: "major",
-  rarity: "rare",
-  blurb: "It shows up when you need its particular kind of courage.",
-};
-
-const deck: TarotCardData[] = [
-  dailyCard,
-  rareCard,
-  { id: "the-moon", name: "The Moon", image: tarot("18-TheMoon.jpg"), arcana: "major", rarity: "common" },
-  { id: "the-world", name: "The World", image: tarot("21-TheWorld.jpg"), arcana: "major", rarity: "common" },
-  {
-    id: "wheel",
-    name: "Wheel of Fortune",
-    image: tarot("10-WheelOfFortune.jpg"),
-    arcana: "major",
-    rarity: "rare",
-    blurb: "The turn is already moving, even before you name it.",
-  },
-  { id: "the-fool", name: "The Fool", image: tarot("00-TheFool.jpg"), arcana: "major", rarity: "common" },
-  {
-    id: "high-priestess",
-    name: "The High Priestess",
-    image: tarot("02-TheHighPriestess.jpg"),
-    arcana: "major",
-    rarity: "common",
-  },
-];
-
-const collectionPreviewDeck: TarotCardData[] = [
-  rareCard,
-  dailyCard,
-  { id: "the-moon", name: "The Moon", image: tarot("18-TheMoon.jpg"), arcana: "major", rarity: "common" },
-  { id: "the-world", name: "The World", image: tarot("21-TheWorld.jpg"), arcana: "major", rarity: "common" },
-  {
-    id: "wheel",
-    name: "Wheel of Fortune",
-    image: tarot("10-WheelOfFortune.jpg"),
-    arcana: "major",
-    rarity: "rare",
-    blurb: "The turn is already moving, even before you name it.",
-  },
-  { id: "the-fool", name: "The Fool", image: tarot("00-TheFool.jpg"), arcana: "major", rarity: "common" },
-  {
-    id: "high-priestess",
-    name: "The High Priestess",
-    image: tarot("02-TheHighPriestess.jpg"),
-    arcana: "major",
-    rarity: "common",
-  },
-  { id: "locked-1", name: "Locked card", image: "", arcana: "major", rarity: "common" },
-];
-
 const scores: ScoreArea[] = [
   { key: "love", label: "Love", value: 82, toneVar: "--score-love" },
   { key: "career", label: "Career", value: 77, toneVar: "--score-career" },
@@ -119,35 +38,19 @@ const scores: ScoreArea[] = [
   { key: "energy", label: "Energy", value: 74, toneVar: "--score-study" },
 ];
 
-const tasks: EnergyTaskItem[] = [
-  { id: "water", label: "Drink a glass of water slowly", done: true },
-  { id: "message", label: "Reply to one message you have avoided", done: false },
-  { id: "breath", label: "Step outside for three slow breaths", done: false },
-];
+function birthdayScore(date: string) {
+  if (!date) return 78;
+  const seed = date.split("").reduce((total, char) => total + char.charCodeAt(0), 0);
+  return 64 + (seed % 29);
+}
 
-const spreads: SpreadOption[] = [
-  {
-    id: "choice",
-    label: "Choice",
-    question: "I need to decide.",
-    summary: "Three cards separate the want, the fear, and the honest next step.",
-    positions: ["Want", "Fear", "Next"],
-  },
-  {
-    id: "relationship",
-    label: "Connection",
-    question: "Someone is on my mind.",
-    summary: "Five cards map your side, their side, what is between you, what is hidden, and what can move.",
-    positions: ["You", "Them", "Between", "Hidden", "Move"],
-  },
-  {
-    id: "shadow",
-    label: "Shadow",
-    question: "I keep repeating this.",
-    summary: "Four cards slow the pattern down: trigger, protection, cost, and release.",
-    positions: ["Trigger", "Shield", "Cost", "Release"],
-  },
-];
+function scoreSet(overall: number): ScoreArea[] {
+  const offsets = [4, -2, 6, 11, -7];
+  return scores.map((score, index) => ({
+    ...score,
+    value: Math.max(42, Math.min(98, overall + offsets[index])),
+  }));
+}
 
 function CtaLink({ href, children }: { href: string; children: ReactNode }) {
   return (
@@ -183,7 +86,7 @@ function Starfield() {
         top: `${Math.random() * 100}%`,
         left: `${Math.random() * 100}%`,
         size: Math.random() < 0.85 ? 1.5 : 2.5,
-        color: Math.random() < 0.3 ? "var(--hint-aqua)" : "var(--hint-ivory)",
+        color: Math.random() < 0.3 ? "var(--star-soft)" : "var(--star-ink)",
         opacity: 0.2 + Math.random() * 0.5,
         duration: 2.4 + Math.random() * 4,
         delay: Math.random() * 4,
@@ -227,8 +130,8 @@ function Atmosphere() {
   );
 }
 
-function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => void }) {
-  const night = theme === "nocturne";
+function Header({ theme, onToggleTheme }: { theme: HintTheme; onToggleTheme: () => void }) {
+  const night = theme === "dark";
 
   return (
     <header className="hint-site__header">
@@ -238,9 +141,13 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
           <span>Hint</span>
         </a>
         <div className="hint-site__links">
+          <a href="#features">Features</a>
+          <a href="/tarot">Tarot</a>
+          <a href="/astrology">Charts</a>
           <a href="#how">How it works</a>
-          <a href="#daily-pull">Daily pull + score</a>
-          <a href="#collection">Collection</a>
+          <a href="/daily-pull">Daily pull</a>
+          <a href="/collection">Collection</a>
+          <a href="/animal-tarot">Animals</a>
           <a href="#pricing">Pricing</a>
         </div>
         <div className="hint-site__actions">
@@ -253,8 +160,8 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
               <MoonIcon />
             </span>
           </button>
-          <a className="hint-site__open" href={WEB_DEMO_URL}>
-            Try Demo Online
+          <a className="hint-site__open" href={START_HERE_URL}>
+            Open Hint Online
           </a>
         </div>
       </nav>
@@ -264,13 +171,13 @@ function Header({ theme, onToggleTheme }: { theme: Theme; onToggleTheme: () => v
 
 function HeroStats() {
   const stats = [
-    ["Free", "web demo"],
-    ["No", "download needed"],
-    ["1", "tap to start"],
+    ["5", "feature doors"],
+    ["1", "daily ritual"],
+    ["78", "cards to collect"],
   ];
 
   return (
-    <div className="hint-site__stats" aria-label="Hint preview scope">
+    <div className="hint-site__stats" aria-label="Hint online features">
       {stats.map(([value, label]) => (
         <div key={label}>
           <span>{value}</span>
@@ -281,86 +188,271 @@ function HeroStats() {
   );
 }
 
-function FeatureVisual({ kind }: { kind: "animal" | "room" | "score" | "daily" | "task" }) {
-  if (kind === "animal") return <AnimalTarot spirit={animalSpirit} />;
-  if (kind === "room") return <TarotRoom title="Tarot Room" />;
-  if (kind === "score") return <DailyEnergyScore areas={scores} overall={78} active />;
-  if (kind === "daily") return <DailyTarot card={dailyCard} defaultRevealed />;
-  return <EnergyTask items={tasks} rewardImage={lucky("lavender.png")} />;
+function HeroActions() {
+  return (
+    <div className="hint-site__hero-actions">
+      <CtaLink href={START_HERE_URL}>Open Hint Online</CtaLink>
+      <a className="hint-site__secondary" href="#features">
+        Tour Features
+      </a>
+    </div>
+  );
+}
+
+function FeatureJumpBar() {
+  const items = [
+    ["Preview", "#features"],
+    ["Birthday", "#birthday-score"],
+    ["Daily Score", "/daily-pull"],
+    ["Tarot Trial", "#tarot-trial"],
+  ];
+
+  return (
+    <nav className="hint-site__jumpbar" aria-label="Open Hint features">
+      {items.map(([label, href]) => (
+        <a key={label} href={href}>
+          {label}
+        </a>
+      ))}
+    </nav>
+  );
+}
+
+function AppPhone({ label, children }: { label: string; children: ReactNode }) {
+  return (
+    <div className="hint-phone" aria-label={`${label} app preview`}>
+      <div className="hint-phone__hardware">
+        <span className="hint-phone__speaker" aria-hidden />
+        <div className="hint-phone__screen">
+          <div className="hint-phone__topbar">
+            <img src="/assets/brand/hint-cardmark-logo.png" alt="" />
+            <span>{label}</span>
+          </div>
+          <div className="hint-phone__content">{children}</div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function DailyScorePreview({ overall = 78 }: { overall?: number }) {
+  return (
+    <div className="hint-phone-score">
+      <p className="hint-phone-kicker">Today Score</p>
+      <DailyEnergyScore areas={scoreSet(overall)} overall={overall} active />
+    </div>
+  );
+}
+
+function AstrologyPreview() {
+  const placements = [
+    ["Sun", "Taurus"],
+    ["Moon", "Cancer"],
+    ["Rising", "Leo"],
+  ];
+
+  return (
+    <div className="hint-astro-preview">
+      <p className="hint-phone-kicker">Astrology</p>
+      <div className="hint-astro-preview__orb" aria-hidden>
+        <span />
+        <i />
+      </div>
+      <div className="hint-astro-preview__rows">
+        {placements.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+      <p className="hint-astro-preview__copy">
+        Birth chart and sky signals help shape the daily score.
+      </p>
+    </div>
+  );
+}
+
+function FeatureVisual({ kind }: { kind: "room" | "score" | "daily" | "astrology" }) {
+  if (kind === "room") {
+    return (
+      <AppPhone label="Tarot Room">
+        <TarotRoom title="Tarot Room" />
+      </AppPhone>
+    );
+  }
+  if (kind === "score") {
+    return (
+      <AppPhone label="Daily Score">
+        <DailyScorePreview />
+      </AppPhone>
+    );
+  }
+  if (kind === "astrology") {
+    return (
+      <AppPhone label="Charts">
+        <AstrologyPreview />
+      </AppPhone>
+    );
+  }
+  return (
+    <AppPhone label="Daily Tarot">
+      <DailyTarot card={dailyCard} defaultRevealed />
+    </AppPhone>
+  );
 }
 
 function HeroCarousel() {
   const slides: FeatureSlide[] = [
     {
-      id: "animal",
-      eyebrow: "Animal Tarot",
-      title: "Meet the creature that walks the night with you.",
-      body: "Animal Tarot opens symbols through habitat, instinct, and behavior: wolf paths, deer signals, night movement, and quiet companions.",
-      ctaLabel: "Explore Animal Tarot",
-      href: "/animal-tarot",
-      accent: "aqua",
-      visual: <FeatureVisual kind="animal" />,
-    },
-    {
       id: "room",
       eyebrow: "Tarot Room",
-      title: "A candlelit room that only opens for you.",
-      body: "A private space where the cards are laid slowly and an unhurried voice reads them with you.",
-      ctaLabel: "Enter Tarot Room",
-      href: "#tarot-room",
+      title: "A private room for one free card reading.",
+      body: "The landing page shows what the room looks like before visitors try one tarot reading on the website.",
+      ctaLabel: "Try Tarot Free",
+      href: "#tarot-trial",
       accent: "rose",
       visual: <FeatureVisual kind="room" />,
     },
     {
-      id: "score",
-      eyebrow: "Daily Pull",
-      title: "Read where the day left your energy.",
-      body: "After the pull, Hint reads five currents from tonight's sky and your chart. A gentle read, never a grade.",
-      ctaLabel: "Open Daily Pull",
-      href: "#daily-pull",
-      accent: "gold",
-      visual: <FeatureVisual kind="score" />,
-    },
-    {
       id: "daily",
-      eyebrow: "Daily Pull",
-      title: "One card, turned fresh for tonight.",
-      body: "Each evening a single card surfaces first, then the score reads how the same day is moving through you.",
-      ctaLabel: "Draw Daily Pull",
-      href: "#daily-pull",
+      eyebrow: "Daily Tarot",
+      title: "One daily card, shown like the app.",
+      body: "The preview should feel like the actual Hint experience: a card, a short reading, and a clear next step.",
+      ctaLabel: "Open Daily Pull",
+      href: "/daily-pull",
       accent: "gold",
       visual: <FeatureVisual kind="daily" />,
     },
     {
-      id: "task",
-      eyebrow: "Energy Task",
-      title: "A small ritual, matched to the weather inside you.",
-      body: "Hint gives you one thing to do tonight, just enough to let the air move again.",
-      ctaLabel: "See Tonight's Ritual",
-      href: "#ritual",
+      id: "score",
+      eyebrow: "Daily Score",
+      title: "Enter a birthday to unlock today's score.",
+      body: "A free sample can show love, career, emotion, luck, and energy so the visitor understands the product quickly.",
+      ctaLabel: "Enter Birthday",
+      href: "#birthday-score",
+      accent: "gold",
+      visual: <FeatureVisual kind="score" />,
+    },
+    {
+      id: "astrology",
+      eyebrow: "Astrology",
+      title: "Astrology stays as part of the feature story.",
+      body: "Charts support the daily score and readings, but on this page they only need a clean preview, not a full astrology section.",
+      ctaLabel: "Try Daily Score",
+      href: "#birthday-score",
       accent: "aqua",
-      visual: <FeatureVisual kind="task" />,
+      visual: <FeatureVisual kind="astrology" />,
     },
   ];
 
   return (
-    <FeatureCarousel
-      slides={slides}
-      renderCta={(slide) => (
-        <a className="hint-fc__cta" href={slide.href}>
-          {slide.ctaLabel} <span aria-hidden>-&gt;</span>
-        </a>
-      )}
-    />
+    <section className="hint-site__section hint-slider-section" id="features">
+      <FeatureCarousel
+        slides={slides}
+        renderCta={(slide) => (
+          <a className="hint-fc__cta" href={slide.href}>
+            {slide.ctaLabel} <span aria-hidden>-&gt;</span>
+          </a>
+        )}
+      />
+    </section>
+  );
+}
+
+function BirthdayScoreSection() {
+  const [birthDate, setBirthDate] = useState("");
+  const [revealed, setRevealed] = useState(false);
+  const overall = birthdayScore(birthDate);
+  const active = revealed && birthDate.length > 0;
+
+  return (
+    <section className="hint-site__section hint-birthday" id="birthday-score">
+      <div className="hint-birthday__grid">
+        <div className="hint-birthday__copy">
+          <span className="hint-site__eyebrow">Try free</span>
+          <h2>Enter your birthday. See today's score.</h2>
+          <p>
+            This is the free first moment: birthday in, today's card and score out.
+            It introduces astrology without turning the page into a full chart tool.
+          </p>
+
+          <form
+            className="hint-birthday__form"
+            onSubmit={(event) => {
+              event.preventDefault();
+              setRevealed(true);
+            }}
+          >
+            <label htmlFor="hint-birthday-input">Birthday</label>
+            <div>
+              <input
+                id="hint-birthday-input"
+                type="date"
+                value={birthDate}
+                onChange={(event) => {
+                  setBirthDate(event.target.value);
+                  setRevealed(false);
+                }}
+              />
+              <button type="submit">See My Score</button>
+            </div>
+          </form>
+
+          <div className="hint-birthday__result" aria-live="polite">
+            <span>{active ? "Your sample score" : "Sample preview"}</span>
+            <strong>{active ? overall : 78}</strong>
+            <small>{active ? "The full daily pull opens with the real feature page." : "Enter a birthday to personalize the preview."}</small>
+          </div>
+
+          <div className="hint-birthday__actions">
+            <CtaLink href="/daily-pull">Open Daily Pull</CtaLink>
+            <a className="hint-site__secondary" href="#tarot-trial">
+              Try Tarot
+            </a>
+          </div>
+        </div>
+
+        <div className="hint-birthday__phones" aria-label="Daily score app previews">
+          <AppPhone label="Daily Score">
+            <DailyScorePreview overall={active ? overall : 78} />
+          </AppPhone>
+          <AppPhone label="Daily Tarot">
+            <DailyTarot card={dailyCard} defaultRevealed />
+          </AppPhone>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TarotTrialSection() {
+  return (
+    <section className="hint-site__section hint-trial" id="tarot-trial">
+      <div className="hint-trial__copy">
+        <span className="hint-site__eyebrow">Try free tarot</span>
+        <h2>Let visitors try one reading on the website.</h2>
+        <p>
+          After the feature ads and birthday score, the next step is simple:
+          open a real Tarot Room and let them try the web reading once.
+        </p>
+        <CtaLink href="/tarot">Enter Tarot Room</CtaLink>
+      </div>
+      <div className="hint-trial__visual">
+        <AppPhone label="Tarot Room">
+          <TarotRoom title="Tarot Room" />
+        </AppPhone>
+      </div>
+    </section>
   );
 }
 
 function HowItWorks() {
   const items = [
-    ["Ask", "Bring a question, a worry, or a half-formed thought."],
-    ["Draw", "Tonight's sky and your chart fold into one card."],
-    ["Read", "The room answers gently, with space around the answer."],
-    ["Continue", "Keep the preview light. The app saves, remembers, and explains."],
+    ["Preview", "Swipe through app-style screens so visitors see what Hint looks like."],
+    ["Birthday", "Let them try the daily score with one simple birth date field."],
+    ["Daily", "Show the daily tarot card and score as the first free result."],
+    ["Tarot", "Offer one website tarot reading before deeper feature pages."],
   ];
 
   return (
@@ -381,238 +473,30 @@ function HowItWorks() {
   );
 }
 
-function CollectionPreview({
-  collectedIds,
-  newCardId,
-  total,
-  message,
-}: {
-  collectedIds: string[];
-  newCardId: string | null;
-  total: number;
-  message: string;
-}) {
-  const owned = new Set(collectedIds);
-  const ordered = useMemo(() => {
-    const preview = collectionPreviewDeck.filter((card) => card.id !== "locked-1");
-    const recent = newCardId ? preview.find((card) => card.id === newCardId) : null;
-    const rest = preview.filter((card) => card.id !== newCardId);
-    return [...(recent ? [recent] : []), ...rest, { id: "locked-1", name: "Locked card", image: "", arcana: "major" as const, rarity: "common" as const }];
-  }, [newCardId]);
-
-  return (
-    <section className="collection-preview" id="collection" aria-label="Card collection preview">
-      <header className="collection-preview__head">
-        <div>
-          <span className="hint-site__eyebrow">Card collection</span>
-          <h3>
-            Collected {collectedIds.length} <span>/ {total}</span>
-          </h3>
-        </div>
-        {message && <p>{message}</p>}
-      </header>
-
-      <div className="collection-preview__grid">
-        {ordered.map((card, index) => {
-          const isOwned = owned.has(card.id);
-          const isNew = card.id === newCardId && isOwned;
-          return (
-            <button
-              key={`${card.id}-${index}`}
-              type="button"
-              className={`collection-preview__slot${isOwned ? " is-owned" : ""}${isNew ? " is-new" : ""}`}
-              aria-label={isOwned ? card.name : "Locked card"}
-              disabled={!isOwned}
-            >
-              {isOwned && card.image ? (
-                <>
-                  <img src={card.image} alt={card.name} draggable={false} />
-                  {isNew && <span>New</span>}
-                </>
-              ) : (
-                <i aria-hidden />
-              )}
-            </button>
-          );
-        })}
-      </div>
-    </section>
-  );
-}
-
-function DailyPullSection() {
-  const [rareOpen, setRareOpen] = useState(false);
-  const [scoreVisible, setScoreVisible] = useState(false);
-
-  const handleDailyDraw = (card: TarotCardData) => {
-    setScoreVisible(true);
-    if (card.rarity !== "common") setRareOpen(true);
-  };
-
-  return (
-    <section className="hint-site__section daily-pull" id="daily-pull">
-      <div className="hint-site__section-head daily-pull__head">
-        <span className="hint-site__eyebrow">Daily Pull + Score</span>
-        <h2>One draw, held in the sky.</h2>
-        <p>
-          This is the original card-fan ritual: tap the fan, let the card rise, then read
-          the score from the same daily moment.
-        </p>
-      </div>
-
-      <div className="daily-pull__ritual-surface">
-        <div className="daily-pull__original-draw">
-          <SkyDeckDraw
-            deck={deck}
-            pick={() => rareCard}
-            onDraw={handleDailyDraw}
-          />
-        </div>
-      </div>
-
-      {scoreVisible ? (
-        <div className="daily-pull__score is-visible" id="score">
-          <div className="daily-pull__score-head">
-            <span className="hint-site__eyebrow">Daily Pull score</span>
-            <h3>Five ways the day landed.</h3>
-          </div>
-          <div className="hint-site__score-grid">
-            <div className="hint-site__panel hint-site__score-panel">
-              <DailyEnergyScore areas={scores} overall={78} active />
-            </div>
-            <div className="hint-site__panel hint-site__score-panel" id="ritual">
-              <EnergyTask items={tasks} rewardImage={lucky("lavender.png")} rewardLabel="New moon badge" />
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="daily-pull__score-lock" id="score">
-          <span>Draw your daily card first.</span>
-          <strong>The score opens after the pull.</strong>
-        </div>
-      )}
-
-      <RareCardUnlock
-        card={rareCard}
-        open={rareOpen}
-        onClose={() => setRareOpen(false)}
-        ctaLabel="Added to collection"
-      />
-    </section>
-  );
-}
-
-function RewardsSection() {
-  const collectedIds = ["the-star", "the-moon", "the-world", "the-fool", "high-priestess", "wheel"];
-
-  return (
-    <section className="hint-site__section hint-site__rewards" id="rewards">
-      <div className="hint-site__section-head">
-        <span className="hint-site__eyebrow">Collection</span>
-        <h2>Your deck.</h2>
-        <p>
-          A preview of what collecting feels like. Real saving and unlock history live in the Hint app.
-        </p>
-      </div>
-      <CollectionPreview
-        collectedIds={collectedIds}
-        newCardId={null}
-        total={78}
-        message="Preview only. Start the real collection in the app."
-      />
-    </section>
-  );
-}
-
-function SpreadGuide() {
-  const [selected, setSelected] = useState(spreads[0]);
-
-  return (
-    <div className="hint-spread">
-      <div className="hint-spread__head">
-        <span className="hint-site__eyebrow">Spread guide</span>
-        <h3>{selected.label}</h3>
-      </div>
-
-      <div className="hint-spread__questions" aria-label="Choose a question type">
-        {spreads.map((spread) => (
-          <button
-            key={spread.id}
-            type="button"
-            className={spread.id === selected.id ? "is-active" : ""}
-            onClick={() => setSelected(spread)}
-          >
-            {spread.question}
-          </button>
-        ))}
-      </div>
-
-      <div className="hint-spread__body">
-        <div className={`hint-spread__diagram count-${selected.positions.length}`}>
-          {selected.positions.map((position, index) => (
-            <span key={position} style={{ "--i": index } as CSSProperties}>
-              <b>{index + 1}</b>
-              <small>{position}</small>
-            </span>
-          ))}
-        </div>
-        <p>{selected.summary}</p>
-      </div>
-    </div>
-  );
-}
-
-function TarotRoomSection() {
-  return (
-    <section className="hint-site__section hint-site__room-showcase" id="tarot-room">
-      <div className="hint-site__section-head hint-site__room-intro">
-        <span className="hint-site__eyebrow">Tarot Room</span>
-        <h2>The room recommends the spread before the deck opens.</h2>
-        <p>
-          The public page stays simple. The full app carries the serious ritual:
-          choose the right spread, explain the positions, save the reading, and open follow-ups with intention.
-        </p>
-        <div className="hint-site__chips" aria-label="Tarot room priorities">
-          <span>Guided spreads</span>
-          <span>Full app ritual</span>
-          <span>Saved reading flow</span>
-        </div>
-      </div>
-      <div className="hint-site__room-stack">
-        <div className="hint-site__room-card hint-site__spread-panel">
-          <SpreadGuide />
-        </div>
-        <div className="hint-site__room-card hint-site__room-panel">
-          <TarotRoom
-            title="Tarot Room"
-            onAsk={async (prompt) =>
-              `I hear: "${prompt}". The room would recommend a spread first, then read the cards against the question.`
-            }
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function PricingSection() {
   return (
     <section className="hint-site__section" id="pricing">
       <div className="hint-site__pricing">
-        <span className="hint-site__eyebrow">Pricing preview</span>
-        <h2>Try the web. Go deeper in the app.</h2>
+        <span className="hint-site__eyebrow">One website</span>
+        <h2>Introduce first. Let them try immediately.</h2>
         <p>
-          Tokens are for one-time questions, extra readings, follow-ups, and deeper unlocks.
-          Membership is for daily users who want Daily Hint, history, collection, astrology, and included tokens.
+          Astrology, tarot, daily score, and the room are explained through the slider.
+          The free actions stay focused: birthday score first, then one tarot reading.
         </p>
-        <CtaLink href={getHintAppUrl()}>Open Hint App</CtaLink>
+        <CtaLink href="#birthday-score">Try Free</CtaLink>
       </div>
     </section>
   );
 }
 
 export function LandingPage() {
-  const [theme, setTheme] = useState<Theme>("nocturne");
+  const [theme, setTheme] = useState<HintTheme>("dark");
+
+  useEffect(() => {
+    document.documentElement.dataset.hintTheme = theme;
+    document.documentElement.classList.toggle("dark", theme === "dark");
+    setHintThemePreference(theme);
+  }, [theme]);
 
   useEffect(() => {
     const scrollToHash = () => {
@@ -631,25 +515,29 @@ export function LandingPage() {
   return (
     <div className="hint-site" data-hint-theme={theme}>
       <Atmosphere />
-      <Header theme={theme} onToggleTheme={() => setTheme((current) => (current === "nocturne" ? "daybreak" : "nocturne"))} />
+      <Header theme={theme} onToggleTheme={() => setTheme((current) => (current === "dark" ? "bright" : "dark"))} />
 
       <main className="hint-site__main" id="top">
         <section className="hint-site__hero">
           <div className="hint-site__pill">
             <span />
-            Try Hint Demo Online
+            Inside Hint
           </div>
           <h1>
-            Try Hint online, then go <em>deeper.</em>
+            Five doorways into <em>the night.</em>
           </h1>
-          <p>Open the playable web demo for Daily Pull, Tarot Room, astrology previews, and collection glimpses. No download needed.</p>
+          <p>
+            Start with the feature tour, then use Cards, Charts, Daily Pull,
+            Tarot Room, and Collection inside this same website.
+          </p>
+          <HeroActions />
           <HeroStats />
         </section>
+        <FeatureJumpBar />
         <HeroCarousel />
+        <BirthdayScoreSection />
+        <TarotTrialSection />
         <HowItWorks />
-        <DailyPullSection />
-        <RewardsSection />
-        <TarotRoomSection />
         <PricingSection />
       </main>
     </div>

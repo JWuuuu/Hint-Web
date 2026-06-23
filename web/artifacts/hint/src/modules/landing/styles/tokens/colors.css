@@ -1,13 +1,10 @@
-/* ─────────────────────────────────────────────────────────────
-   HINT · COLOR SYSTEM
-   Mirrors the current Hint-main app palette so the public website and
-   preview share the same soft premium rose / lavender / gold language.
-   Landing consumes the semantic tokens below; app routes consume the
-   matching --hint-* variables in src/index.css.
-   ───────────────────────────────────────────────────────────── */
+/* HINT landing palette.
+   These are the colors the rest of the website should match. The original
+   landing names now live under the shared dark/bright theme keys. */
 
 :root,
-[data-hint-theme="nocturne"] {
+[data-hint-theme="dark"],
+.hint-site[data-hint-theme="dark"] {
   color-scheme: dark;
 
   --hint-obsidian: #130d19;
@@ -62,12 +59,15 @@
   --accent-gold: var(--hint-gold);
   --accent-aqua: var(--hint-aqua);
   --accent-rose: var(--hint-rose);
+  --star-ink: var(--hint-ivory);
+  --star-soft: var(--hint-aqua);
 
   --score-ink: #f0c6d8;
   --score-shadow: 0 0 24px rgba(240, 198, 216, 0.20);
 }
 
-[data-hint-theme="daybreak"] {
+[data-hint-theme="bright"],
+.hint-site[data-hint-theme="bright"] {
   color-scheme: light;
 
   --hint-ivory: #282030;
@@ -112,7 +112,14 @@
   --accent-gold: var(--hint-gold);
   --accent-aqua: var(--hint-aqua);
   --accent-rose: var(--hint-rose);
+  --star-ink: var(--hint-ivory);
+  --star-soft: var(--hint-aqua);
 
+  --score-love: #d8649a;
+  --score-wealth: #b4873b;
+  --score-career: #8d70c9;
+  --score-study: #749c98;
+  --score-people: #8d70c9;
   --score-ink: #7c5f76;
   --score-shadow: 0 1px 0 rgba(255, 255, 255, 0.48), 0 0 22px rgba(214, 109, 155, 0.14);
 }

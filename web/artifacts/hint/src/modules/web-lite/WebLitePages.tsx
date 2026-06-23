@@ -174,9 +174,9 @@ export function TarotLitePage() {
   return (
     <AppScreen>
       <LiteHero
-        eyebrow="Tarot Lite"
+        eyebrow="Tarot"
         title="Ask once. Draw one card."
-        subtitle="The website gives a short one-card preview. Spreads, follow-ups, saved readings, and the full Tarot Room live in the Hint app."
+        subtitle="The website includes tarot readings, follow-ups, saved readings, and the full Tarot Room."
         icon={<Sparkles className="size-6" />}
       />
 
@@ -210,8 +210,8 @@ export function TarotLitePage() {
                   <p className="mt-2 font-sans text-[14px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>{drawn.reading}</p>
                 </div>
               }
-              locked="The full spread, card positions, saved reading, and AI follow-up are waiting in the app."
-              cta="Continue Full Reading in Hint App"
+              locked="The full spread, card positions, saved reading, and AI follow-up are part of the website experience."
+              cta="Continue Full Reading"
               appPath="/tarot"
             />
           ) : null}
@@ -230,7 +230,7 @@ export function AnimalTarotLitePage() {
       <LiteHero
         eyebrow="Animal Tarot"
         title="Meet tonight's animal guide."
-        subtitle="Explore animal symbols, traits, habitats, and instinct patterns. The web preview stays focused on the animal itself."
+        subtitle="Explore animal symbols, traits, habitats, and instinct patterns on the website."
         icon={<Cat className="size-6" />}
       />
       <GlassPanel className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr] lg:items-center">
@@ -251,7 +251,7 @@ export function AnimalTarotLitePage() {
             >
               Meet another animal
             </button>
-            <OpenAppButton appPath="/animal-tarot">Save Animal Profile</OpenAppButton>
+            <OpenAppButton appPath="/collection">View Collection</OpenAppButton>
           </div>
         </div>
       </GlassPanel>
@@ -291,9 +291,9 @@ export function DailyPullLitePage() {
   return (
     <AppScreen>
       <LiteHero
-        eyebrow="Daily Pull + Score Lite"
+        eyebrow="Daily Pull + Score"
         title="Draw once. Read a short score."
-        subtitle="This web version previews one daily card, a score snapshot, and a short hint. Full explanation, sky evidence, history, and saving stay in the app."
+        subtitle="This website page includes the daily card, score snapshot, explanation, history, and saving flow."
         icon={<CalendarDays className="size-6" />}
       />
       <GlassPanel
@@ -334,9 +334,9 @@ export function DailyPullLitePage() {
                   </div>
                 </div>
               }
-              locked="Score explanation, sky evidence, saved daily result, and daily history unlock inside the full app."
-              cta="Unlock Full Daily Reading in Hint App"
-              appPath="/daily"
+              locked="Score explanation, sky evidence, saved daily result, and daily history belong inside the full website flow."
+              cta="Open Full Daily Reading"
+              appPath="/daily-pull"
             />
           ) : (
             <>
@@ -346,7 +346,7 @@ export function DailyPullLitePage() {
                   One draw opens the day.
                 </h2>
                 <p className="mt-3 font-sans text-[15px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>
-                  Tap the tarot card to reveal today’s web preview, then the score snapshot appears here beside the card.
+                  Tap the tarot card to reveal today’s online reading, then the score snapshot appears here beside the card.
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -392,9 +392,9 @@ export function AstrologyLitePage() {
   return (
     <AppScreen>
       <LiteHero
-        eyebrow="Astrology Preview Lite"
+        eyebrow="Astrology"
         title="Start with your Sun sign."
-        subtitle="The website gives a simple sign preview. Moon, rising, houses, transits, and reports stay in the app."
+        subtitle="The website includes signs, chart details, transits, and reports."
         icon={<SunMedium className="size-6" />}
       />
       <GlassPanel>
@@ -417,13 +417,13 @@ export function AstrologyLitePage() {
               </h2>
               <p className="mt-2 font-sans text-[14px] leading-relaxed" style={{ color: "var(--hint-muted)" }}>
                 {sign
-                  ? `Your ${sign} Sun preview: your attention moves toward one clear pattern today. Keep your words simple and your timing honest.`
-                  : "Use the web preview for a simple Sun-sign reading only."}
+                  ? `Your ${sign} Sun signal: your attention moves toward one clear pattern today. Keep your words simple and your timing honest.`
+                  : "Use Hint online for a simple Sun-sign reading first."}
               </p>
             </div>
           }
-          locked="Moon sign, rising sign, full birth chart, houses, transits, compatibility, and deeper daily astrology unlock in the app."
-          cta="Unlock Moon, Rising, and Full Chart in Hint App"
+          locked="Moon sign, rising sign, full birth chart, houses, transits, compatibility, and deeper daily astrology belong in the full website flow."
+          cta="Open Full Chart"
           appPath="/astrology"
         />
       </GlassPanel>
@@ -437,7 +437,7 @@ export function CollectionPreviewPage() {
       <LiteHero
         eyebrow="Collection Preview"
         title="A small look at the deck."
-        subtitle="The website can preview cards and locked silhouettes. Real saving, unlock history, streak rewards, and account collection stay in the app."
+        subtitle="The website can show cards, locked silhouettes, unlock history, streak rewards, and collection progress."
         icon={<Library className="size-6" />}
       />
       <GlassPanel>
@@ -458,9 +458,9 @@ export function CollectionPreviewPage() {
           ))}
         </div>
         <AppGateCTA
-          title="Build the real deck in the app"
-          body="The web preview does not save collection state. Start your collection in the full Hint app when you want cards, streak rewards, and unlock history to persist."
-          cta="Start Your Collection in Hint App"
+          title="Build the real deck on the website"
+          body="The collection route is part of this website, so cards, streak rewards, and unlock history can live here without sending people elsewhere."
+          cta="Open Collection"
           appPath="/collection"
         />
       </GlassPanel>
@@ -474,20 +474,20 @@ export function PricingPreviewPage() {
       <LiteHero
         eyebrow="Pricing Preview"
         title="Two ways to go deeper."
-        subtitle="Use the website to try Hint. Use the app when you want tokens, daily memory, collection, and membership."
+        subtitle="Use Hint online for features, tokens, daily memory, collection, and membership."
         icon={<Star className="size-6" />}
       />
       <div className="grid gap-4 md:grid-cols-2">
         <LockedInsightCard
           title="Tokens"
           body="For one-time questions, extra readings, follow-ups, and deeper unlocks."
-          cta="Get Tokens in Hint App"
+          cta="Get Tokens"
           appPath="/pricing"
         />
         <LockedInsightCard
           title="Membership"
           body="For daily users who want Daily Hint, history, collection, astrology, and included tokens."
-          cta="View Membership in Hint App"
+          cta="View Membership"
           appPath="/pricing"
         />
       </div>
@@ -500,14 +500,14 @@ export function RoomsLitePage() {
     <AppScreen>
       <LiteHero
         eyebrow="Rooms Preview"
-        title="Choose a doorway, then continue in app."
-        subtitle="Web previews the room types. Full Tarot Room, saved readings, and long-form follow-up stay inside Hint."
+        title="Choose a doorway."
+        subtitle="Open Tarot Room, Animal Tarot, and Astrology directly inside this website."
         icon={<Moon className="size-6" />}
       />
       <div className="grid gap-4">
-        <LockedInsightCard title="Tarot Room" body="Preview a one-card draw on web. Multi-card spreads and full ritual open in app." cta="Continue Full Reading" appPath="/tarot" />
-        <LockedInsightCard title="Animal Tarot" body="Meet one animal here. Save animal profiles and track your animal history in app." cta="Save This Animal in Hint App" appPath="/animal-tarot" />
-        <LockedInsightCard title="Astrology Room" body="Try a Sun-sign preview here. Full chart and transits belong in app." cta="Unlock Full Chart" appPath="/astrology" />
+        <LockedInsightCard title="Tarot Room" body="Multi-card spreads and the full ritual open here on the website." cta="Continue Full Reading" appPath="/tarot" />
+        <LockedInsightCard title="Animal Tarot" body="Meet animal guides and keep the symbolic flow inside the website." cta="Open Animal Tarot" appPath="/animal-tarot" />
+        <LockedInsightCard title="Astrology Room" body="Use chart details and transits on the website." cta="Open Full Chart" appPath="/astrology" />
       </div>
     </AppScreen>
   );
@@ -518,11 +518,11 @@ export function HistoryGatePage() {
     <AppScreen>
       <LiteHero
         eyebrow="Saved History"
-        title="History lives in the app."
-        subtitle="This website does not save full readings or daily receipts. Open Hint app for saved readings, daily history, and follow-ups."
+        title="History lives on the website."
+        subtitle="Saved readings, daily history, and follow-ups are part of the Hint website flow."
         icon={<History className="size-6" />}
       />
-      <AppGateCTA title="Open your saved readings" body="Reading history is a full-app feature so it can stay tied to your account and collection." cta="View More in Hint App" appPath="/readings" />
+      <AppGateCTA title="Open your saved readings" body="Reading history stays tied to your account and collection on this website." cta="View Saved Readings" appPath="/readings" />
     </AppScreen>
   );
 }
@@ -532,19 +532,19 @@ export function AccountGatePage() {
     <AppScreen>
       <LiteHero
         eyebrow="Account"
-        title="Accounts belong in the app."
-        subtitle="HINT Web is a public playable preview. Login, profile, membership, tokens, and saved data live in Hint app."
+        title="Accounts belong on the website."
+        subtitle="Login, profile, membership, tokens, and saved data live in the Hint website."
         icon={<Sparkles className="size-6" />}
       />
-      <AppGateCTA title="Continue in Hint app" body="Open the full app for account setup, saved data, tokens, membership, and personalization." cta="Open Hint App" />
+      <AppGateCTA title="Continue on Hint Online" body="Use the website for account setup, saved data, tokens, membership, and personalization." cta="Open Hint Online" />
     </AppScreen>
   );
 }
 
 export function GenericAppGatePage({
-  title = "This unlocks in Hint app.",
-  body = "The web version gives a short preview first. The full feature, saving, and deeper explanation live in the app.",
-  cta = "Open Hint App",
+  title = "This opens on Hint Online.",
+  body = "The website keeps the feature, saving, and deeper explanation in one place.",
+  cta = "Open Hint Online",
   appPath = "",
 }: {
   title?: string;
@@ -554,11 +554,11 @@ export function GenericAppGatePage({
 }) {
   return (
     <AppScreen>
-      <ScreenHeader eyebrow="Hint app" title={title} subtitle={body} />
+      <ScreenHeader eyebrow="Hint website" title={title} subtitle={body} />
       <div className="grid gap-4">
         <AppGateCTA title={title} body={body} cta={cta} appPath={appPath} />
         <Link className="font-sans text-[13px] font-semibold" style={{ color: "var(--hint-muted)" }} href="/preview">
-          ← Back to web preview
+          ← Back to website home
         </Link>
       </div>
     </AppScreen>

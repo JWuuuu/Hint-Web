@@ -1,7 +1,7 @@
 ﻿import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation } from "wouter";
-import { Home, LogIn, LogOut, Moon, Settings, Sparkles, Sun, UserPlus, UserRound } from "lucide-react";
+import { LogIn, LogOut, Moon, Settings, Sparkles, Sun, UserPlus, UserRound } from "lucide-react";
 import {
   PointerProvider,
   RoomLight,
@@ -28,7 +28,6 @@ import { clearLocalAccount, useLocalAccount } from "./lib/auth";
 import { useProfile } from "./lib/useProfile";
 import { readBirthProfile } from "./lib/astro/userBirthProfile";
 import { useLanguage } from "./lib/i18n";
-import { getHintAppUrl } from "./lib/appUrl";
 import type { BirthProfile } from "./types/astrology";
 
 /** Immersive room routes own the full screen (their own back link + pinned
@@ -46,6 +45,8 @@ export function AppShell({ children }: { children: ReactNode }) {
   const [reduceMotion, setReduceMotion] = useState(
     () => getHintPreferences().reduceMotion,
   );
+  const onLanding = location === "/";
+  const effectiveTheme: HintTheme = onLanding ? "dark" : theme;
   const showNav = location !== "/" && !IMMERSIVE_ROUTES.some(
     (r) => location === r || location.startsWith(r + "/"),
   );
@@ -56,22 +57,28 @@ export function AppShell({ children }: { children: ReactNode }) {
   useEffect(() => {
     trackEvent("app_opened", {
       route: location,
-      theme,
+      theme: effectiveTheme,
     });
     // Track one app open per page load.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    document.documentElement.dataset.hintTheme = theme;
-    document.documentElement.classList.toggle("dark", theme === "dark");
+    document.documentElement.dataset.hintTheme = effectiveTheme;
+    document.documentElement.classList.toggle("dark", effectiveTheme === "dark");
 
     try {
-      window.localStorage.setItem(HINT_THEME_STORAGE_KEY, theme);
+      window.localStorage.setItem(HINT_THEME_STORAGE_KEY, effectiveTheme);
     } catch {
       // Local storage can be unavailable in private browsing.
     }
-  }, [theme]);
+  }, [effectiveTheme]);
+
+  useEffect(() => {
+    if (onLanding && theme !== "dark") {
+      setTheme("dark");
+    }
+  }, [onLanding, theme]);
 
   useEffect(() => {
     document.documentElement.dataset.hintReduceMotion = reduceMotion ? "true" : "false";
@@ -103,11 +110,11 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <PointerProvider>
       <div
-        data-hint-theme={theme}
+        data-hint-theme={effectiveTheme}
         className="fixed inset-0 overflow-hidden"
       >
         {/* Atmosphere stack — back to front */}
-        <CelestialBackdrop theme={theme} />
+        <CelestialBackdrop theme={effectiveTheme} />
         <Moonlight />
         <Haze />
         <Particles />
@@ -148,24 +155,29 @@ function WebsiteHomeNav({
   const isDark = theme === "dark";
   const { t } = useLanguage();
   const [activeHash, setActiveHash] = useState(() =>
-    typeof window === "undefined" ? "#today" : window.location.hash || "#today",
+    typeof window === "undefined" ? "#hint-preview" : window.location.hash || "#hint-preview",
   );
   const homeNavItems = [
+    { href: "/preview#hint-preview", label: "Preview", section: true },
     { href: "/preview#today", label: t("nav.today"), section: true },
-    { href: "/daily-pull", label: t("nav.daily"), section: false },
+    { href: "/preview#daily-score", label: "Daily Score", section: true },
+    { href: "/preview#tarot-trial", label: "Tarot", section: true },
     { href: "/rooms", label: t("nav.rooms"), section: false },
-    { href: "/astrology", label: t("nav.astrology"), section: false },
     { href: "/readings", label: t("nav.history"), section: false },
   ];
-  const profileActive = location === "/me" || location.startsWith("/me/") || location === "/login" || location === "/settings";
+  const profileActive = location === "/profile" || location.startsWith("/profile/") || location === "/me" || location.startsWith("/me/") || location === "/login" || location === "/settings";
+  const sectionHash = (href: string) => {
+    const hashIndex = href.indexOf("#");
+    return hashIndex >= 0 ? href.slice(hashIndex) : "";
+  };
   const isActiveNavItem = (href: string, section: boolean) => {
-    if (section) return location === "/preview" && activeHash === "#today";
+    if (section) return location === "/preview" && activeHash === (sectionHash(href) || "#hint-preview");
     return location === href || location.startsWith(`${href}/`);
   };
 
   useEffect(() => {
     const updateActiveHash = () => {
-      setActiveHash(window.location.hash || "#today");
+      setActiveHash(window.location.hash || "#hint-preview");
     };
 
     updateActiveHash();
@@ -174,62 +186,37 @@ function WebsiteHomeNav({
   }, []);
 
   return (
-    <div className="pointer-events-none fixed left-0 right-0 top-0 z-50 px-2 py-1 xl:px-5 xl:py-3">
+    <div className="pointer-events-none fixed left-0 right-0 top-0 z-50 px-3 py-3 sm:px-5">
       <nav
         aria-label="Primary"
-        className="pointer-events-auto relative mx-auto grid w-full max-w-[min(96vw,86rem)] grid-cols-[auto_1fr_auto] items-center gap-2 rounded-[16px] border px-2 py-1.5 xl:flex xl:gap-4 xl:rounded-full xl:px-4 xl:py-2"
+        className="pointer-events-auto relative mx-auto grid w-full max-w-[1180px] grid-cols-[auto_1fr_auto] items-center gap-2 rounded-[22px] border px-2 py-1.5 lg:flex lg:min-h-[60px] lg:gap-4 lg:rounded-full lg:px-3 lg:py-2"
         style={{
-          background: isDark
-            ? "rgba(12, 16, 28, 0.88)"
-            : "rgba(255, 249, 239, 0.90)",
-          borderColor: isDark
-            ? "rgba(229, 205, 149, 0.26)"
-            : "rgba(116, 89, 58, 0.14)",
+          background: "color-mix(in srgb, var(--hint-surface) 90%, transparent)",
+          borderColor: "var(--hint-border)",
           backdropFilter: "blur(24px) saturate(1.22)",
           WebkitBackdropFilter: "blur(24px) saturate(1.22)",
-          boxShadow: isDark
-            ? "0 16px 42px rgba(0, 0, 0, 0.24)"
-            : "0 18px 44px rgba(80, 54, 42, 0.12)",
+          boxShadow: "var(--hint-nav-shadow, var(--hint-elevated-shadow))",
         }}
       >
-        <div className="row-start-1 inline-flex min-w-0 shrink-0 justify-self-start items-center gap-1.5">
+        <div className="row-start-1 inline-flex min-w-0 shrink-0 items-center justify-self-start">
           <Link
-            href="/"
-            aria-current={location === "/" ? "page" : undefined}
-            data-active={location === "/" ? "true" : "false"}
-            className="inline-flex w-fit min-w-0 shrink-0 items-center gap-2 rounded-[13px] border py-1 pl-1 pr-2.5 font-serif text-[17px] leading-none xl:gap-3 xl:rounded-full xl:py-1.5 xl:pl-1.5 xl:pr-4 xl:text-[24px]"
+            href="/preview#hint-preview"
+            className="inline-flex w-fit min-w-0 shrink-0 items-center gap-2 rounded-full px-1.5 py-1 pr-3 font-serif text-[19px] font-semibold leading-none lg:gap-3 lg:text-[21px]"
             style={{
               color: "var(--hint-text)",
-              background: isDark ? "rgba(241,166,107,0.12)" : "rgba(255,255,255,0.88)",
-              borderColor: isDark ? "rgba(241,166,107,0.35)" : "rgba(116,89,58,0.14)",
-              boxShadow: isDark
-                ? "inset 0 0 0 1px rgba(255,250,242,0.08)"
-                : "0 10px 22px rgba(80,54,42,0.08), inset 0 0 0 1px rgba(255,255,255,0.72)",
+              background: "transparent",
             }}
             aria-label={t("nav.homeAria")}
           >
-            <HintLogo className="size-7 rounded-[9px] border border-white/25 shadow-[0_10px_24px_rgba(0,0,0,0.2)] xl:size-10 xl:rounded-[13px]" />
+            <HintLogo className="size-8 rounded-[10px] border border-white/20 shadow-[0_10px_24px_rgba(0,0,0,0.18)] lg:size-9 lg:rounded-[11px]" />
             Hint
-          </Link>
-          <Link
-            href="/"
-            className="inline-flex h-8 items-center justify-center gap-1.5 rounded-full border px-2.5 font-sans text-[11px] font-semibold xl:h-10 xl:px-3 xl:text-[12px]"
-            style={{
-              color: "var(--hint-text)",
-              background: "var(--hint-surface-soft)",
-              borderColor: "var(--hint-border)",
-            }}
-            aria-label="Return to landing page"
-          >
-            <Home className="size-3.5 xl:size-4" />
-            <span className="hidden sm:inline">Landing</span>
           </Link>
         </div>
 
         <div
-          className="hidden min-w-0 rounded-[14px] border p-1 xl:flex xl:w-auto xl:flex-1 xl:justify-center xl:gap-1.5 xl:rounded-full"
+          className="hidden min-w-0 rounded-full border p-1 lg:flex lg:w-auto lg:flex-1 lg:justify-center lg:gap-1.5"
           style={{
-            background: isDark ? "rgba(255,255,255,0.055)" : "rgba(255,255,255,0.72)",
+            background: "color-mix(in srgb, var(--hint-input-bg) 76%, transparent)",
             borderColor: "var(--hint-border)",
           }}
         >
@@ -245,19 +232,19 @@ function WebsiteHomeNav({
           ))}
         </div>
 
-        <div className="col-start-3 row-start-1 flex shrink-0 items-center justify-self-end gap-1.5 xl:static xl:col-auto xl:row-auto xl:ml-0 xl:gap-2">
+        <div className="col-start-3 row-start-1 flex shrink-0 items-center justify-self-end gap-1.5 lg:static lg:col-auto lg:row-auto lg:ml-0 lg:gap-2">
           <LanguageToggle compact menuPlacement="bottom" />
           <button
             type="button"
             onClick={() => onThemeSelect(isDark ? "bright" : "dark")}
             aria-pressed={isDark}
             aria-label={isDark ? t("theme.switchToDayFromNight") : t("theme.switchToNightFromDay")}
-            className="hidden h-10 items-center gap-2 rounded-full border px-3 text-[12px] font-semibold xl:inline-flex"
+            className="hidden h-10 items-center gap-2 rounded-full border px-3 text-[12px] font-semibold lg:inline-flex"
             style={{
-              background: isDark ? "rgba(241,166,107,0.14)" : "rgba(255,255,255,0.92)",
-              borderColor: isDark ? "rgba(241,166,107,0.34)" : "rgba(116,89,58,0.20)",
+              background: "color-mix(in srgb, var(--hint-input-bg) 86%, transparent)",
+              borderColor: "var(--hint-border)",
               color: "var(--hint-text)",
-              boxShadow: isDark ? "inset 0 1px 0 rgba(255,255,255,0.10), 0 10px 22px rgba(241,166,107,0.10)" : "0 10px 24px rgba(65,45,20,0.10)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.10)",
             }}
           >
             {isDark ? <Moon aria-hidden="true" className="size-4" /> : <Sun aria-hidden="true" className="size-4" />}
@@ -267,49 +254,41 @@ function WebsiteHomeNav({
             type="button"
             onClick={() => onThemeSelect(isDark ? "bright" : "dark")}
             aria-label={isDark ? t("theme.switchToDayFromNight") : t("theme.switchToNightFromDay")}
-            className="grid size-9 place-items-center rounded-full border xl:hidden"
+            className="grid size-9 place-items-center rounded-full border lg:hidden"
             style={{ borderColor: "var(--hint-border)", color: "var(--hint-text)", background: "var(--hint-surface-soft)" }}
           >
             {isDark ? <Moon className="size-4" /> : <Sun className="size-4" />}
           </button>
           <Link
-            href="/me"
+            href="/profile"
             aria-label="Open profile"
-            className="grid size-9 place-items-center rounded-full border transition-[transform,opacity] duration-200 hover:-translate-y-0.5 xl:size-11"
+            className="grid size-9 place-items-center rounded-full border transition-[transform,opacity] duration-200 hover:-translate-y-0.5 lg:size-10"
             style={{
-              color: profileActive ? (isDark ? "#fffaf2" : "#241d18") : "var(--hint-text)",
-              background: profileActive
-                ? isDark
-                  ? "linear-gradient(135deg, rgba(241,166,107,0.98), rgba(246,194,143,0.94))"
-                  : "linear-gradient(135deg, rgba(239,162,96,0.96), rgba(246,194,143,0.92))"
-                : "var(--hint-surface-soft)",
-              borderColor: profileActive
-                ? isDark
-                  ? "rgba(241,166,107,0.46)"
-                  : "rgba(116,89,58,0.18)"
-                : "var(--hint-border)",
+              color: profileActive ? "var(--hint-special-action-text)" : "var(--hint-text)",
+              background: profileActive ? "var(--hint-special-action-bg)" : "var(--hint-surface-soft)",
+              borderColor: profileActive ? "var(--hint-special-action-border, var(--hint-border-strong))" : "var(--hint-border)",
             }}
           >
-            <UserRound aria-hidden="true" className="size-4 xl:size-5" />
+            <UserRound aria-hidden="true" className="size-4 lg:size-5" />
           </Link>
           <a
-            href={getHintAppUrl("/ask")}
-            className="hidden h-11 items-center justify-center gap-2 rounded-full px-5 font-sans text-[13px] font-semibold xl:inline-flex"
+            href="/preview#today"
+            className="hidden h-10 items-center justify-center gap-2 rounded-full px-5 font-sans text-[13px] font-semibold lg:inline-flex"
             style={{
-              color: "#fffaf2",
-              background: isDark ? "#f1a66b" : "#292331",
-              boxShadow: isDark ? "0 14px 28px rgba(241,166,107,0.18)" : "0 14px 28px rgba(41,35,49,0.14)",
+              color: "var(--hint-special-action-text)",
+              background: "var(--hint-special-action-bg)",
+              boxShadow: "0 12px 26px rgba(244, 175, 203, 0.22)",
             }}
           >
-            Open Hint App
+            Draw Today
             <ArrowMark />
           </a>
         </div>
 
         <div
-          className="col-span-3 row-start-2 flex justify-start gap-1 overflow-x-auto rounded-[13px] border p-1 [scrollbar-width:none] sm:justify-center [&::-webkit-scrollbar]:hidden xl:hidden"
+          className="col-span-3 row-start-2 flex justify-start gap-1 overflow-x-auto rounded-[16px] border p-1 [scrollbar-width:none] sm:justify-center [&::-webkit-scrollbar]:hidden lg:hidden"
           style={{
-            background: isDark ? "rgba(255,255,255,0.055)" : "rgba(255,255,255,0.72)",
+            background: "color-mix(in srgb, var(--hint-input-bg) 76%, transparent)",
             borderColor: "var(--hint-border)",
           }}
         >
@@ -467,7 +446,7 @@ function AccountMenu({ profileActive, isDark }: { profileActive: boolean; isDark
           </div>
 
           <div className="mt-3 grid gap-2">
-            <AccountMenuLink href="/me" onNavigate={() => setOpen(false)} icon={<UserRound className="size-4" />}>
+            <AccountMenuLink href="/profile" onNavigate={() => setOpen(false)} icon={<UserRound className="size-4" />}>
               {t("account.viewProfile")}
             </AccountMenuLink>
             <AccountMenuLink href="/settings" onNavigate={() => setOpen(false)} icon={<Settings className="size-4" />}>
@@ -574,12 +553,13 @@ function MobileHomeNavLink({
   const className =
     "flex h-8 shrink-0 items-center justify-center rounded-[10px] px-3 font-sans text-[12px] font-semibold";
   const style = {
-    color: active ? (isDark ? "#fffaf2" : "#241d18") : "var(--hint-text)",
-    background: active
+    color: active ? "var(--hint-special-action-text)" : "var(--hint-muted)",
+    background: active ? "var(--hint-special-action-bg)" : "transparent",
+    boxShadow: active
       ? isDark
-        ? "linear-gradient(135deg, rgba(241,166,107,0.98), rgba(246,194,143,0.94))"
-        : "linear-gradient(135deg, rgba(239,162,96,0.96), rgba(246,194,143,0.92))"
-      : "transparent",
+        ? "0 10px 24px rgba(244,175,203,0.18), inset 0 0 0 1px rgba(255,250,242,0.18)"
+        : "0 10px 22px rgba(214,109,155,0.14), inset 0 0 0 1px rgba(255,255,255,0.46)"
+      : "none",
   };
 
   if (href.startsWith("/#")) {
@@ -623,18 +603,14 @@ function HomeNavAnchor({
   children: ReactNode;
 }) {
   const className =
-    "flex h-9 min-w-[88px] shrink-0 items-center justify-center rounded-[10px] px-3 text-center font-sans text-[12px] font-semibold leading-tight transition hover:-translate-y-0.5 active:translate-y-0 sm:min-w-0 sm:px-1 sm:text-[11px] md:h-10 md:min-w-[82px] md:rounded-full md:px-3 md:text-[13px] xl:min-w-[88px]";
+    "flex h-9 min-w-[88px] shrink-0 items-center justify-center rounded-full px-3 text-center font-sans text-[12px] font-semibold leading-tight transition hover:-translate-y-0.5 active:translate-y-0 sm:min-w-0 sm:px-1 sm:text-[11px] md:h-10 md:min-w-[82px] md:px-3 md:text-[13px] lg:min-w-[88px]";
   const style = {
-    color: active ? (isDark ? "#fffaf2" : "#241d18") : "var(--hint-text)",
-    background: active
-      ? isDark
-        ? "linear-gradient(135deg, rgba(241,166,107,0.98), rgba(246,194,143,0.94))"
-        : "linear-gradient(135deg, rgba(239,162,96,0.96), rgba(246,194,143,0.92))"
-      : "transparent",
+    color: active ? "var(--hint-special-action-text)" : "var(--hint-muted)",
+    background: active ? "var(--hint-special-action-bg)" : "transparent",
     boxShadow: active
       ? isDark
-        ? "0 10px 22px rgba(241,166,107,0.18), inset 0 0 0 1px rgba(255,250,242,0.22)"
-        : "0 10px 22px rgba(224,146,80,0.22), inset 0 0 0 1px rgba(116,89,58,0.16)"
+        ? "0 10px 24px rgba(244,175,203,0.18), inset 0 0 0 1px rgba(255,250,242,0.18)"
+        : "0 10px 22px rgba(214,109,155,0.14), inset 0 0 0 1px rgba(255,255,255,0.46)"
       : "none",
   };
 
