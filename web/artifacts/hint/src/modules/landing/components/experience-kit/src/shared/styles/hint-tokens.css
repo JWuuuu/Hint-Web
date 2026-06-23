@@ -75,7 +75,7 @@
   }
 
   /* Daybreak overrides — only the tokens that change. */
-  [data-hint-theme="daybreak"] {
+  [data-hint-theme="bright"] {
     --bg-solid:       #f7efe1;
     --surface:        rgba(255, 252, 244, 0.7);
     --surface-strong: rgba(255, 251, 242, 0.86);

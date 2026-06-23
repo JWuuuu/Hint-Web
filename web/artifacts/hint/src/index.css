@@ -56,10 +56,15 @@
   --hint-muted-token: rgba(225, 215, 224, 0.54);
   --hint-gold: #e3c889;
   --hint-gold-bright: #fff1bf;
+  --hint-gold-foil: #fff2c8;
   --hint-aqua: #badbd6;
+  --hint-aqua-deep: #749c98;
+  --hint-teal-glow: #badbd6;
   --hint-rose: #f4afcb;
   --hint-lavender: #d5c2f2;
   --hint-plum: #271d38;
+  --hint-ember: #f4afcb;
+  --hint-ember-soft: #d5c2f2;
   --hint-glass: rgba(255,255,255,0.045);
   --hint-glass-line: rgba(255,255,255,0.10);
   --hint-page-bg:
@@ -143,50 +148,56 @@
   --hint-nav-shadow: 0 18px 44px rgba(0,0,0,0.48), inset 0 1px 0 rgba(255,255,255,0.08);
   --hint-elevated-shadow: 0 24px 70px rgba(0,0,0,0.38), inset 0 1px 0 rgba(255,255,255,0.08);
 
-  --astro-text: #fff8e8;
-  --astro-text-strong: #fffaf0;
-  --astro-muted: rgba(255,248,232,0.74);
-  --astro-faint: rgba(255,248,232,0.52);
-  --astro-gold: #d9b765;
-  --astro-gold-bright: #ffe6a3;
-  --astro-aqua: #8beee4;
-  --astro-rose: #ff8dad;
-  --astro-lavender: #c7a7ff;
-  --astro-green: #91d38f;
-  --astro-orange: #f0a46d;
-  --astro-bg: radial-gradient(circle at 18% 6%, rgba(217,183,101,0.18), transparent 34%), radial-gradient(circle at 88% 18%, rgba(139,238,228,0.14), transparent 34%), linear-gradient(180deg, #090b12 0%, #10121b 48%, #070910 100%);
-  --astro-border: rgba(217,183,101,0.26);
-  --astro-stroke: rgba(217,183,101,0.34);
-  --astro-surface: linear-gradient(145deg, rgba(16,18,27,0.96), rgba(25,22,33,0.94) 52%, rgba(13,21,25,0.94));
-  --astro-hero: linear-gradient(145deg, rgba(14,17,27,0.97), rgba(29,24,36,0.94) 50%, rgba(10,25,29,0.92));
-  --astro-inner: linear-gradient(145deg, rgba(255,255,255,0.085), rgba(255,255,255,0.035));
-  --astro-locked: linear-gradient(145deg, rgba(28,25,34,0.96), rgba(18,16,24,0.96));
-  --astro-panel: linear-gradient(145deg, rgba(10,13,20,0.97), rgba(24,20,31,0.95) 48%, rgba(11,23,27,0.94));
-  --astro-panel-inner: linear-gradient(145deg, rgba(255,255,255,0.075), rgba(255,255,255,0.025));
-  --astro-tile: rgba(255,255,255,0.055);
-  --astro-tile-border: rgba(255,255,255,0.10);
-  --astro-input: rgba(7,9,14,0.64);
-  --astro-chart-panel: radial-gradient(circle at 50% 42%, rgba(134,214,199,0.16), transparent 34%), linear-gradient(145deg, rgba(5,7,12,0.60), rgba(16,18,26,0.42));
-  --astro-chart-header: rgba(7,9,14,0.84);
-  --astro-wheel-outer: rgba(8,11,20,0.96);
-  --astro-wheel-core: rgba(3,4,6,0.46);
-  --astro-wheel-dot-bg: rgba(8,11,20,0.95);
-  --astro-wheel-glow-center: rgba(134,214,199,0.28);
-  --astro-wheel-glow-mid: rgba(203,168,102,0.12);
-  --astro-wheel-glow-edge: rgba(7,9,14,0.98);
-  --astro-wheel-line: rgba(255,255,255,0.20);
-  --astro-wheel-axis: rgba(255,255,255,0.28);
-  --astro-button: linear-gradient(135deg, var(--astro-gold-bright), var(--astro-gold));
+  --astro-text: var(--hint-text);
+  --astro-text-strong: var(--hint-ivory);
+  --astro-muted: var(--hint-muted);
+  --astro-faint: var(--hint-faint);
+  --astro-gold: var(--hint-gold);
+  --astro-gold-bright: var(--hint-gold-bright);
+  --astro-aqua: var(--hint-aqua);
+  --astro-rose: var(--hint-rose);
+  --astro-lavender: var(--hint-lavender);
+  --astro-green: var(--hint-aqua);
+  --astro-orange: var(--hint-gold);
+  --astro-bg: var(--hint-page-bg);
+  --astro-border: var(--hint-border);
+  --astro-stroke: var(--hint-liquid-border, var(--hint-border-strong));
+  --astro-surface: var(--hint-card-surface);
+  --astro-hero: var(--hint-surface-strong);
+  --astro-inner: linear-gradient(145deg, rgba(255,255,255,0.10), rgba(255,255,255,0.045));
+  --astro-locked: var(--hint-card-surface);
+  --astro-panel: var(--hint-card-surface);
+  --astro-panel-inner: var(--hint-surface-soft);
+  --astro-tile: var(--hint-input-bg);
+  --astro-tile-border: var(--hint-border);
+  --astro-input: var(--hint-input-bg);
+  --astro-chart-panel: radial-gradient(circle at 50% 42%, rgba(186,219,214,0.16), transparent 34%), var(--hint-card-surface);
+  --astro-chart-header: rgba(37, 28, 52, 0.62);
+  --astro-wheel-outer: rgba(37, 28, 52, 0.78);
+  --astro-wheel-core: rgba(19, 13, 25, 0.46);
+  --astro-wheel-dot-bg: rgba(37, 28, 52, 0.86);
+  --astro-wheel-glow-center: rgba(186,219,214,0.24);
+  --astro-wheel-glow-mid: rgba(227,200,137,0.12);
+  --astro-wheel-glow-edge: rgba(19,13,25,0.88);
+  --astro-wheel-line: var(--hint-border-strong);
+  --astro-wheel-axis: var(--hint-border-strong);
+  --astro-button: var(--hint-special-action-bg);
   --astro-button-text: var(--hint-special-action-text, #24172a);
-  --astro-shadow: 0 24px 72px rgba(0,0,0,0.28), inset 0 1px 0 rgba(255,255,255,0.08);
-  --astro-shadow-soft: 0 16px 42px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.06);
-  --astro-button-shadow: 0 12px 28px rgba(203,168,102,0.18);
+  --astro-shadow: var(--hint-elevated-shadow);
+  --astro-shadow-soft: var(--hint-elevated-shadow);
+  --astro-button-shadow: 0 12px 28px rgba(244,175,203,0.18);
 }
 
 [data-hint-theme="bright"] {
   color-scheme: light;
+  --hint-ivory: #282030;
+  --hint-ivory-dim: rgba(83, 73, 94, 0.76);
+  --hint-muted-token: rgba(95, 85, 105, 0.54);
   --hint-page-bg:
-    linear-gradient(180deg, #fbf5ea 0%, #f2edf7 48%, #e8f3f1 100%);
+    radial-gradient(760px 560px at 10% 8%, rgba(255, 205, 224, 0.58), transparent 64%),
+    radial-gradient(720px 560px at 92% 8%, rgba(226, 212, 252, 0.48), transparent 64%),
+    radial-gradient(700px 520px at 54% 94%, rgba(255, 238, 198, 0.36), transparent 66%),
+    linear-gradient(180deg, #fffdfb 0%, #fbf3f8 46%, #f8fbf7 100%);
   --hint-bg-glow-a: rgba(244, 176, 152, 0.32);
   --hint-bg-glow-b: rgba(90, 176, 177, 0.28);
   --hint-bg-glow-c: rgba(206, 169, 89, 0.18);
@@ -263,44 +274,44 @@
   --hint-nav-shadow: 0 18px 44px rgba(70, 49, 88, 0.18), inset 0 1px 0 rgba(255,255,255,0.82);
   --hint-elevated-shadow: 0 24px 70px rgba(75, 56, 85, 0.18), inset 0 1px 0 rgba(255,255,255,0.72);
 
-  --astro-text: rgba(31, 25, 35, 0.96);
-  --astro-text-strong: #241d18;
-  --astro-muted: rgba(74, 63, 82, 0.74);
-  --astro-faint: rgba(74, 63, 82, 0.52);
-  --astro-gold: #9a692d;
-  --astro-gold-bright: #bd812d;
-  --astro-aqua: #247f84;
-  --astro-rose: #b84f75;
-  --astro-lavender: #7356b8;
-  --astro-green: #4f874f;
-  --astro-orange: #b76534;
-  --astro-bg: radial-gradient(circle at 16% 8%, rgba(218,176,98,0.18), transparent 34%), radial-gradient(circle at 88% 14%, rgba(62,162,160,0.16), transparent 34%), linear-gradient(180deg, #fffaf3 0%, #f8f5fb 48%, #eef9f6 100%);
-  --astro-border: rgba(116, 89, 58, 0.18);
-  --astro-stroke: rgba(154, 105, 45, 0.34);
-  --astro-surface: linear-gradient(145deg, rgba(255,255,252,0.96), rgba(244,251,249,0.92) 52%, rgba(250,243,250,0.92));
-  --astro-hero: linear-gradient(145deg, rgba(255,253,248,0.97), rgba(247,241,251,0.93) 50%, rgba(234,249,246,0.93));
+  --astro-text: var(--hint-text);
+  --astro-text-strong: var(--hint-ivory);
+  --astro-muted: var(--hint-muted);
+  --astro-faint: var(--hint-faint);
+  --astro-gold: var(--hint-gold);
+  --astro-gold-bright: var(--hint-gold-bright);
+  --astro-aqua: var(--hint-aqua);
+  --astro-rose: var(--hint-rose);
+  --astro-lavender: var(--hint-lavender);
+  --astro-green: var(--hint-aqua);
+  --astro-orange: var(--hint-gold);
+  --astro-bg: var(--hint-page-bg);
+  --astro-border: var(--hint-border);
+  --astro-stroke: var(--hint-liquid-border, var(--hint-border-strong));
+  --astro-surface: var(--hint-card-surface);
+  --astro-hero: var(--hint-surface-strong);
   --astro-inner: linear-gradient(145deg, rgba(255,255,255,0.72), rgba(255,255,255,0.38));
-  --astro-locked: linear-gradient(145deg, rgba(255,250,242,0.94), rgba(239,233,246,0.92));
-  --astro-panel: linear-gradient(145deg, rgba(255,253,248,0.97), rgba(247,241,251,0.93) 48%, rgba(234,249,246,0.93));
-  --astro-panel-inner: linear-gradient(145deg, rgba(255,255,255,0.76), rgba(255,255,255,0.42));
-  --astro-tile: rgba(255,255,255,0.62);
-  --astro-tile-border: rgba(72, 55, 78, 0.12);
-  --astro-input: rgba(255,255,255,0.66);
-  --astro-chart-panel: radial-gradient(circle at 50% 42%, rgba(36,127,132,0.12), transparent 36%), linear-gradient(145deg, rgba(255,255,255,0.72), rgba(246,250,250,0.48));
+  --astro-locked: var(--hint-card-surface);
+  --astro-panel: var(--hint-card-surface);
+  --astro-panel-inner: var(--hint-surface-soft);
+  --astro-tile: var(--hint-input-bg);
+  --astro-tile-border: var(--hint-border);
+  --astro-input: var(--hint-input-bg);
+  --astro-chart-panel: radial-gradient(circle at 50% 42%, rgba(116,156,152,0.12), transparent 36%), var(--hint-card-surface);
   --astro-chart-header: rgba(255,252,246,0.86);
   --astro-wheel-outer: rgba(255,251,242,0.96);
   --astro-wheel-core: rgba(255,255,255,0.5);
   --astro-wheel-dot-bg: rgba(255,252,246,0.96);
-  --astro-wheel-glow-center: rgba(36,127,132,0.18);
-  --astro-wheel-glow-mid: rgba(154,105,45,0.12);
+  --astro-wheel-glow-center: rgba(116,156,152,0.18);
+  --astro-wheel-glow-mid: rgba(180,135,59,0.12);
   --astro-wheel-glow-edge: rgba(255,252,246,0.96);
-  --astro-wheel-line: rgba(54,42,61,0.24);
-  --astro-wheel-axis: rgba(54,42,61,0.34);
-  --astro-button: linear-gradient(135deg, #f3cc83, #d7973e);
-  --astro-button-text: #241d18;
-  --astro-shadow: 0 24px 64px rgba(93, 73, 105, 0.13), inset 0 1px 0 rgba(255,255,255,0.76);
-  --astro-shadow-soft: 0 18px 42px rgba(83, 64, 98, 0.10), inset 0 1px 0 rgba(255,255,255,0.68);
-  --astro-button-shadow: 0 12px 24px rgba(154,105,45,0.18);
+  --astro-wheel-line: var(--hint-border-strong);
+  --astro-wheel-axis: var(--hint-border-strong);
+  --astro-button: var(--hint-special-action-bg);
+  --astro-button-text: var(--hint-special-action-text);
+  --astro-shadow: var(--hint-elevated-shadow);
+  --astro-shadow-soft: var(--hint-elevated-shadow);
+  --astro-button-shadow: 0 12px 24px rgba(214,109,155,0.14);
 }
 
 /* HINT Main app-only visual system
@@ -315,10 +326,15 @@
   --hint-muted-token: rgba(225, 215, 224, 0.54);
   --hint-gold: #e3c889;
   --hint-gold-bright: #fff1bf;
+  --hint-gold-foil: #fff2c8;
   --hint-aqua: #badbd6;
+  --hint-aqua-deep: #749c98;
+  --hint-teal-glow: #badbd6;
   --hint-rose: #f4afcb;
   --hint-lavender: #d5c2f2;
   --hint-plum: #271d38;
+  --hint-ember: #f4afcb;
+  --hint-ember-soft: #d5c2f2;
   --hint-page-bg:
     radial-gradient(760px 560px at 12% 6%, rgba(244, 175, 203, 0.26), transparent 62%),
     radial-gradient(680px 520px at 88% 10%, rgba(213, 194, 242, 0.20), transparent 60%),
@@ -357,6 +373,9 @@
 }
 
 [data-hint-theme="bright"] {
+  --hint-ivory: #282030;
+  --hint-ivory-dim: rgba(83, 73, 94, 0.76);
+  --hint-muted-token: rgba(95, 85, 105, 0.54);
   --hint-page-bg:
     radial-gradient(760px 560px at 10% 8%, rgba(255, 205, 224, 0.58), transparent 64%),
     radial-gradient(720px 560px at 92% 8%, rgba(226, 212, 252, 0.48), transparent 64%),
@@ -364,10 +383,15 @@
     linear-gradient(180deg, #fffdfb 0%, #fbf3f8 46%, #f8fbf7 100%);
   --hint-gold: #b4873b;
   --hint-gold-bright: #e9c980;
+  --hint-gold-foil: #fff4cb;
   --hint-aqua: #749c98;
+  --hint-aqua-deep: #5f8f8a;
+  --hint-teal-glow: #749c98;
   --hint-rose: #d8649a;
   --hint-lavender: #8d70c9;
   --hint-plum: #34223f;
+  --hint-ember: #ffc5dc;
+  --hint-ember-soft: #d8c9ff;
   --hint-text: rgba(40, 32, 48, 0.96);
   --hint-muted: rgba(83, 73, 94, 0.76);
   --hint-faint: rgba(95, 85, 105, 0.54);

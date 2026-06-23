@@ -1,11 +1,10 @@
 import type { ReactNode } from "react";
 import { ArrowRight, LockKeyhole, Sparkles } from "lucide-react";
-import { getHintAppUrl } from "../../lib/appUrl";
 
 type ButtonTone = "gold" | "aqua" | "quiet";
 
 export function OpenAppButton({
-  children = "Open Hint App",
+  children = "Open Hint Online",
   appPath = "",
   tone = "gold",
   className = "",
@@ -36,7 +35,7 @@ export function OpenAppButton({
 
   return (
     <a
-      href={getHintAppUrl(appPath)}
+      href={appPath || "/preview"}
       className={`inline-flex min-h-11 items-center justify-center gap-2 rounded-full px-5 font-sans text-[13px] font-semibold transition hover:-translate-y-0.5 ${className}`}
       style={styles}
     >
@@ -49,7 +48,7 @@ export function OpenAppButton({
 export function AppGateCTA({
   title,
   body,
-  cta = "Open Hint App",
+  cta = "Open Hint Online",
   appPath = "",
 }: {
   title: string;
@@ -75,7 +74,7 @@ export function AppGateCTA({
         <div className="min-w-0">
           <p className="flex items-center gap-2 font-sans text-[11px] font-semibold uppercase tracking-[0.14em]" style={{ color: "var(--hint-gold)" }}>
             <LockKeyhole className="size-3.5" />
-            Hint app unlock
+            Website feature
           </p>
           <h3 className="mt-1 font-serif text-[22px] leading-tight" style={{ color: "var(--hint-text)" }}>
             {title}

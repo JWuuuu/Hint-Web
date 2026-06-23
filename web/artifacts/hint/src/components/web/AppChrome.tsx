@@ -135,11 +135,11 @@ export function GlassPanel({
       style={{
         background: hero
           ? "var(--hint-surface-strong)"
-          : "var(--hint-glass, rgba(255,255,255,0.045))",
+          : "var(--hint-card-surface, var(--hint-glass, rgba(255,255,255,0.045)))",
         backdropFilter: "blur(22px)",
         WebkitBackdropFilter: "blur(22px)",
-        border: "1px solid var(--hint-glass-line, rgba(255,255,255,0.10))",
-        boxShadow: "0 18px 52px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.08)",
+        border: "1px solid var(--hint-border)",
+        boxShadow: "var(--hint-elevated-shadow, 0 18px 52px rgba(0,0,0,0.26), inset 0 1px 0 rgba(255,255,255,0.08))",
       }}
     >
       <div

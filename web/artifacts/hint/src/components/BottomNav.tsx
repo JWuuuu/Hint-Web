@@ -36,7 +36,7 @@ export function BottomNav({ theme, onThemeToggle }: BottomNavProps) {
     { href: "/preview#today", label: t("nav.today"), section: true },
     { href: "/preview#rewards", label: t("nav.rewards"), section: true },
     { href: "/readings", label: t("nav.history"), section: false },
-    { href: "/me", label: t("nav.me"), section: false },
+    { href: "/profile", label: t("nav.me"), section: false },
   ];
 
   return (

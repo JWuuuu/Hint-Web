@@ -4,34 +4,56 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AppShell } from "./AppShell";
 import { OnboardingGate } from "./components/web/OnboardingGate";
 import { LanguageProvider } from "./lib/i18n";
-import { LandingPage } from "./modules/landing/LandingPage";
 import { HomeDashboard } from "./modules/home";
 import { AboutView, ContactView, DisclaimerView, PrivacyPolicyView, TermsView } from "./modules/legal";
+import { AskHint } from "./modules/ask";
 import { LoginView } from "./modules/auth/LoginView";
+import { AstrologyView, CompatibilityView, DreamView, JournalView } from "./modules/features";
 import { MeView, SettingsView } from "./modules/me";
 import { ReadingDetailView, ReadingsView } from "./modules/readings/ReadingsView";
+import { TarotRoom } from "./modules/tarot";
 import {
   AnimalTarotLitePage,
-  AstrologyLitePage,
   CollectionPreviewPage,
-  DailyPullLitePage,
-  GenericAppGatePage,
   PricingPreviewPage,
   RoomsLitePage,
-  TarotLitePage,
 } from "./modules/web-lite/WebLitePages";
 
 const queryClient = new QueryClient();
 
 function LegacyPreviewRedirect() {
   useEffect(() => {
-    const hash = window.location.hash || "#today";
+    const hash = window.location.hash || "#hint-preview";
     window.location.replace(`/preview${hash}`);
   }, []);
 
   return (
     <div className="min-h-full flex items-center justify-center font-sans text-sm" style={{ color: "var(--hint-muted)" }}>
-      Opening web preview...
+      Opening Hint Online...
+    </div>
+  );
+}
+
+function DailyPreviewRedirect() {
+  useEffect(() => {
+    window.location.replace("/preview#today");
+  }, []);
+
+  return (
+    <div className="min-h-full flex items-center justify-center font-sans text-sm" style={{ color: "var(--hint-muted)" }}>
+      Opening today&apos;s card...
+    </div>
+  );
+}
+
+function ProfileRedirect() {
+  useEffect(() => {
+    window.location.replace(`/profile${window.location.search}${window.location.hash}`);
+  }, []);
+
+  return (
+    <div className="min-h-full flex items-center justify-center font-sans text-sm" style={{ color: "var(--hint-muted)" }}>
+      Opening your profile...
     </div>
   );
 }
@@ -39,39 +61,28 @@ function LegacyPreviewRedirect() {
 function Router() {
   return (
     <Switch>
-      <Route path="/" component={LandingPage} />
+      <Route path="/" component={LegacyPreviewRedirect} />
       <Route path="/preview" component={HomeDashboard} />
       <Route path="/app" component={LegacyPreviewRedirect} />
-      <Route path="/tarot" component={TarotLitePage} />
-      <Route path="/ask">
-        <GenericAppGatePage title="Ask follow-ups in Hint app." body="The website gives a short preview first. Full AI follow-up, chat history, and saved context live in the app." cta="Ask a Follow-up in App" appPath="/ask" />
-      </Route>
+      <Route path="/tarot" component={TarotRoom} />
+      <Route path="/ask" component={AskHint} />
       <Route path="/animal-tarot" component={AnimalTarotLitePage} />
       <Route path="/rooms" component={RoomsLitePage} />
       <Route path="/readings/:id" component={ReadingDetailView} />
       <Route path="/readings" component={ReadingsView} />
       <Route path="/login" component={LoginView} />
-      <Route path="/me" component={MeView} />
+      <Route path="/profile" component={MeView} />
+      <Route path="/me" component={ProfileRedirect} />
       <Route path="/settings" component={SettingsView} />
-      <Route path="/astrology" component={AstrologyLitePage} />
-      <Route path="/compatibility/invite/:token">
-        <GenericAppGatePage title="Relationship reports unlock in Hint app." body="The website keeps astrology light. Full compatibility, invite links, and relationship reports live in the app." cta="Open Relationship Report" appPath="/compatibility" />
-      </Route>
-      <Route path="/compatibility/:id">
-        <GenericAppGatePage title="Relationship reports unlock in Hint app." body="The website keeps astrology light. Full compatibility, invite links, and relationship reports live in the app." cta="Open Relationship Report" appPath="/compatibility" />
-      </Route>
-      <Route path="/compatibility">
-        <GenericAppGatePage title="Relationship reports unlock in Hint app." body="The website keeps astrology light. Full compatibility, invite links, and relationship reports live in the app." cta="Open Relationship Report" appPath="/compatibility" />
-      </Route>
-      <Route path="/dream">
-        <GenericAppGatePage title="Dream saving unlocks in Hint app." body="The website can preview small rituals. Dream history and deeper interpretation belong in the app." cta="Open Dream Room" appPath="/dream" />
-      </Route>
-      <Route path="/journal">
-        <GenericAppGatePage title="Journals unlock in Hint app." body="The web preview does not save long-term entries. Open the app for saved notes, history, and patterns." cta="Open Journal" appPath="/journal" />
-      </Route>
+      <Route path="/astrology" component={AstrologyView} />
+      <Route path="/compatibility/invite/:token" component={CompatibilityView} />
+      <Route path="/compatibility/:id" component={CompatibilityView} />
+      <Route path="/compatibility" component={CompatibilityView} />
+      <Route path="/dream" component={DreamView} />
+      <Route path="/journal" component={JournalView} />
       <Route path="/collection" component={CollectionPreviewPage} />
       <Route path="/pricing" component={PricingPreviewPage} />
-      <Route path="/daily-pull" component={DailyPullLitePage} />
+      <Route path="/daily-pull" component={DailyPreviewRedirect} />
       <Route path="*">
         <div className="min-h-full flex items-center justify-center font-serif text-white/20 text-sm">
           -

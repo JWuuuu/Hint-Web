@@ -23,6 +23,7 @@ import {
 } from "../data/localRitualProgress";
 import { ModuleGrid } from "./ModuleGrid";
 import { FeedCards } from "./FeedCards";
+import { HintPreviewSection } from "./HintPreviewSection";
 import { CardSigil } from "../../hold/components/CardSigil";
 import { useLanguage } from "../../../lib/i18n";
 import { generateSkyCardReading } from "../../../lib/readings/generateSkyCardReading";
@@ -53,7 +54,7 @@ function TodayShineLayer({ wide = false }: { wide?: boolean }) {
         ].join(" ")}
         style={{
           background:
-            "linear-gradient(90deg, transparent 0%, rgba(134,214,199,0.10) 28%, rgba(255,244,214,0.20) 50%, rgba(239,166,116,0.10) 68%, transparent 100%)",
+            "linear-gradient(90deg, transparent 0%, rgba(244,175,203,0.12) 28%, rgba(255,242,200,0.20) 50%, rgba(213,194,242,0.13) 70%, transparent 100%)",
           mixBlendMode: "screen",
         }}
         animate={{ x: wide ? ["-50vw", "115vw"] : ["-35%", "720%"], opacity: [0, 0.62, 0] }}
@@ -63,7 +64,7 @@ function TodayShineLayer({ wide = false }: { wide?: boolean }) {
         className="absolute inset-x-[-12%] top-0 h-40"
         style={{
           background:
-            "radial-gradient(circle at 18% 42%, rgba(203,168,102,0.18), transparent 28%), radial-gradient(circle at 62% 34%, rgba(134,214,199,0.18), transparent 24%), radial-gradient(circle at 82% 56%, rgba(255,255,255,0.12), transparent 18%)",
+            "radial-gradient(circle at 18% 42%, rgba(244,175,203,0.18), transparent 28%), radial-gradient(circle at 62% 34%, rgba(213,194,242,0.18), transparent 24%), radial-gradient(circle at 82% 56%, rgba(255,242,200,0.14), transparent 18%)",
           filter: "blur(10px)",
         }}
         animate={{ x: ["-3%", "3%", "-3%"], opacity: [0.36, 0.62, 0.36] }}
@@ -400,7 +401,7 @@ function CompactSignalPanel({
         )}
       </div>
       {revealed && !birthPersonalized && (
-        <OpenAppButton appPath="/me" tone="quiet" className="relative mt-3 w-full border border-[color:var(--hint-border)]">
+        <OpenAppButton appPath="/profile" tone="quiet" className="relative mt-3 w-full border border-[color:var(--hint-border)]">
           Add birth details for sharper daily scores
         </OpenAppButton>
       )}
@@ -554,7 +555,7 @@ function ThemeAwareDailyCard({
 }
 
 function memoryInsight(currentCardName: string): string {
-  return `${currentCardName} is your web preview for today. Hint can remember streaks, past cards, and repeating themes inside the full app.`;
+  return `${currentCardName} is your online reading for today. Hint can remember streaks, past cards, and repeating themes on this website.`;
 }
 
 function CircularScore({
@@ -709,10 +710,9 @@ function DailyHintSection({
       transition={{ delay: 0.16, duration: 0.76, ease: "easeOut" }}
       className="relative overflow-hidden rounded-[18px] border px-3 py-3.5 lg:rounded-[28px] lg:px-10 lg:py-8"
       style={{
-        background:
-          "linear-gradient(105deg, color-mix(in srgb, var(--hint-surface) 86%, transparent), color-mix(in srgb, var(--hint-input-bg) 78%, transparent))",
-        borderColor: "color-mix(in srgb, var(--hint-border) 82%, white)",
-        boxShadow: "var(--hint-elevated-shadow)",
+        background: "var(--hint-surface-strong)",
+        borderColor: "var(--hint-border-strong)",
+        boxShadow: "var(--hint-liquid-shadow, var(--hint-elevated-shadow))",
       }}
     >
       <div
@@ -720,7 +720,7 @@ function DailyHintSection({
         className="absolute inset-0"
         style={{
           background:
-            "radial-gradient(560px 380px at 18% 28%, rgba(122,226,214,0.18), transparent 68%), radial-gradient(480px 320px at 86% 8%, rgba(239,166,116,0.13), transparent 68%)",
+            "radial-gradient(560px 380px at 18% 28%, rgba(244,175,203,0.18), transparent 68%), radial-gradient(480px 320px at 86% 8%, rgba(213,194,242,0.16), transparent 68%), radial-gradient(520px 360px at 52% 98%, rgba(255,242,200,0.10), transparent 70%)",
         }}
       />
       <TodayShineLayer />
@@ -774,9 +774,10 @@ function DailyHintSection({
               onKeyDown={revealFromKeyboard}
               className="relative mt-4 inline-flex h-10 w-full max-w-[16rem] items-center justify-center overflow-hidden rounded-full border px-4 font-sans text-[12px] font-semibold tracking-normal sm:w-auto"
               style={{
-                color: "var(--hint-text)",
-                borderColor: "var(--hint-border-strong)",
-                background: "color-mix(in srgb, var(--hint-surface) 78%, transparent)",
+                color: revealed ? "var(--hint-text)" : "var(--hint-special-action-text)",
+                borderColor: revealed ? "var(--hint-border-strong)" : "var(--hint-special-action-border, var(--hint-border-strong))",
+                background: revealed ? "color-mix(in srgb, var(--hint-surface) 78%, transparent)" : "var(--hint-special-action-bg)",
+                boxShadow: revealed ? "none" : "0 12px 26px rgba(244, 175, 203, 0.22)",
               }}
               aria-label={revealed ? "Daily sky card revealed" : "Press and hold to draw today's sky card"}
             >
@@ -786,7 +787,7 @@ function DailyHintSection({
                   className="absolute inset-y-0 left-0 transition-transform duration-75"
                   style={{
                     width: "100%",
-                    background: "color-mix(in srgb, var(--hint-gold, #cba866) 22%, transparent)",
+                    background: "rgba(255, 255, 255, 0.28)",
                     transform: `scaleX(${holdProgress})`,
                     transformOrigin: "left center",
                   }}
@@ -795,7 +796,7 @@ function DailyHintSection({
               <span className="relative">{revealed ? "Card revealed" : "Hold to draw"}</span>
             </button>
             {!birthPersonalized && (
-              <OpenAppButton appPath="/me" tone="quiet" className="mt-3 w-full max-w-[16rem] border border-[color:var(--hint-border)]">
+              <OpenAppButton appPath="/profile" tone="quiet" className="mt-3 w-full max-w-[16rem] border border-[color:var(--hint-border)]">
                 Add birth details
               </OpenAppButton>
             )}
@@ -815,7 +816,7 @@ function DailyHintSection({
             <div
               className="rounded-[18px] border p-3 sm:p-4"
               style={{
-                background: "color-mix(in srgb, var(--hint-input-bg) 82%, transparent)",
+                background: "linear-gradient(145deg, color-mix(in srgb, var(--hint-surface) 86%, white 5%), color-mix(in srgb, var(--hint-surface-soft) 78%, white 3%))",
                 borderColor: "var(--hint-border)",
               }}
             >
@@ -858,7 +859,7 @@ function DailyHintSection({
             <div
               className="rounded-[18px] border p-4"
               style={{
-                background: "color-mix(in srgb, var(--hint-input-bg) 76%, transparent)",
+                background: "linear-gradient(145deg, color-mix(in srgb, var(--hint-surface) 82%, white 5%), color-mix(in srgb, var(--hint-surface-soft) 78%, white 3%))",
                 borderColor: "var(--hint-border)",
               }}
             >
@@ -1022,7 +1023,7 @@ function RitualStreakPanel({
             Light one star each day, Monday to Sunday.
           </p>
         </div>
-        <OpenAppButton appPath="/rewards" tone="quiet" className="h-9 px-3 text-[11px]">
+        <OpenAppButton appPath="/collection" tone="quiet" className="h-9 px-3 text-[11px]">
           Save progress
         </OpenAppButton>
       </div>
@@ -1580,6 +1581,19 @@ export function HomeDashboard() {
   }, [report.date]);
 
   useEffect(() => {
+    const scrollToHash = () => {
+      const id = window.location.hash.slice(1) || "hint-preview";
+      window.requestAnimationFrame(() => {
+        document.getElementById(decodeURIComponent(id))?.scrollIntoView({ block: "start" });
+      });
+    };
+
+    scrollToHash();
+    window.addEventListener("hashchange", scrollToHash);
+    return () => window.removeEventListener("hashchange", scrollToHash);
+  }, []);
+
+  useEffect(() => {
     return subscribeToRitualProgress(() => setRitual(getRitualProgress()));
   }, []);
 
@@ -1622,7 +1636,7 @@ export function HomeDashboard() {
       title: t("home.card.daily.title"),
       label: t("home.card.daily.label"),
       body: t("home.card.daily.body"),
-      href: "/daily-pull",
+      href: "/preview#today",
       icon: Moon,
       color: ACCENT.lavender,
     },
@@ -1632,26 +1646,28 @@ export function HomeDashboard() {
     <div className="relative h-full w-full overflow-y-auto overscroll-none pb-16">
       <TodayShineLayer wide />
       <div className={`relative z-10 mx-auto w-full max-w-[44rem] px-4 sm:max-w-3xl sm:px-6 lg:max-w-6xl lg:pt-28 ${dailyCardRevealed ? "pt-20" : "pt-24"}`}>
+        <HintPreviewSection />
+
         <motion.section
           id="today"
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.08, duration: 0.75, ease: "easeOut" }}
-          className={`relative scroll-mt-24 overflow-visible pt-2 lg:mb-8 lg:scroll-mt-28 lg:pt-3 ${dailyCardRevealed ? "mb-3" : "mb-5"}`}
+          className={`relative scroll-mt-28 overflow-visible pt-2 lg:mb-6 lg:scroll-mt-32 lg:pt-3 ${dailyCardRevealed ? "mb-3" : "mb-5"}`}
         >
-          <div className={`${dailyCardRevealed ? "py-2" : "py-3"} lg:py-8`}>
+          <div className={`${dailyCardRevealed ? "py-2" : "py-3"} lg:py-5`}>
             <div className="relative z-10">
-              <p className="font-sans text-[10px] font-medium uppercase tracking-[0.12em] lg:text-[11px]" style={{ color: ACCENT.gold }}>
-                {t("home.eyebrow")}
+              <p className="font-sans text-[10px] font-semibold uppercase tracking-[0.18em] lg:text-[11px]" style={{ color: ACCENT.gold }}>
+                Today & Daily
               </p>
-              <h1
-                className={`mt-2 max-w-4xl text-balance font-serif leading-[1.02] lg:mt-4 lg:text-[72px] ${dailyCardRevealed ? "text-[24px]" : "text-[32px]"}`}
-                style={{ color: "var(--hint-text)", textShadow: "0 0 32px rgba(228,198,138,0.12)" }}
+              <h2
+                className={`mt-2 max-w-4xl text-balance font-serif leading-[1.04] lg:mt-3 lg:text-[56px] ${dailyCardRevealed ? "text-[24px]" : "text-[32px]"}`}
+                style={{ color: "var(--hint-text)", textShadow: "0 0 34px rgba(255,248,242,0.20), 0 2px 16px rgba(0,0,0,0.28)" }}
               >
                 {t("home.title")}
-              </h1>
-              <p className={`max-w-3xl font-sans leading-relaxed lg:mt-4 lg:text-[16px] ${dailyCardRevealed ? "mt-2 text-[12px] sm:text-[13px]" : "mt-3 text-[13px] sm:text-[14px]"}`} style={{ color: "var(--hint-muted)" }}>
-                {t("home.subtitle")}
+              </h2>
+              <p className={`max-w-3xl font-sans leading-relaxed lg:mt-4 lg:text-[16px] ${dailyCardRevealed ? "mt-2 text-[12px] sm:text-[13px]" : "mt-3 text-[13px] sm:text-[14px]"}`} style={{ color: "color-mix(in srgb, var(--hint-text) 80%, transparent)" }}>
+                Draw the daily card here, then use the birthday score and tarot trial above and below without jumping to a separate Daily page.
               </p>
             </div>
           </div>
